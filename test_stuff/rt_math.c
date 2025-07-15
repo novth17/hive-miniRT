@@ -18,7 +18,7 @@ float square(float a)
 }
 
 inline
-float lengthSq(t_v3 a)
+float length_sq(t_v3 a)
 {
 	float result;
 
@@ -319,7 +319,7 @@ float length(t_v3 a)
 {
 	float result;
 
-	result = squareRoot(lengthSq(a));
+	result = squareRoot(length_sq(a));
 	return (result);
 }
 
@@ -341,7 +341,7 @@ inline
 t_v3 noz(t_v3 a)
 {
 	t_v3 result;
-	const float lensq =  lengthSq(a);
+	const float lensq = length_sq(a);
 
 	if (lensq > square(0.0001f))
 	{
