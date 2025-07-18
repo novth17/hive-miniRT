@@ -56,3 +56,5 @@ dkms.conf
 miniRT
 .vscode
 obj/
+libs/MLX42
+.DS_Store
