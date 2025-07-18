@@ -1,4 +1,4 @@
-NAME		= miniRT
+NAME		= mini_rt
 
 CC			= cc
 INCLUDE		:= -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
@@ -13,9 +13,10 @@ MLX42 := $(MLX42_DIR)/build/libmlx42.a
 OBJ_DIR		= obj/
 SRC_DIR		= src
 
-HEADERS		= inc/miniRT.h
+HEADERS		= inc/mini_rt.h
 
-SRC 		= $(SRC_DIR)/main.c
+SRC 		=	$(SRC_DIR)/main.c \
+				$(SRC_DIR)/parser/init.c
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 
 all: $(NAME)

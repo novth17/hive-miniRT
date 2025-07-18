@@ -1,0 +1,49 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/18 20:02:04 by hiennguy          #+#    #+#             */
+/*   Updated: 2025/07/18 22:29:28 by hiennguy         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "mini_rt.h"
+
+static int	setup_mlx(t_mini_rt *minirt)
+{
+	minirt->mlx = mlx_init(WINDOW_WIDTH, WINDOW_HEIGHT, "MiniRay", true);
+	if (!minirt->mlx)
+	{
+		ft_dprintf(2, mlx_strerror(mlx_errno));
+		return (FAIL);
+	}
+	minirt->image = mlx_new_image(minirt->mlx, WINDOW_WIDTH, WINDOW_HEIGHT);
+	if (!minirt->image)
+	{
+		mlx_close_window(minirt->mlx);
+		ft_putstr_fd(mlx_strerror(mlx_errno), 2);
+		return (FAIL);
+	}
+	if (mlx_image_to_window(minirt->mlx, minirt->image, 0, 0) == -1)
+	{
+		mlx_close_window(minirt->mlx);
+		ft_putstr_fd(mlx_strerror(mlx_errno), 2);
+		return (FAIL);
+	}
+	mlx_set_setting(MLX_STRETCH_IMAGE, true);
+	mlx_set_window_size(minirt->mlx, 1024, 1024);
+	return (SUCCESS);
+}
+
+
+void	init_minirt(t_mini_rt *minirt, char **argv)
+{
+	(void) **argv;
+	ft_bzero(minirt, sizeof(t_mini_rt));
+	if (setup_mlx(minirt) == FAIL)
+		exit(FAIL);
+
+}
