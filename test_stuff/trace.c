@@ -12,6 +12,7 @@
 #define MIN_HIT_DIST 0.001f
 #define TOLERANCE	 0.0001f
 
+/*
 
 typedef struct
 {
@@ -94,108 +95,80 @@ typedef struct
 	t_v3 direction;
 } t_ray;
 
-// inline
-// void sphere_hit(t_sphere sphere, const t_ray *ray)
-// {
+*/
 
-// 	t_v3 relative_origin = v3_sub_v3(sphere.position, ray->origin); // or origin - center?
-// 	const float a = length_sq(ray->direction);
-// 	const float b = 2.0f * inner(ray->direction, relative_origin);
-// 	const float c = length_sq(relative_origin) - sphere.radius * sphere.radius;
-// 	const float denom = 2.0f*a;
-// 	const float root_term =  square_root(b * b - 4.0f * a * c);
+// everything under this is definetely going to be re done somewhere else
 
-// 	if (root_term > TOLERANCE)
-// 	{
-// 		float tp = (-b + root_term) / denom;
-// 		float tn = (-b - root_term) / denom;
-// 		float t = tp;
-// 	}
-// }
+static float ExactLinearTosRGB(float L);
 
-inline
-float sphere_hit(t_sphere sphere, const t_ray *ray)
+
+typedef struct
+{
+	float	aspect_ratio; //
+	int32_t image_width;
+	int32_t image_height;
+
+	float focal_length;
+	float viewport_height;
+	float viewport_width;
+	t_v3 camera_center;
+
+	t_v3 viewport_u;
+	t_v3 viewport_v;
+
+	t_v3 pixel_delta_u;
+	t_v3 pixel_delta_v;
+
+	t_v3 viewport_upper_left;
+	t_v3 pixel00_location;
+} t_camera;
+
+#define IMAGE_WIDTH 1280.0f
+#define IMAGE_HEIGHT 720.0f
+
+
+int main(void)
 {
 
-	t_v3 relative_origin = v3_sub_v3(sphere.position, ray->origin); // or origin - center?
-	const float a = length_sq(ray->direction);
-	const float h = inner(ray->direction, relative_origin);
-	const float c = length_sq(relative_origin) - sphere.radius * sphere.radius;
-	const float discriminant =  h * h - a * c;
+	float	aspect_ratio = IMAGE_WIDTH / IMAGE_HEIGHT;
+	int32_t image_width = IMAGE_WIDTH;
+	int32_t image_height = (int32_t)(image_width / aspect_ratio);
+	if (image_height < 1)
+		image_height = 1;
 
-	if (discriminant < TOLERANCE)
-	{
-		return (-1.0f);
-	}
-	else
-	{
-		return (square_root(discriminant) / a);
-	}
+	float focal_length = 1.0f;
+	float viewport_height = 2.0f;
+	float viewport_width = viewport_height * (float)(image_width) / image_height;
+
+	t_v3 viewport_u = v3(viewport_width, 0, 0);
+	t_v3 viewport_v = v3(0, -viewport_height, 0);
+
+	t_v3 pixel_delta_u = v3_div_f32(viewport_u, (float)image_width);
+	t_v3 pixel_delta_v = v3_div_f32(viewport_v, (float));
+
+	t_v3 viewport_upper_left;
+	t_v3 pixel00_location;
 }
 
-inline
-int check_spheres(t_context *context, t_ray *ray)
+static
+float ExactLinearTosRGB(float L)
 {
-	uint32_t i;
-	i = 0;
+	float S;
 
-	float dist;
-	while (i < context->spheres->count)
+	if (L < 0.0f)
 	{
-		dist = sphere_hit(context->spheres->arr[i], ray);
-		++i;
-	}
-}
-
-
-inline
-t_v3 ray_cast(t_context *context, t_ray *ray)
-{
-	t_hit hit;
-	t_v3  color;
-	uint32_t bounce_count;
-
-	hit = (t_hit){0, F32MAX, 0, 0};
-	color = (t_v3){0};
-	bounce_count = 0;
-
-	while (bounce_count < context->cam->max_bounce)
-	{
-
-		++bounce_count;
+		L = 0.0f;
 	}
 
-
-	return (color);
-}
-
-
-int trace(t_context *context)
-{
-	uint32_t y;
-	uint32_t x;
-	uint32_t sample_count;
-
-	y = 0;
-	while (y < context->image->height)
+	if (L > 1.0f)
 	{
-		x = 0;
-		while (x < context->image->width)
-		{
-			sample_count = 0;
-			while (sample_count < context->cam->samples_per_pixel)
-			{
-				t_ray ray;
-
-
-				ray.origin = context->cam->view_point;
-				ray.direction = noz(v3_sub_v3(ray.origin, ));
-				t_v3 color = ray_cast(context, &ray);
-				++sample_count;
-			}
-			++x;
-		}
-		++y;
+		L = 1.0f;
 	}
-	return (0);
+
+	S = L * 12.92;
+	if (L > 0.0031308)
+	{
+		S = 1.055F*pow(L, 1.0f/2.4f) - 0.055f;
+	}
+	return (S);
 }
