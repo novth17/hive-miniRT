@@ -1,8 +1,8 @@
 NAME		= miniRT
 
 CC			= cc
-INCLUDE := -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
-CFLAGS  = $(INCLUDE) -Wall -Wextra -Werror
+INCLUDE		:= -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
+CFLAGS		= $(INCLUDE) -Wall -Wextra -Werror
 
 LIBFT_DIR := libs/libft
 LIBFT := $(LIBFT_DIR)/libft.a
@@ -44,6 +44,8 @@ clean:
 
 fclean: clean
 	@rm -f $(NAME)
+	@$(MAKE) -C $(LIBFT_DIR) fclean
+	@echo "Executable '$(NAME)' removed."
 
 re: fclean all
 

@@ -1,40 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*   ft_dprintf.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 15:22:27 by hiennguy          #+#    #+#             */
-/*   Updated: 2024/11/20 18:27:44 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:01:53 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/ft_printf.h"
 #include <stdarg.h>
 
-static int	handle_format(char c, va_list *args)
+static int	handle_format(int fd, char c, va_list *args)
 {
 	if (c == 'c')
-		return (ft_print_char(va_arg(*args, int)));
+		return (ft_print_char(fd, va_arg(*args, int)));
 	if (c == 's')
-		return (ft_print_string(va_arg(*args, char *)));
+		return (ft_print_string(fd, va_arg(*args, char *)));
 	if (c == 'p')
-		return (ft_print_hex_pointer(va_arg(*args, void *)));
+		return (ft_print_hex_pointer(fd, va_arg(*args, void *)));
 	if (c == 'x')
-		return (ft_print_hex_lower(va_arg(*args, unsigned int)));
+		return (ft_print_hex_lower(fd, va_arg(*args, unsigned int)));
 	if (c == 'X')
-		return (ft_print_hex_upper(va_arg(*args, unsigned int)));
+		return (ft_print_hex_upper(fd, va_arg(*args, unsigned int)));
 	if (c == 'd' || c == 'i')
-		return (ft_print_number(va_arg(*args, int)));
+		return (ft_print_number(fd, va_arg(*args, int)));
 	if (c == 'u')
-		return (ft_print_number(va_arg(*args, unsigned int)));
+		return (ft_print_number(fd, va_arg(*args, unsigned int)));
 	if (c == '%')
-		return (ft_print_char('%'));
-	return (ft_print_char(c));
+		return (ft_print_char(fd, '%'));
+	return (ft_print_char(fd, c));
 }
 
-int	ft_printf(const char *format_string, ...)
+int ft_dprintf(int fd, const char *format_string, ...)
 {
 	int		i;
 	int		printed_chars;
@@ -47,12 +47,12 @@ int	ft_printf(const char *format_string, ...)
 	{
 		if (format_string[i] == '%' && format_string[i + 1] != '\0')
 		{
-			printed_chars += handle_format(format_string[i + 1], &args);
+			printed_chars += handle_format(fd, format_string[i + 1], &args);
 			i++;
 		}
 		else
 		{
-			write(1, &format_string[i], 1);
+			write(fd, &format_string[i], 1);
 			printed_chars++;
 		}
 		i++;

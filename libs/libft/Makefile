@@ -27,13 +27,13 @@ SOURCES = src/ft_is/ft_isalnum.c \
           src/ft_mem/ft_memcpy.c \
           src/ft_mem/ft_memmove.c \
           src/ft_mem/ft_memset.c \
-          src/ft_printf/ft_print_char.c \
-          src/ft_printf/ft_print_hex_lower.c \
-          src/ft_printf/ft_print_hex_pointer.c \
-          src/ft_printf/ft_print_hex_upper.c \
-          src/ft_printf/ft_print_number.c \
-          src/ft_printf/ft_print_string.c \
-          src/ft_printf/ft_printf.c \
+          src/ft_dprintf/ft_print_char.c \
+          src/ft_dprintf/ft_print_hex_lower.c \
+          src/ft_dprintf/ft_print_hex_pointer.c \
+          src/ft_dprintf/ft_print_hex_upper.c \
+          src/ft_dprintf/ft_print_number.c \
+          src/ft_dprintf/ft_print_string.c \
+          src/ft_dprintf/ft_dprintf.c \
           src/ft_put/ft_putchar_fd.c \
           src/ft_put/ft_putendl_fd.c \
           src/ft_put/ft_putnbr_fd.c \
