@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/18 22:36:03 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/18 23:47:27 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 
 # include "MLX42.h"
 # include "libft.h"
+
+#include "../test_stuff/rt_math.h"
 
 # define WINDOW_WIDTH 800
 # define WINDOW_HEIGHT 800

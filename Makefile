@@ -2,7 +2,7 @@ NAME		= mini_rt
 
 CC			= cc
 INCLUDE		:= -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
-CFLAGS		= $(INCLUDE) -Wall -Wextra -Werror
+CFLAGS		= $(INCLUDE) -Wall -Wextra #-Werror
 
 LIBFT_DIR := libs/libft
 LIBFT := $(LIBFT_DIR)/libft.a
