@@ -69,7 +69,7 @@ all: $(NAME)
 # Rule to build the library
 $(NAME): $(OBJS)
 	@ar crs $(NAME) $(OBJS)
-	@echo "Library $(NAME) created successfully!"
+	@echo "\033[0;33mLibrary $(NAME) created successfully! ✅\033[0m"
 
 # Rule to build object files
 %.o: %.c
@@ -80,15 +80,16 @@ $(NAME): $(OBJS)
 # Clean target
 clean:
 	@rm -f $(OBJS)
-	@echo "Libft clean success: All object files removed."
+	@echo "\033[0;33mLibft clean success: All object files removed. ✅\033[0m"
 
 # Full clean target
 fclean: clean
 	@rm -f $(NAME)
-	@echo "Libft fclean success: Library $(NAME) removed."
+	@echo "\033[0;33mLibft fclean success: Library $(NAME) removed. ✅\033[0m"
+
 
 # Recompile everything
 re: fclean all
 
 # Phony targets
-.PHONY: all clean fclean re
+
