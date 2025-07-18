@@ -6,11 +6,11 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 15:22:27 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/18 18:02:46 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:08:44 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/ft_printf.h"
+#include "../../inc/ft_dprintf.h"
 
 static int	print_positive_number(int fd, long positive_number)
 {
@@ -31,7 +31,7 @@ static int	print_positive_number(int fd, long positive_number)
 	return (count);
 }
 
-int ft_print_number(int fd, long nb)
+int	ft_print_number(int fd, long nb)
 {
 	int	count;
 	int	temp;

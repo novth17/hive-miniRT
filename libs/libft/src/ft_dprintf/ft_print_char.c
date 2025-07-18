@@ -6,13 +6,13 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 15:22:27 by hiennguy          #+#    #+#             */
-/*   Updated: 2024/11/20 18:09:49 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:08:25 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/ft_printf.h"
+#include "../../inc/ft_dprintf.h"
 
-int ft_print_char(int fd, int c)
+int	ft_print_char(int fd, int c)
 {
 	return (write(fd, &c, 1));
 }

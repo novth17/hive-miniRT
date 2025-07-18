@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 15:22:27 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/18 18:01:53 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:08:13 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int	handle_format(int fd, char c, va_list *args)
 	return (ft_print_char(fd, c));
 }
 
-int ft_dprintf(int fd, const char *format_string, ...)
+int	ft_dprintf(int fd, const char *format_string, ...)
 {
 	int		i;
 	int		printed_chars;

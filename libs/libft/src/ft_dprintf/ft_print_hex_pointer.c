@@ -6,13 +6,13 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 15:22:27 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/18 18:03:14 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:08:34 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/ft_printf.h"
+#include "../../inc/ft_dprintf.h"
 
-int ft_print_hex_pointer(int fd, void *ptr)
+int	ft_print_hex_pointer(int fd, void *ptr)
 {
 	unsigned long	nb;
 

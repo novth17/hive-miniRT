@@ -6,13 +6,13 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 15:22:27 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/03/01 11:53:34 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:08:46 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/ft_printf.h"
+#include "../../inc/ft_dprintf.h"
 
-int ft_print_string(int fd, char *str)
+int	ft_print_string(int fd, char *str)
 {
 	size_t	length;
 
