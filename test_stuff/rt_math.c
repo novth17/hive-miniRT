@@ -18,7 +18,7 @@ float square(float a)
 }
 
 inline
-float lengthSq(t_v3 a)
+float length_sq(t_v3 a)
 {
 	float result;
 
@@ -27,9 +27,9 @@ float lengthSq(t_v3 a)
 }
 
 #include <math.h>
-// @TODO remake
+// @TODO remake mby
 inline
-float squareRoot(float a)
+float square_root(float a)
 {
 	float result = (float)sqrt(a);
 
@@ -80,58 +80,79 @@ t_v3 v3_add_v3(t_v3 a, t_v3 b)
 }
 
 inline
-t_v3 v3_add_float(t_v3 a, float b)
+t_v3 v3_add_f32(t_v3 a, float b)
 {
-	t_v3 result = {};
+	t_v3 result;
 
 	result.x = a.x + b;
 	result.y = a.y + b;
 	result.z = a.z + b;
-
 	return (result);
 }
 
 inline
 t_v3 v3_sub_v3(t_v3 a, t_v3 b)
 {
-	t_v3 result = {};
+	t_v3 result;
 
 	result.x = a.x - b.x;
 	result.y = a.y - b.y;
 	result.z = a.z - b.z;
-
 	return (result);
 }
 
 inline
 t_v3 v3_mul_v3(t_v3 a, t_v3 b)
 {
-	t_v3 result = {};
+	t_v3 result;
 
 	result.x = a.x * b.x;
 	result.y = a.y * b.y;
 	result.z = a.z * b.z;
-
 	return (result);
 }
 
 inline
-t_v3 float_mul_v3(float a, t_v3 b)
+t_v3 f32_mul_v3(float a, t_v3 b)
 {
-	t_v3 result = {};
+	t_v3 result;
 
 	result.x = a * b.x;
 	result.y = a * b.y;
 	result.z = a * b.z;
+	return (result);
+}
 
+inline
+t_v3 f32_div_v3(float a, t_v3 b)
+{
+	t_v3 result;
+
+	result.x = a / b.x;
+	result.y = a / b.y;
+	result.z = a / b.z;
+	return (result);
+}
+
+inline
+t_v3 v3_div_f32(t_v3 a, float b)
+{
+	t_v3 result;
+
+	result.x = a.x / b;
+	result.y = a.y / b;
+	result.z = a.z / b;
 	return (result);
 }
 
 inline
 t_v3 neg(t_v3 a)
 {
-	t_v3 result = {-a.x, -a.y, -a.z};
+	t_v3 result;
 
+	result.x = -a.x;
+	result.y = -a.y;
+	result.z = -a.z;
 	return (result);
 }
 
@@ -175,10 +196,10 @@ t_v4 linear_to_srgb255(t_v4 c)
 	const float one255 = 255.0f;
 	t_v4 result;
 
-	result.r = one255 * squareRoot(c.r);
-	result.g = one255 * squareRoot(c.g);
-	result.b = one255 * squareRoot(c.b);
-	result.a = one255 * squareRoot(c.a);
+	result.r = one255 * square_root(c.r);
+	result.g = one255 * square_root(c.g);
+	result.b = one255 * square_root(c.b);
+	result.a = one255 * square_root(c.a);
 	return (result);
 }
 
@@ -303,6 +324,15 @@ float inner(t_v3 a, t_v3 b)
 }
 
 inline
+float dot(t_v3 a, t_v3 b)
+{
+	float result;
+
+	result = a.x*b.x + a.y*b.y + a.z*b.z;
+	return (result);
+}
+
+inline
 t_v3 cross(t_v3 a, t_v3 b)
 {
 	t_v3 result;
@@ -319,7 +349,7 @@ float length(t_v3 a)
 {
 	float result;
 
-	result = squareRoot(lengthSq(a));
+	result = square_root(length_sq(a));
 	return (result);
 }
 
@@ -341,13 +371,13 @@ inline
 t_v3 noz(t_v3 a)
 {
 	t_v3 result;
-	const float lensq =  lengthSq(a);
+	const float lensq = length_sq(a);
 
 	if (lensq > square(0.0001f))
 	{
-		result.x = a.x * (1.0f / squareRoot(lensq));
-		result.y = a.y * (1.0f / squareRoot(lensq));
-		result.z = a.z * (1.0f / squareRoot(lensq));
+		result.x = a.x * (1.0f / square_root(lensq));
+		result.y = a.y * (1.0f / square_root(lensq));
+		result.z = a.z * (1.0f / square_root(lensq));
 	}
 	return (result);
 }
