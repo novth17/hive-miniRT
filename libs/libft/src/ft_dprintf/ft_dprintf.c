@@ -6,11 +6,11 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/15 15:22:27 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/18 18:08:13 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/18 18:09:48 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/ft_printf.h"
+#include "../../inc/ft_dprintf.h"
 #include <stdarg.h>
 
 static int	handle_format(int fd, char c, va_list *args)
