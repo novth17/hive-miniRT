@@ -16,7 +16,10 @@ SRC_DIR		= src
 HEADERS		= inc/mini_rt.h
 
 SRC 		=	$(SRC_DIR)/main.c \
-				$(SRC_DIR)/parser/init.c
+				$(SRC_DIR)/error.c \
+				$(SRC_DIR)/parser/init.c \
+				$(SRC_DIR)/parser/parse.c
+
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 
 all: $(NAME)

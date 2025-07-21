@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 16:08:38 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/18 22:13:28 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/21 16:08:51 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdint.h>
 # include <unistd.h>
 # include "ft_dprintf.h"
+# include "get_next_line.h"
 
 typedef struct s_list
 {

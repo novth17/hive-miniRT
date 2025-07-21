@@ -58,7 +58,9 @@ SOURCES = src/ft_is/ft_isalnum.c \
           src/ft_to/ft_tolower.c \
           src/ft_to/ft_toupper.c \
 		  src/ft_string/ft_free_2d.c \
-		  src/ft_string/ft_free_3d.c
+		  src/ft_string/ft_free_3d.c \
+		  src/get_next_line/get_next_line_utils.c \
+		  src/get_next_line/get_next_line.c
 
 # Adjust paths for object files
 OBJS = $(SOURCES:.c=.o)

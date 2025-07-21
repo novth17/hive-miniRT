@@ -58,3 +58,4 @@ mini_rt
 obj/
 libs/MLX42
 .DS_Store
+*.swp

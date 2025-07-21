@@ -6,13 +6,13 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 20:02:04 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/18 22:29:28 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/21 16:11:06 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt.h"
 
-static int	setup_mlx(t_mini_rt *minirt)
+static int	setup_mlx(t_minirt *minirt)
 {
 	minirt->mlx = mlx_init(WINDOW_WIDTH, WINDOW_HEIGHT, "MiniRay", true);
 	if (!minirt->mlx)
@@ -38,12 +38,16 @@ static int	setup_mlx(t_mini_rt *minirt)
 	return (SUCCESS);
 }
 
-
-void	init_minirt(t_mini_rt *minirt, char **argv)
+void	init_minirt(t_minirt *minirt, char **argv)
 {
-	(void) **argv;
-	ft_bzero(minirt, sizeof(t_mini_rt));
-	if (setup_mlx(minirt) == FAIL)
-		exit(FAIL);
+	if (!argv[1])
+		exit_error("Usage: ./miniRT scene.rt");
 
+	ft_bzero(minirt, sizeof(t_minirt));
+
+	if (parse(minirt, argv) == FAIL)
+		exit_error("Parsing failed");
+
+	if (setup_mlx(minirt) == FAIL)
+		exit_error("Failed to initialize MLX");
 }
