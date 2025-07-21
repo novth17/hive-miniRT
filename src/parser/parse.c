@@ -6,19 +6,30 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/21 16:12:41 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/21 21:08:14 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "mini_rt.h"
-# include <fcntl.h>
 
-static int	parse_file(t_minirt *minirt, char **argv)
+static int parse_file(t_minirt *minirt, char *filename);
+static int parse_line(char *line, t_minirt *minirt);
+
+int	parse(t_minirt *minirt, char **filename)
+{
+	if (parse_file(minirt, *filename) == FAIL)
+		return (FAIL);
+
+	return (SUCCESS);
+}
+
+
+static int parse_file(t_minirt *minirt, char *filename)
 {
 	int		fd;
-	char	*line;
+	char	*line = NULL;
 
-	fd = open(argv[1], O_RDONLY);
+	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 		exit_error("Failed to open scene file");
 
@@ -29,22 +40,20 @@ static int	parse_file(t_minirt *minirt, char **argv)
 			free(line);
 			continue;
 		}
-		// if (parse_line(line, &minirt->scene) == FAIL)
-		// {
-		// 	free(line);
-		// 	exit_error("Scene parsing failed");
-		// }
-		// free(line);
+		if (parse_line(line, minirt) == FAIL)
+		 	exit_error("Scene parsing failed");
+		free(line);
 	}
 	close(fd);
 	return (SUCCESS);
 }
 
-
-int	parse(t_minirt *minirt, char **argv)
+static int parse_line(char *line, t_minirt *minirt)
 {
-	parse_file(&minirt->scene, argv[1]);
-	//parse_input;
-	//parse_files;
-		//parse_line();
+
 }
+
+
+
+
+

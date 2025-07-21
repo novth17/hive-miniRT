@@ -1,26 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/21 15:26:29 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/21 17:43:29 by hiennguy         ###   ########.fr       */
+/*   Created: 2024/06/09 20:54:51 by ktieu             #+#    #+#             */
+/*   Updated: 2025/07/21 20:48:36 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "mini_rt.h"
+#include "../../inc/libft.h"
 
-void	exit_error(const char *msg)
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	ft_dprintf(2, "Error: %s\n", msg);
-	exit(FAIL);
-}
+	size_t			i;
+	unsigned char	*str1;
+	unsigned char	*str2;
 
-
-int	print_ret_error(const char *msg)
-{
-	ft_dprintf(2, "Error\n%s\n", msg);
-	return(FAIL);
+	str1 = (unsigned char *) s1;
+	str2 = (unsigned char *) s2;
+	i = 0;
+	while (str1[i] == str2[i] && str1[i])
+		i++;
+	return (str1[i] - str2[i]);
 }

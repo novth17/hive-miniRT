@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 22:28:07 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/21 16:18:43 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/21 21:01:43 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,27 +77,23 @@
 
 static int	run_minirt(t_minirt *minirt, char **argv)
 {
-	init_minirt(minirt, argv);
+	if (init_minirt(minirt, argv) == FAIL)
+		return (FAIL);
 	//render(minirt);
+
 	mlx_loop(minirt->mlx);
 	mlx_terminate(minirt->mlx);
+	return (SUCCESS);
 }
 
 int	main(int argc, char **argv)
 {
 	t_minirt minirt;
-	if (argc != 2)
-	{
-		ft_dprintf(2, "Argument must be exactly 1 as a file [name].rt, try again\n");
+
+	if (validate_input(argc, argv[1]) == FAIL)
 		return (FAIL);
-	}
-	if (!argv[1])
-		exit_error("Usage: ./miniRT scene.rt");
-	if (run_minirt(&minirt, argv) == FAIL)
-		return (FAIL);
-	write(1, "hihihaha\n", 8);
-	ft_dprintf(1, "success hihihaha\n");
+	run_minirt(&minirt, argv);
+	ft_dprintf(1, "success hihihaha congrats\n");
 	return (SUCCESS);
 }
-
 

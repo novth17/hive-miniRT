@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 20:02:04 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/21 16:11:06 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/21 21:05:08 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,19 @@ static int	setup_mlx(t_minirt *minirt)
 	mlx_set_window_size(minirt->mlx, 1024, 1024);
 	return (SUCCESS);
 }
-
-void	init_minirt(t_minirt *minirt, char **argv)
+int	init_minirt(t_minirt *minirt, char **argv)
 {
-	if (!argv[1])
-		exit_error("Usage: ./miniRT scene.rt");
-
 	ft_bzero(minirt, sizeof(t_minirt));
 
 	if (parse(minirt, argv) == FAIL)
-		exit_error("Parsing failed");
-
+	{
+		ft_dprintf(2, "Parsing failed");
+		return (FAIL);
+	}
 	if (setup_mlx(minirt) == FAIL)
-		exit_error("Failed to initialize MLX");
+	{
+		ft_dprintf(2, "Failed to initialize MLX");
+		return (FAIL);
+	}
+	return (SUCCESS);
 }

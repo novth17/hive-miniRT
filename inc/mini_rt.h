@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/21 15:50:38 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/21 20:59:50 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #define SUCCESS	0
 #define FAIL	1
 
+# include <fcntl.h>
 # include "MLX42.h"
 # include "libft.h"
 # include "mini_rt.h"
@@ -78,8 +79,9 @@ typedef struct s_mini_rt
 
 
 /* ===================== INPUT PARSING & INIT ===================== */
-void	init_minirt(t_minirt *minirt, char **argv);
-int	parse(t_minirt *minirt, char **argv);
+int		validate_input(int argc, char *filename);
+int		init_minirt(t_minirt *minirt, char **argv);
+int		parse(t_minirt *minirt, char **filename);
 
 /* ===================== FOR DRAW ===================== */
 

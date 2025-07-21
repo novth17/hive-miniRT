@@ -48,6 +48,7 @@ SOURCES = src/ft_is/ft_isalnum.c \
           src/ft_string/ft_strlen.c \
           src/ft_string/ft_strmapi.c \
           src/ft_string/ft_strncmp.c \
+		  src/ft_string/ft_strcmp.c \
           src/ft_string/ft_strnstr.c \
           src/ft_string/ft_strrchr.c \
           src/ft_string/ft_strtrim.c \
