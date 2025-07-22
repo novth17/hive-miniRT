@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 20:54:52 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/21 20:59:37 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/22 19:10:42 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,3 +36,4 @@ int validate_input(int argc, char *filename)
 	}
 	return (SUCCESS);
 }
+
