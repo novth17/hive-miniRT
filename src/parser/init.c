@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 20:02:04 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/21 21:05:08 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/22 15:08:06 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	init_minirt(t_minirt *minirt, char **argv)
 {
 	ft_bzero(minirt, sizeof(t_minirt));
 
-	if (parse(minirt, argv) == FAIL)
+	if (parse(minirt, argv[1]) == FAIL)
 	{
 		ft_dprintf(2, "Parsing failed");
 		return (FAIL);

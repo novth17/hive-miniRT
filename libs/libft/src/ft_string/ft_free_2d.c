@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 20:48:02 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/02/14 11:26:49 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/22 14:16:52 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,3 +26,4 @@ void	ft_free_2d(char **all_words)
 	}
 	free(all_words);
 }
+
