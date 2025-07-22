@@ -10,7 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt.h"
+#include "../inc/mini_rt.h"
+#include "../inc/rt_math.h"
+#include "../test_stuff/MLX42.h"
+
 // #include "../test_stuff/rt_math.c"
 
 // static void	render(t_minirt *minirt)
@@ -74,6 +77,187 @@
 // 		++y;
 // 	}
 // }
+//
+#include "camera.c"
+#include <stdint.h>
+
+static
+float ExactLinearTosRGB(float L)
+{
+	float S;
+
+	if (L < 0.0f)
+	{
+		L = 0.0f;
+	}
+
+	if (L > 1.0f)
+	{
+		L = 1.0f;
+	}
+
+	S = L * 12.92;
+	if (L > 0.0031308)
+	{
+		S = 1.055F*pow(L, 1.0f/2.4f) - 0.055f;
+	}
+	return (S);
+}
+
+typedef struct
+{
+	t_v3 origin;
+	t_v3 direction;
+} t_ray;
+
+static inline
+t_v3 ray_color(const t_ray *ray)
+{
+	t_v3 unit_direction = unit_vector(ray->direction);
+	float a = 0.5 * (unit_direction.y + 1.0f);
+
+	t_v3 result;
+	result = f32_mul_v3(1.0 - a, v3(1.0, 1.0, 1.0));
+	result = v3_add_v3(result, f32_mul_v3(a, v3(0.5, 0.7, 1.0)));
+	return (result);
+}
+
+static inline
+t_ray init_ray(t_camera *cam, int32_t x, int32_t y)
+{
+	const t_v3 x_delta = f32_mul_v3(x, cam->pixel_delta_u);
+	const t_v3 y_delta = f32_mul_v3(y, cam->pixel_delta_v);
+	const t_v3 pixel_center = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
+	t_ray ray;
+
+	ray.origin = cam->camera_center;
+	ray.direction = V3_SUB(pixel_center, cam->camera_center);
+	return (ray);
+}
+
+typedef struct
+{
+	t_v3	position;
+	float	radius;
+	t_v3 	color;
+} t_sphere;
+
+typedef struct
+{
+	uint32_t count;
+	t_sphere arr[];
+} t_spheres;
+
+static inline
+bool sphere_hit(t_sphere sp, t_ray ray)
+{
+
+	t_v3 oc = v3_sub_v3(sp.position, ray.origin);
+	// t_v3 color = ray_color(&ray);
+	// bool hit = 0;
+	float a = dot(ray.direction, ray.direction);
+	float b = -2.0f * dot(ray.direction, oc);
+	float c = dot(oc, oc) - sp.radius*sp.radius;
+	float discrimanant = b*b - 4*a*c;
+	if (discrimanant >= 0)
+	{
+		return true;
+	}
+	else
+		return false;
+}
+
+typedef struct
+{
+	t_v3 position;
+	t_v3 color;
+} t_hit;
+
+static inline
+t_hit check_sphere(t_spheres *spheres, t_ray ray)
+{
+	t_hit hit;
+	int i;
+
+	hit = (t_hit){};
+	i = 0;
+	while (i < spheres->count)
+	{
+		if (sphere_hit(spheres->arr[i], ray))
+		{
+			hit.color = spheres->arr[i].color;
+		}
+		++i;
+	}
+}
+
+
+static
+void render(t_minirt *minirt)
+{
+	t_v3 position = {.x = 0, .y = 0, .z = -1.0f};
+	float radius = 0.5f;
+
+	t_camera cam;
+	const int count = 1;
+
+	base_init_cam(minirt, &cam);
+	t_spheres *spheres = (t_spheres *)malloc(sizeof(t_spheres) + count);
+	spheres->count = count;
+	spheres->arr[0].position = v3(0, 0, -1);
+	spheres->arr[0].radius = 0.5f;
+	spheres->arr[0].color = v3(1, 0, 0);
+
+	int32_t y = 0;
+	while (y < cam.image_height)
+	{
+		int32_t x = 0;
+		while (x < cam.image_width)
+		{
+			t_ray ray;
+			ray = init_ray(&cam,  x, y);
+
+			// t_v3 color = ray_color(&ray);
+			t_v3 oc = v3_sub_v3(position, ray.origin);
+			// bool hit = 0;
+			float a = dot(ray.direction, ray.direction);
+			float b = -2.0f * dot(ray.direction, oc);
+			float c = dot(oc, oc) - radius*radius;
+			float discrimanant = b*b - 4*a*c;
+			// printf("a:%f b: %f c: %f d:%f\n", a,b,c,
+			// 	 discrimanant);
+			t_v3 color = {};
+			if (sphere_hit(spheres[i], ray))
+			{
+				color = v3(0.5f, 0, 0);
+				// uint32_t color = rgba_pack();
+				// mlx_put_pixel(minirt->image, x, y, 0x770000FF);
+			}
+			else
+				color = ray_color(&ray);
+
+
+			// exa
+			// linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF});
+			// uint32_t bmp_value = rgba_pack4x8(linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF}));
+   			int rbyte = (int)(255.999 * color.r);
+      		int gbyte = (int)(255.999 * color.g);
+        	int bbyte = (int)(255.999 * color.b);
+        	uint32_t bmp_value = 0xFF << 24 | rbyte << 16 | gbyte << 8 | bbyte;
+    		// uint32_t bmp_value = exact_rgba_pack4x8(color);
+      		minirt->image;
+
+			++x;
+		}
+		++y;
+	}
+
+	return (0);
+}
+
+
+
+
 
 static int	run_minirt(t_minirt *minirt, char **argv)
 {
@@ -96,4 +280,3 @@ int	main(int argc, char **argv)
 	ft_dprintf(1, "success hihihaha congrats\n");
 	return (SUCCESS);
 }
-

@@ -198,10 +198,6 @@ typedef struct
 	float	aspect_ratio; //
 	int32_t image_width;
 	int32_t image_height;
-	int32_t samples_per_pixel;
-	int32_t max_bounce; // for mandatory 1 or 2 i guess;
-
-	float vfov;
 
 	float focal_length;
 	float viewport_height;
@@ -222,7 +218,6 @@ typedef struct
 #define IMAGE_HEIGHT 720.0f
 
 #define v3_sub v3_sub_v3
-#define v3_add v3_add_v3
 
 static inline
 t_v3	viewport_top_left(const t_v3 camera_center, const t_v3 viewport_u, const t_v3 viewport_v, const float focal_length)
@@ -256,26 +251,16 @@ typedef struct
 static inline
 t_ray init_ray(t_camera *cam, int32_t x, int32_t y)
 {
-	const t_v3 x_delta = f32_mul_v3(x, cam->pixel_delta_u);
-	const t_v3 y_delta = f32_mul_v3(y, cam->pixel_delta_v);
-	const t_v3 pixel_center = v3_add(cam->pixel00_loc, v3_add(x_delta, y_delta));
-	t_ray ray;
 
-	ray.origin = cam->camera_center;
-	ray.direction = v3_sub(pixel_center, cam->camera_center);
-	return (ray);
 }
 
-// not done
 static inline
 t_camera init_cam( void )
 {
 	t_camera cam;
 
-	cam.aspect_ratio = 16.0 / 9.0;
-	cam.image_width = 400;
-	// cam.aspect_ratio = IMAGE_WIDTH / IMAGE_HEIGHT;
-	// cam.image_width = IMAGE_WIDTH;
+	cam.aspect_ratio = IMAGE_WIDTH / IMAGE_HEIGHT;
+	cam.image_width = IMAGE_WIDTH;
 	cam.image_height = (int32_t)(cam.image_width / cam.aspect_ratio);
 	if (cam.image_height < 1)
 		cam.image_height = 1;
@@ -298,105 +283,57 @@ t_camera init_cam( void )
 
 	// t_v3 pixel00_loc = v3_add_v3(viewport_upper_left, f32_mul_v3(0.5f, (v3_add_v3(pixel_delta_u, pixel_delta_v))));
 	cam.pixel00_loc = pixel00_location(cam.viewport_upper_left, cam.pixel_delta_u, cam.pixel_delta_v);
-	return (cam);
-}
-
-//temp
-static inline
-t_v3 ray_color(const t_ray *ray)
-{
-	t_v3 unit_direction = unit_vector(ray->direction);
-	float a = 0.5 * (unit_direction.y + 1.0f);
-
-	t_v3 result;
-	result = f32_mul_v3(1.0 - a, v3(1.0, 1.0, 1.0));
-	result = v3_add_v3(result, f32_mul_v3(a, v3(0.5, 0.7, 1.0)));
-	return (result);
-}
-
-// static inline
-// uint32_t rgba_pack4x8(t_v4 unpacked)
-// {
-// 	uint32_t result =   {((uint32_t)((unpacked.a + 0.5f)) << 24)	|
-// 						((uint32_t)((unpacked.r + 0.5f)) << 16)	|
-// 						((uint32_t)((unpacked.g + 0.5f)) << 8)		|
-// 						((uint32_t)((unpacked.b + 0.5f)) << 0)};
-// 	return (result);
-// }
-
-static inline
-uint32_t exact_rgba_pack4x8(t_v3 color)
-{
-	uint32_t result;
-	const t_v4 bmp_color =
-			{
-				255.0f * ExactLinearTosRGB(color.r),
-				255.0f * ExactLinearTosRGB(color.g),
-				255.0f * ExactLinearTosRGB(color.b),
-				255.0f,
-			};
-	result = rgba_pack4x8(bmp_color);
-	return (result);
 }
 
 int main(void)
 {
 
-	t_v3 position = {.x = 0, .y = 0, .z = -1.0f};
-	float radius = 0.5f;
+	float	aspect_ratio = IMAGE_WIDTH / IMAGE_HEIGHT;
+	int32_t image_width = IMAGE_WIDTH;
+	int32_t image_height = (int32_t)(image_width / aspect_ratio);
+	if (image_height < 1)
+		image_height = 1;
+
+	float focal_length = 1.0f;
+	float viewport_height = 2.0f;
+	float viewport_width = viewport_height * ((float)(image_width) / image_height);
+	t_v3 camera_center = v3(0, 0, 0);
+
+	t_v3 viewport_u = v3(viewport_width, 0, 0);
+	t_v3 viewport_v = v3(0, -viewport_height, 0);
+
+	t_v3 pixel_delta_u = v3_div_f32(viewport_u, (float)image_width);
+	t_v3 pixel_delta_v = v3_div_f32(viewport_v, (float)image_height);
+
+	// t_v3 viewport_upper_left = v3_sub_v3(camera_center, (v3_sub_v3(v3_sub_v3(v3(0, 0, focal_length), v3_div_f32(viewport_u, 2.0f)), v3_div_f32(viewport_v, 2.0f))));
+	// t_v3 viewport_upper_left = v3_sub_v3(camera_center, v3(0, 0, focal_length));
+	// viewport_upper_left = v3_sub(viewport_upper_left, )
+	t_v3 viewport_upper_left = viewport_top_left(camera_center, viewport_u, viewport_v, focal_length);
+
+	// t_v3 pixel00_loc = v3_add_v3(viewport_upper_left, f32_mul_v3(0.5f, (v3_add_v3(pixel_delta_u, pixel_delta_v))));
+	t_v3 pixel00_loc = pixel00_location(viewport_upper_left, pixel_delta_u, pixel_delta_v);
+
+	image_u32 image;
+
 
 	t_camera cam;
 
 	cam = init_cam();
 
-	image_u32 image = allocate_image(cam.image_width, cam.image_height);
-	uint32_t *out = image.pixels;
 	int32_t y = 0;
-	while (y < cam.image_height)
+	while (y < image_height)
 	{
 		int32_t x = 0;
-		while (x < cam.image_width)
+		while (x < image_width)
 		{
+			t_v3 pixel_center =
 			t_ray ray;
-			ray = init_ray(&cam,  x, y);
-
-			// t_v3 color = ray_color(&ray);
-			t_v3 oc = v3_sub_v3(position, ray.origin);
-			// bool hit = 0;
-			float a = dot(ray.direction, ray.direction);
-			float b = -2.0f * dot(ray.direction, oc);
-			float c = dot(oc, oc) - radius*radius;
-			float discrimanant = b*b - 4*a*c;
-			// printf("a:%f b: %f c: %f d:%f\n", a,b,c,
-			// 	 discrimanant);
-			t_v3 color = {};
-			if (discrimanant >= 0)
-			{
-				color = v3(0.5f, 0, 0);
-				// uint32_t color = rgba_pack();
-				// mlx_put_pixel(minirt->image, x, y, 0x770000FF);
-			}
-			else
-				color = ray_color(&ray);
-
-
-			// exa
-			// linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF});
-			// uint32_t bmp_value = rgba_pack4x8(linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF}));
-   			int rbyte = (int)(255.999 * color.r);
-      		int gbyte = (int)(255.999 * color.g);
-        	int bbyte = (int)(255.999 * color.b);
-        	uint32_t bmp_value = 0xFF << 24 | rbyte << 16 | gbyte << 8 | bbyte;
-    		// uint32_t bmp_value = exact_rgba_pack4x8(color);
-			*out++ = bmp_value;
-
-			++x;
+			ray.origin =
 		}
-		++y;
 	}
 
-	write_image(image, "test_bmp.bmp");
-	return (0);
+
+
 }
 
 static

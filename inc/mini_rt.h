@@ -16,12 +16,52 @@
 #define SUCCESS	0
 #define FAIL	1
 
-# include <fcntl.h>
-# include "MLX42.h"
-# include "libft.h"
-# include "mini_rt.h"
 
+
+
+
+
+# include <fcntl.h>
+// # include "MLX42.h"
+// # include "libft.h"
+// # include "mini_rt.h"
+
+
+# include "../libs/libft/inc/libft.h"
 # include "../test_stuff/rt_math.h"
+# include "../libs/MLX42/include/MLX42/MLX42.h"
+
+typedef struct
+{
+	float	aspect_ratio; //
+	int32_t image_width;
+	int32_t image_height;
+	int32_t samples_per_pixel;
+	int32_t max_bounce; // for mandatory 1 or 2 i guess;
+
+	float		vfov;
+	t_point3 origin;
+	t_point3 direction;
+	t_v3	 vup;
+
+	float focal_length;
+	float viewport_height;
+	float viewport_width;
+	t_v3 camera_center;
+
+	t_v3 viewport_u;
+	t_v3 viewport_v;
+
+	t_v3 pixel_delta_u;
+	t_v3 pixel_delta_v;
+
+	t_v3 viewport_upper_left;
+	t_v3 pixel00_loc;
+
+
+} t_camera;
+
+
 
 # define WINDOW_WIDTH 800
 # define WINDOW_HEIGHT 800
@@ -46,12 +86,12 @@ typedef struct	s_ambient
 	t_color	color;
 }			t_ambient;
 
-typedef struct	s_camera
-{
-	t_vec3	origin;
-	t_vec3	direction;  //must be normalized (range [-1,1])
-	float	fov; //Horizontal field of view in degrees in range [0,180]:
-}	t_camera;
+// typedef struct	s_camera
+// {
+// 	t_vec3	origin;
+// 	t_vec3	direction;  //must be normalized (range [-1,1])
+// 	float	fov; //Horizontal field of view in degrees in range [0,180]:
+// }	t_camera;
 
 typedef struct	s_light
 {

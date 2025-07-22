@@ -354,6 +354,15 @@ float length(t_v3 a)
 }
 
 inline
+t_v3 unit_vector(t_v3 a)
+{
+	t_v3 result;
+
+	result = v3_div_f32(a, length(a));
+	return result;
+}
+
+inline
 t_v3 normalize(t_v3 a)
 {
 	const float len = length(a);
