@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 15:26:29 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/21 17:43:29 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/22 22:11:38 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,4 @@ void	exit_error(const char *msg)
 {
 	ft_dprintf(2, "Error: %s\n", msg);
 	exit(FAIL);
-}
-
-
-int	print_ret_error(const char *msg)
-{
-	ft_dprintf(2, "Error\n%s\n", msg);
-	return(FAIL);
 }
