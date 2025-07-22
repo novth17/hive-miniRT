@@ -53,8 +53,10 @@ dkms.conf
 
 # debug information files
 *.dwo
-miniRT
+mini_rt
 .vscode
 obj/
 libs/MLX42
 .DS_Store
+*.swp
+

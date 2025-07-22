@@ -139,15 +139,16 @@ int main(void)
 	float focal_length = 1.0f;
 	float viewport_height = 2.0f;
 	float viewport_width = viewport_height * (float)(image_width) / image_height;
+	t_v3 camera_center = v3(0, 0, 0);
 
 	t_v3 viewport_u = v3(viewport_width, 0, 0);
 	t_v3 viewport_v = v3(0, -viewport_height, 0);
 
 	t_v3 pixel_delta_u = v3_div_f32(viewport_u, (float)image_width);
-	t_v3 pixel_delta_v = v3_div_f32(viewport_v, (float));
+	t_v3 pixel_delta_v = v3_div_f32(viewport_v, (float)image_height);
 
-	t_v3 viewport_upper_left;
-	t_v3 pixel00_location;
+	t_v3 viewport_upper_left = v3_sub_v3(camera_center, (v3_sub_v3(v3_sub_v3(v3(0, 0, focal_length), v3_div_f32(viewport_u, 2.0f)), v3_div_f32(viewport_v, 2.0f))));
+	t_v3 pixel00_location = v3_add_v3(viewport_upper_left, f32_mul_v3(0.5f, (v3_add_v3(pixel_delta_u, pixel_delta_v))));
 }
 
 static

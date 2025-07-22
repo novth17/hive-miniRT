@@ -1,22 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   miniRT.h                                           :+:      :+:    :+:   */
+/*   ft_count_2d.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/15 20:46:13 by hiennguy         ###   ########.fr       */
+/*   Created: 2025/07/22 17:06:55 by hiennguy          #+#    #+#             */
+/*   Updated: 2025/07/22 17:08:01 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../../inc/libft.h"
 
-#ifndef MINI_RT_H
-#define MINI_RT_H
+int	ft_count_2d(char **tokens)
+{
+	int	count;
 
-#define SUCCESS	0
-#define FAIL	1
-
-#include <unistd.h>
-
-#endif
+	count = 0;
+	if (!tokens)
+		return (0);
+	while (tokens[count])
+		count++;
+	return (count);
+}

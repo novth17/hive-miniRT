@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_free_2d.c                                       :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/27 20:48:02 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 14:16:52 by hiennguy         ###   ########.fr       */
+/*   Created: 2024/12/18 20:45:39 by hiennguy          #+#    #+#             */
+/*   Updated: 2025/07/21 17:28:15 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/libft.h"
+#ifndef GET_NEXT_LINE_H
+# define GET_NEXT_LINE_H
 
-void	ft_free_2d(char **all_words)
-{
-	int	i;
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1024
+# endif
 
-	if (!all_words)
-		return ;
-	i = 0;
-	while (all_words[i])
-	{
-		free(all_words[i]);
-		i++;
-	}
-	free(all_words);
-}
+# include "libft.h"
 
+char	*ft_strjoin_gnl(char *s1, char *s2, int *newline_index);
+void	ft_strlcpy_gnl(char *dst, const char *src, size_t dst_size);
+void	*ft_memcpy_gnl(void *dst, void const *src, size_t n);
+void	ft_bzero_gnl(void *s, size_t n);
+char	*get_next_line(int fd);
+
+#endif

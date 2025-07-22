@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 16:08:38 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/02/18 19:50:59 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/22 17:08:29 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <stdlib.h>
 # include <stdint.h>
 # include <unistd.h>
+# include "ft_dprintf.h"
+# include "get_next_line.h"
 
 typedef struct s_list
 {
@@ -43,9 +45,11 @@ char	*ft_strdup(const char *s);
 size_t	ft_strlcat(char *dst, const char *src, size_t size);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 size_t	ft_strlen(const char *s);
+int		ft_strcmp(const char *s1, const char *s2);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_strnstr(const char *big, const char *little, size_t len);
 char	*ft_strrchr(const char *s, int c);
+int		ft_count_2d(char **tokens);
 int		ft_tolower(int c);
 int		ft_toupper(int c);
 void	ft_putchar_fd(char c, int fd);
