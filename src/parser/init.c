@@ -6,11 +6,11 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 20:02:04 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 15:08:06 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/22 20:37:28 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt.h"
+# include "mini_rt.h"
 
 static int	setup_mlx(t_minirt *minirt)
 {
@@ -37,11 +37,12 @@ static int	setup_mlx(t_minirt *minirt)
 	mlx_set_window_size(minirt->mlx, 1024, 1024);
 	return (SUCCESS);
 }
+
 int	init_minirt(t_minirt *minirt, char **argv)
 {
 	ft_bzero(minirt, sizeof(t_minirt));
 
-	if (parse(minirt, argv[1]) == FAIL)
+	if (parse_file(minirt, argv[1]) == FAIL)
 	{
 		ft_dprintf(2, "Parsing failed");
 		return (FAIL);

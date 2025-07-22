@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 15:00:31 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/22 21:46:57 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,9 @@ typedef struct s_vec3
 
 typedef struct s_color
 {
-	int r;
-	int g;
-	int b;
+	float r;
+	float g;
+	float b;
 }				t_color;
 
 typedef struct	s_ambient
@@ -121,7 +121,9 @@ typedef struct s_mini_rt
 /* ===================== INPUT PARSING & INIT ===================== */
 int		validate_input(int argc, char *filename);
 int		init_minirt(t_minirt *minirt, char **argv);
-int		parse(t_minirt *minirt, char *filename);
+int		parse_file(t_minirt *minirt, char *filename);
+double	parse_float(const char *str, bool *is_valid);
+int		parse_ambient(char **tokens, t_scene *scene);
 
 /* ===================== FOR DRAW ===================== */
 

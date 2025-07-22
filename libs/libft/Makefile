@@ -53,6 +53,7 @@ SOURCES = src/ft_is/ft_isalnum.c \
           src/ft_string/ft_strrchr.c \
           src/ft_string/ft_strtrim.c \
           src/ft_string/ft_substr.c \
+		  src/ft_string/ft_count_2d.c \
           src/ft_to/ft_atoi.c \
 		  src/ft_to/ft_atof.c \
           src/ft_to/ft_itoa.c \
