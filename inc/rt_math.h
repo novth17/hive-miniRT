@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 16:14:19 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/24 19:17:41 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/07/23 00:28:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,8 @@ float		length(t_v3 a);
 t_v3		unit_vector(t_v3 a);
 t_v3		normalize(t_v3 a);
 t_v3		noz(t_v3 a);
+
+t_v3		neg(t_v3 a);
 
 t_v3		hadamard(t_v3 a, t_v3 b); // hadamard attennuation
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 22:28:07 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 15:05:44 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 02:00:14 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@
 // 	}
 // }
 //
-#include "camera.c"
+// #include "camera.c"
 #include <stdint.h>
 #include <math.h>
 
@@ -105,6 +105,8 @@ float ExactLinearTosRGB(float L)
 	return (S);
 }
 
+
+
 typedef struct
 {
 	t_v3 origin;
@@ -112,29 +114,7 @@ typedef struct
 } t_ray;
 
 static inline
-t_v3 ray_color(const t_ray *ray)
-{
-	t_v3 unit_direction = unit_vector(ray->direction);
-	float a = 0.5 * (unit_direction.y + 1.0f);
-
-	t_v3 result;
-	result = f32_mul_v3(1.0 - a, v3(1.0, 1.0, 1.0));
-	result = v3_add_v3(result, f32_mul_v3(a, v3(0.5, 0.7, 1.0)));
-	return (result);
-}
-
-static inline
-t_ray init_ray(t_camera *cam, int32_t x, int32_t y)
-{
-	const t_v3 x_delta = f32_mul_v3(x, cam->pixel_delta_u);
-	const t_v3 y_delta = f32_mul_v3(y, cam->pixel_delta_v);
-	const t_v3 pixel_center = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
-	t_ray ray;
-
-	ray.origin = cam->camera_center;
-	ray.direction = V3_SUB(pixel_center, cam->camera_center);
-	return (ray);
-}
+t_ray init_ray(t_camera *cam, int32_t x, int32_t y);
 
 typedef struct
 {
@@ -149,70 +129,194 @@ typedef struct
 	t_sphere *arr;
 } t_spheres;
 
-static inline
-bool sphere_hit(t_sphere sp, t_ray ray)
-{
+// static inline
+// bool sphere_hit(t_sphere sp, t_ray ray)
+// {
+// 	const t_v3 oc = v3_sub_v3(sp.position, ray.origin);
 
-	t_v3 oc = v3_sub_v3(sp.position, ray.origin);
-	// t_v3 color = ray_color(&ray);
-	// bool hit = 0;
-	float a = dot(ray.direction, ray.direction);
-	float b = -2.0f * dot(ray.direction, oc);
-	float c = dot(oc, oc) - sp.radius*sp.radius;
-	float discrimanant = b*b - 4*a*c;
-	if (discrimanant >= 0)
-	{
-		return true;
-	}
-	else
-		return false;
-}
+// 	const float a = dot(ray.direction, ray.direction);
+// 	const float b = -2.0f * dot(ray.direction, oc);
+// 	const float c = dot(oc, oc) - sp.radius*sp.radius;
+// 	const float discrimanant = b*b - 4*a*c;
+// 	if (discrimanant >= 0)
+// 	{
+// 		return true;
+// 	}
+// 	else
+// 		return false;
+// }
 
-typedef struct
+typedef struct s_hit_record
 {
-	t_v3 position;
-	t_v3 color;
+	t_v3 position; // p
+	t_v3 normal;
+	float distance; // t
+	bool front_face; // maybe not needed;
+	// t_v3 color;
 } t_hit;
 
-static inline
-t_hit check_sphere(t_spheres *spheres, t_ray ray)
-{
-	t_hit hit;
-	int i;
+#define MIN_HIT_DIST 0.001f
+#define MAX_HIT_DIST FLT_MAX // for now
 
-	hit = (t_hit){};
+static inline // @TODO move this
+t_v3 at(const t_ray r, const float t)
+{
+	t_v3 result;
+
+	result = V3_ADD(r.origin, f32_mul_v3(t, r.direction));
+	return (result);
+}
+
+#define A x
+#define H y
+#define C z
+
+static inline
+bool sphere_hit(t_hit *rec, const t_sphere sp, const t_ray ray)
+{
+	const t_v3 oc = v3_sub_v3(sp.position, ray.origin);
+	const t_v3 v = {
+			.A = dot(ray.direction, ray.direction), 	// const float a = dot(ray.direction, ray.direction);
+			.H = dot(ray.direction, oc), 				// const float h = dot(ray.direction, oc);
+			.C = dot(oc, oc) - sp.radius*sp.radius}; 	// const float c = dot(oc, oc) - sp.radius*sp.radius;
+	const float discrimanant = v.H*v.H - v.A*v.C;
+	float sqrtd;
+	float root;
+
+	if (discrimanant < 0)
+		return (false);
+	sqrtd = square_root(discrimanant);
+	root = (v.H - sqrtd) / v.A;
+	if (root <= MIN_HIT_DIST || root >= MAX_HIT_DIST)
+	{
+		root = (v.H + sqrtd) / v.A;
+		if (root <= MIN_HIT_DIST || root >= MAX_HIT_DIST)
+			return (false);
+	}
+	rec->distance = root;
+	rec->position = at(ray, rec->distance);
+	rec->normal = v3_div_f32(V3_SUB(rec->position, sp.position), sp.radius);
+	return (true);
+}
+
+inline
+t_v3 neg(t_v3 a)
+{
+	t_v3 result;
+
+	result.x = -a.x;
+	result.y = -a.y;
+	result.z = -a.z;
+	return (result);
+}
+
+inline
+void set_face_normal(t_hit *rec, const t_ray *r, const t_v3 out_normal)
+{
+	const bool front_face = dot(r->direction, out_normal) < 0;
+	if (front_face)
+		rec->normal = out_normal;
+	else
+		rec->normal = neg(out_normal);
+}
+static int hit = 0;
+static int miss = 0;
+static inline
+bool check_spheres(t_hit *rec, const t_spheres *spheres, const t_ray ray)
+{
+	t_hit temp_rec;
+	uint32_t i;
+
+	temp_rec.distance = MAX_HIT_DIST;
 	i = 0;
 	while (i < spheres->count)
 	{
-		if (sphere_hit(spheres->arr[i], ray))
+		if(sphere_hit(&temp_rec, spheres->arr[i], ray))
 		{
-			hit.color = v3(1, 0, 0);//spheres->arr[i].color;
+			hit++;
+			if (temp_rec.distance < rec->distance)
+			{
+				*rec = temp_rec; // @QUESTION when to use set_face_normal - here or later?
+			}
 		}
+		miss++;
+		// if (t > rec->distance)
+		// {
+		// 	hit.distance = t; hit.color = v3(1, 0, 0);//spheres->arr[i].color;
+		// }
+		// else
+		// {
+		// 	hit.color = ray_color(&ray);
+		// }
 		++i;
 	}
-	return (hit);
+	return (temp_rec.distance < MAX_HIT_DIST);
 }
 
+static inline
+t_v3 get_offset(void)
+{
+	t_v3 result = {};
+	// result.x =
+	return (result);
+}
+
+static inline
+t_ray init_ray(t_camera *cam, int32_t x, int32_t y)
+{
+	const t_v3 offset = get_offset();
+	const t_v3 x_delta = f32_mul_v3(x + offset.x, cam->pixel_delta_u);
+	const t_v3 y_delta = f32_mul_v3(y + offset.y, cam->pixel_delta_v);
+	const t_v3 pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
+	t_ray ray;
+
+	ray.origin = cam->camera_center;
+	ray.direction = V3_SUB(pixel_sample, ray.origin);
+	return (ray);
+}
+
+static inline
+t_v3 ray_color(const t_ray ray, const t_spheres *spheres) // change to all objects;
+{
+	// bounces mby here at some point
+	t_hit rec;
+	rec = (t_hit){};
+	rec.distance = MAX_HIT_DIST;
+	check_spheres(&rec, spheres, ray);
+
+
+	if (rec.distance < MAX_HIT_DIST - 1)
+	{
+		return (f32_mul_v3(0.5, V3_ADD(rec.normal, v3(1, 1, 1))));
+	}
+	t_v3 unit_direction = unit_vector(ray.direction);
+	float a = 0.5 * (unit_direction.y + 1.0f);
+
+	t_v3 result;
+	result = f32_mul_v3(1.0 - a, v3(1.0, 1.0, 1.0));
+	result = v3_add_v3(result, f32_mul_v3(a, v3(0.5, 0.7, 1.0)));
+	return (result);
+}
+
+void base_init_cam(t_minirt *minirt, t_camera *cam);
 
 static
 void render(t_minirt *minirt)
 {
-	t_v3 position = {.x = 0, .y = 0, .z = -1.0f};
-	float radius = 0.5f;
-
 	t_camera cam;
-	const int count = 1;
 
 	base_init_cam(minirt, &cam);
 	t_spheres spheres;
-	t_sphere arr[1];
-	spheres.count = 1;
+	t_sphere arr[2];
+	spheres.count = 2;
 	spheres.arr = arr;
-	// t_spheres *spheres = (t_spheres *)malloc(sizeof(t_spheres) + count);
-	// spheres->count = count;
 	arr[0].position = v3(0, 0, -1);
 	arr[0].radius = 0.5f;
 	arr[0].color = v3(1, 0, 0);
+	arr[1].position = v3(0, -55, 0);
+	arr[1].radius = 50.0f;
+	arr[1].color = v3(1, 1, 1);
+
 
 	int32_t y = 0;
 	while (y < cam.image_height)
@@ -220,15 +324,24 @@ void render(t_minirt *minirt)
 		int32_t x = 0;
 		while (x < cam.image_width)
 		{
-			t_ray ray;
-			ray = init_ray(&cam,  x, y);
+			t_v3 color;
+			int32_t sample;
+			sample = 0;
+			while (sample < cam.samples_per_pixel)
+			{
+				const t_ray ray = init_ray(&cam,  x, y);
+
+				color = ray_color(ray, &spheres);
+				++sample;
+			}
 
 			// t_v3 color = ray_color(&ray);
-			t_v3 color = {};
+			// t_v3 color = {};
 			// color = check_sphere(spheres, ray);
-			t_hit hit = check_sphere(&spheres, ray);
+			// t_hit rec = {};
+			// rec.distance = FLT_MAX;
+			// check_spheres(&rec, &spheres, ray);
 
-			color = hit.color;
 			// exa
 			// linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF});
 			// uint32_t bmp_value = rgba_pack4x8(linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF}));
@@ -236,6 +349,11 @@ void render(t_minirt *minirt)
       		int gbyte = (int)(255.999 * color.g);
         	int bbyte = (int)(255.999 * color.b);
         	uint32_t bmp_value = rbyte << 24 | gbyte << 16 | bbyte << 8 | 0xff;
+			// t_v4 linear = linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF});
+			// int rbyte = (int)(linear.r);
+      		// int gbyte = (int)(linear.g);
+        	// int bbyte = (int)(linear.b);
+        	// uint32_t bmp_value = rbyte << 24 | gbyte << 16 | bbyte << 8 | 0xff;
     		// uint32_t bmp_value = exact_rgba_pack4x8(color);
     		mlx_put_pixel(minirt->image, x, y, bmp_value);
 
@@ -243,7 +361,7 @@ void render(t_minirt *minirt)
 		}
 		++y;
 	}
-
+	ft_dprintf(2, "hit: %i\tmiss: %i\n", hit, miss);
 	// return (0);
 }
 

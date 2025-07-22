@@ -64,6 +64,9 @@ void base_init_cam(t_minirt *minirt, t_camera *cam)
 		if (cam->image_height < 1)
 			cam->image_height = 1;
 
+		cam->samples_per_pixel = 1;
+
+
 		cam->focal_length = 1.0f;
 		cam->viewport_height = 2.0f;
 		cam->viewport_width = cam->viewport_height * ((float)(cam->image_width) / cam->image_height);
