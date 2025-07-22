@@ -42,11 +42,11 @@ int	init_minirt(t_minirt *minirt, char **argv)
 {
 	ft_bzero(minirt, sizeof(t_minirt));
 
-	if (parse_file(minirt, argv[1]) == FAIL)
-	{
-		ft_dprintf(2, "Parsing failed");
-		return (FAIL);
-	}
+	// if (parse_file(minirt, argv[1]) == FAIL)
+	// {
+	// 	ft_dprintf(2, "Parsing failed");
+	// 	return (FAIL);
+	// }
 	if (setup_mlx(minirt) == FAIL)
 	{
 		ft_dprintf(2, "Failed to initialize MLX");

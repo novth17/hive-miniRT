@@ -80,6 +80,7 @@
 //
 #include "camera.c"
 #include <stdint.h>
+#include <math.h>
 
 static
 float ExactLinearTosRGB(float L)
@@ -145,7 +146,7 @@ typedef struct
 typedef struct
 {
 	uint32_t count;
-	t_sphere arr[];
+	t_sphere *arr;
 } t_spheres;
 
 static inline
@@ -185,10 +186,11 @@ t_hit check_sphere(t_spheres *spheres, t_ray ray)
 	{
 		if (sphere_hit(spheres->arr[i], ray))
 		{
-			hit.color = spheres->arr[i].color;
+			hit.color = v3(1, 0, 0);//spheres->arr[i].color;
 		}
 		++i;
 	}
+	return (hit);
 }
 
 
@@ -202,11 +204,15 @@ void render(t_minirt *minirt)
 	const int count = 1;
 
 	base_init_cam(minirt, &cam);
-	t_spheres *spheres = (t_spheres *)malloc(sizeof(t_spheres) + count);
-	spheres->count = count;
-	spheres->arr[0].position = v3(0, 0, -1);
-	spheres->arr[0].radius = 0.5f;
-	spheres->arr[0].color = v3(1, 0, 0);
+	t_spheres spheres;
+	t_sphere arr[1];
+	spheres.count = 1;
+	spheres.arr = arr;
+	// t_spheres *spheres = (t_spheres *)malloc(sizeof(t_spheres) + count);
+	// spheres->count = count;
+	arr[0].position = v3(0, 0, -1);
+	arr[0].radius = 0.5f;
+	arr[0].color = v3(1, 0, 0);
 
 	int32_t y = 0;
 	while (y < cam.image_height)
@@ -218,41 +224,27 @@ void render(t_minirt *minirt)
 			ray = init_ray(&cam,  x, y);
 
 			// t_v3 color = ray_color(&ray);
-			t_v3 oc = v3_sub_v3(position, ray.origin);
-			// bool hit = 0;
-			float a = dot(ray.direction, ray.direction);
-			float b = -2.0f * dot(ray.direction, oc);
-			float c = dot(oc, oc) - radius*radius;
-			float discrimanant = b*b - 4*a*c;
-			// printf("a:%f b: %f c: %f d:%f\n", a,b,c,
-			// 	 discrimanant);
 			t_v3 color = {};
-			if (sphere_hit(spheres[i], ray))
-			{
-				color = v3(0.5f, 0, 0);
-				// uint32_t color = rgba_pack();
-				// mlx_put_pixel(minirt->image, x, y, 0x770000FF);
-			}
-			else
-				color = ray_color(&ray);
+			// color = check_sphere(spheres, ray);
+			t_hit hit = check_sphere(&spheres, ray);
 
-
+			color = hit.color;
 			// exa
 			// linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF});
 			// uint32_t bmp_value = rgba_pack4x8(linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF}));
    			int rbyte = (int)(255.999 * color.r);
       		int gbyte = (int)(255.999 * color.g);
         	int bbyte = (int)(255.999 * color.b);
-        	uint32_t bmp_value = 0xFF << 24 | rbyte << 16 | gbyte << 8 | bbyte;
+        	uint32_t bmp_value = rbyte << 24 | gbyte << 16 | bbyte << 8 | 0xff;
     		// uint32_t bmp_value = exact_rgba_pack4x8(color);
-      		minirt->image;
+    		mlx_put_pixel(minirt->image, x, y, bmp_value);
 
 			++x;
 		}
 		++y;
 	}
 
-	return (0);
+	// return (0);
 }
 
 
@@ -263,7 +255,7 @@ static int	run_minirt(t_minirt *minirt, char **argv)
 {
 	if (init_minirt(minirt, argv) == FAIL)
 		return (FAIL);
-	//render(minirt);
+	render(minirt);
 
 	mlx_loop(minirt->mlx);
 	mlx_terminate(minirt->mlx);
@@ -274,8 +266,8 @@ int	main(int argc, char **argv)
 {
 	t_minirt minirt;
 
-	if (validate_input(argc, argv[1]) == FAIL)
-		return (FAIL);
+	// if (validate_input(argc, argv[1]) == FAIL)
+	// 	return (FAIL);
 	run_minirt(&minirt, argv);
 	ft_dprintf(1, "success hihihaha congrats\n");
 	return (SUCCESS);
