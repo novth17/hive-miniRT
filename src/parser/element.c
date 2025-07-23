@@ -6,11 +6,10 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 16:30:30 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 21:51:20 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 21:53:56 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "mini_rt.h"
 #include "mini_rt.h"
 
 int parse_ambient(char **tokens, t_scene *scene)
