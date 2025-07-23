@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 16:30:30 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 22:09:41 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 22:15:34 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,4 +81,3 @@ int parse_light(char **tokens, t_scene *scene)
 
 	return (SUCCESS);
 }
-
