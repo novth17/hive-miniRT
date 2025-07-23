@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 15:12:12 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 22:21:27 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include "MLX42.h"
 # include "libft.h"
 # include "mini_rt.h"
+# include "object.h"
 
 # include "../test_stuff/rt_math.h"
 
@@ -66,7 +67,8 @@ typedef struct s_scene
 	t_camera	camera;
 	t_light		light;
 
-	t_list		*objects;  // list of objects*
+	t_object	*objects;  // list of objects*
+	bool		is_valid;
 }	t_scene;
 
 typedef struct s_mini_rt
@@ -82,13 +84,23 @@ typedef struct s_mini_rt
 int		validate_input(int argc, char *filename);
 int		init_minirt(t_minirt *minirt, char **argv);
 int		parse_file(t_minirt *minirt, char *filename);
-double	parse_float(const char *str, bool *is_valid);
 int		parse_ambient(char **tokens, t_scene *scene);
-t_color parse_color(char **tokens, char *str);
+int		parse_camera(char **tokens, t_scene *scene);
+int		parse_light(char **tokens, t_scene *scene);
+
+bool	check_comma_and_move(char **str, bool *is_valid);
+
+/* ===================== Parse utils ===================== */
+double	parse_float(const char *str, bool *is_valid);
+t_color	parse_color(char *str, bool *is_valid);
+t_vec3	parse_vec3(char *str, bool *is_valid);
+bool	is_normalized_vec3(t_vec3 vector);
 
 /* ===================== FOR DRAW ===================== */
 
 /* ===================== FOR ERROR ===================== */
+int		check_id_args_count(char **tokens, const char *id, int expected);
 void	exit_error(const char *msg);
+int		print_error(const char *msg, const char *value);
 
 # endif
