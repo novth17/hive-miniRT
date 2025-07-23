@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 20:54:52 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 19:10:42 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 21:15:09 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,3 +37,22 @@ int validate_input(int argc, char *filename)
 	return (SUCCESS);
 }
 
+bool is_normalized_vec3(t_vec3 vector)
+{
+	return (
+		vector.x >= -1.0 && vector.x <= 1.0 &&
+		vector.y >= -1.0 && vector.y <= 1.0 &&
+		vector.z >= -1.0 && vector.z <= 1.0
+	);
+}
+
+bool check_comma_and_move(char **str, bool *is_valid)
+{
+	if (!*is_valid || **str != ',')
+	{
+		*is_valid = false;
+		return false;
+	}
+	(*str)++;
+	return true;
+}
