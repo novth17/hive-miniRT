@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:47:29 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 15:48:10 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 16:01:28 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ t_color parse_color(char **tokens, char *str)
 	t_color	color;
 
 	color.r = parse_rgb_comp(tokens, &str);
-	check_comma(tokens, str, "redddddd");
+	check_comma(tokens, str, "red");
 	str++;
 
 	color.g = parse_rgb_comp(tokens, &str);

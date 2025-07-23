@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 16:30:30 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 15:49:37 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 16:01:51 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,4 +32,3 @@ int parse_ambient(char **tokens, t_scene *scene)
 	scene->ambient.color = parse_color(tokens, tokens[2]); // implement or reuse
 	return (SUCCESS);
 }
-
