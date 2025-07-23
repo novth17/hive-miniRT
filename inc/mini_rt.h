@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 22:07:19 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 22:21:27 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include "MLX42.h"
 # include "libft.h"
 # include "mini_rt.h"
+# include "object.h"
 
 # include "../test_stuff/rt_math.h"
 
@@ -66,7 +67,7 @@ typedef struct s_scene
 	t_camera	camera;
 	t_light		light;
 
-	t_list		*objects;  // list of objects*
+	t_object	*objects;  // list of objects*
 	bool		is_valid;
 }	t_scene;
 
