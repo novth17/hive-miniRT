@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 16:30:30 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 21:53:56 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 22:09:41 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int parse_ambient(char **tokens, t_scene *scene)
 	scene->ambient.ratio = parse_float(tokens[1], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Ambient: Invalid lighting ratio", tokens[1]));
+
 	if (scene->ambient.ratio < 0.0 || scene->ambient.ratio > 1.0)
 		return (print_error("Ambient: Lighting ratio must be in range [0.0,1.0]", tokens[1]));
 
@@ -39,11 +40,11 @@ int parse_camera(char **tokens, t_scene *scene)
 
 	scene->camera.origin = parse_vec3(tokens[1], &scene->is_valid);
 	if (!scene->is_valid)
-		return (print_error("Camera: Wrong origin vector format", tokens[1]));
+		return (print_error("Camera: Wrong origin v3 format", tokens[1]));
 
 	scene->camera.direction = parse_vec3(tokens[2], &scene->is_valid);
 	if (!scene->is_valid)
-		return (print_error("Camera: Wrong direction vector format", tokens[2]));
+		return (print_error("Camera: Wrong direction v3 format", tokens[2]));
 
 	if (!is_normalized_vec3(scene->camera.direction))
 		return (print_error("Camera: Direction vector must be in range [-1,1]", NULL));
@@ -56,3 +57,28 @@ int parse_camera(char **tokens, t_scene *scene)
 
 	return (SUCCESS);
 }
+
+int parse_light(char **tokens, t_scene *scene)
+{
+	scene->is_valid = true;
+	if (check_id_args_count(tokens, "Light", 4) == FAIL)
+		return (FAIL);
+
+	scene->light.origin = parse_vec3(tokens[1], &scene->is_valid);
+	if (!scene->is_valid)
+		return print_error("Light: Wrong origin v3 format", tokens[1]);
+
+	scene->light.bright_ratio = parse_float(tokens[2], &scene->is_valid);
+	if (!scene->is_valid)
+		return print_error("Light: Invalid lighting ratio", tokens[2]);
+
+	if (scene->light.bright_ratio < 0.0 || scene->light.bright_ratio > 1.0)
+		return print_error("Light: Lighting ratio must be in range [0.0,1.0]", tokens[2]);
+
+	scene->light.color = parse_color(tokens[3], &scene->is_valid);
+	if (!scene->is_valid)
+		return print_error("Light: Invalid color format (commas and [0,255])", tokens[3]);
+
+	return (SUCCESS);
+}
+

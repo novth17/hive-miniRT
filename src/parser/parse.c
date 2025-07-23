@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 17:36:36 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 21:57:13 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,10 @@ static int	parse_line(char *line, t_minirt *minirt)
 			status = FAIL;
 	}
 	else if (ft_strcmp(tokens[0], "L") == 0)
-		ft_dprintf(2, "light!\n");
+	{
+		if (parse_light(tokens, &minirt->scene) == FAIL)
+			status = FAIL;
+	}
 	else if (ft_strcmp(tokens[0], "sp") == 0)
 		ft_dprintf(2, "sphere!\n");
 	else if (ft_strcmp(tokens[0], "pl") == 0)
@@ -91,6 +94,7 @@ static int	parse_line(char *line, t_minirt *minirt)
 	ft_free_2d(tokens);
 	return status;
 }
+
 
 // static int	parse_line(char *line, t_minirt *minirt)
 // {
@@ -121,8 +125,4 @@ static int	parse_line(char *line, t_minirt *minirt)
 //         return (FAIL);
 //     }
 // }
-
-
-
-
 
