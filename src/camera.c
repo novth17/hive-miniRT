@@ -78,12 +78,8 @@ void base_init_cam(t_minirt *minirt, t_camera *cam)
 		cam->pixel_delta_u = v3_div_f32(cam->viewport_u, (float)cam->image_width);
 		cam->pixel_delta_v = v3_div_f32(cam->viewport_v, (float)cam->image_height);
 
-		// t_v3 viewport_upper_left = v3_sub_v3(camera_center, (v3_sub_v3(v3_sub_v3(v3(0, 0, focal_length), v3_div_f32(viewport_u, 2.0f)), v3_div_f32(viewport_v, 2.0f))));
-		// t_v3 viewport_upper_left = v3_sub_v3(camera_center, v3(0, 0, focal_length));
-		// viewport_upper_left = v3_sub(viewport_upper_left, )
 		cam->viewport_upper_left = viewport_top_left(cam->camera_center, cam->viewport_u, cam->viewport_v, cam->focal_length);
 
-		// t_v3 pixel00_loc = v3_add_v3(viewport_upper_left, f32_mul_v3(0.5f, (v3_add_v3(pixel_delta_u, pixel_delta_v))));
 		cam->pixel00_loc = pixel00_location(cam->viewport_upper_left, cam->pixel_delta_u, cam->pixel_delta_v);
 }
 

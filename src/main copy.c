@@ -311,39 +311,39 @@ uint32_t rgb_pack4x8(t_v3 unpacked)
 	uint32_t result;
 
 	result = ((uint32_t)(0xFF) << 24)					|
-			((uint32_t)((unpacked.b) * 255.0f) << 16)	|
-			((uint32_t)((unpacked.g) * 255.0f) << 8)	|
-			((uint32_t)((unpacked.r) * 255.0f) << 0);
+			((uint32_t)((unpacked.r + 0.5f)) << 16)		|
+			((uint32_t)((unpacked.g + 0.5f)) << 8)		|
+			((uint32_t)((unpacked.b + 0.5f)) << 0);
 	return (result);
 }
 
 // void trace(t_scene *scene, const t_camera * restrict cam, uint32_t *pixels)
-// void trace(t_spheres *spheres, const t_camera * restrict cam, uint32_t *pixels)
-// {
-// 	uint32_t y;
-// 	uint32_t x;
-// 	uint32_t sample;
-// 	t_v3	color;
+void trace(t_spheres *spheres, const t_camera * restrict cam, uint32_t *pixels)
+{
+	uint32_t y;
+	uint32_t x;
+	uint32_t sample;
+	t_v3	color;
 
-// 	y = 0;
-// 	while (y < cam->image_height)
-// 	{
-// 		x = 0;
-// 		while (x < cam->image_width)
-// 		{
-// 			sample = 0;
-// 			while (sample < cam->samples_per_pixel)
-// 			{
-// 				color = ray_color(ray, const t_spheres *spheres)
-// 				++sample;
-// 			}
-// 			*pixels++ = rgb_pack4x8(color);
-// 			// mlx_put_pixel(minirt->image, x, y, uint32_t color)
-// 			++x;
-// 		}
-// 		++y;
-// 	}
-// }
+	y = 0;
+	while (y < cam->image_height)
+	{
+		x = 0;
+		while (x < cam->image_width)
+		{
+			sample = 0;
+			while (sample < cam->samples_per_pixel)
+			{
+				color = ray_color(ray, const t_spheres *spheres)
+				++sample;
+			}
+			*pixels++ = rgb_pack4x8(color);
+			// mlx_put_pixel(minirt->image, x, y, uint32_t color)
+			++x;
+		}
+		++y;
+	}
+}
 
 static
 void render(t_minirt *minirt)
@@ -362,7 +362,7 @@ void render(t_minirt *minirt)
 	arr[1].radius = 50.0f;
 	arr[1].color = v3(1, 1, 1);
 
-	uint32_t *out = (uint32_t *)minirt->image->pixels;
+
 	int32_t y = 0;
 	while (y < cam.image_height)
 	{
@@ -380,7 +380,28 @@ void render(t_minirt *minirt)
 				++sample;
 			}
 
-         	*out++ = rgb_pack4x8(color);
+			// t_v3 color = ray_color(&ray);
+			// t_v3 color = {};
+			// color = check_sphere(spheres, ray);
+			// t_hit rec = {};
+			// rec.distance = FLT_MAX;
+			// check_spheres(&rec, &spheres, ray);
+
+			// exa
+			// linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF});
+			// uint32_t bmp_value = rgba_pack4x8(linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF}));
+   			int rbyte = (int)(255.999 * color.r);
+      		int gbyte = (int)(255.999 * color.g);
+        	int bbyte = (int)(255.999 * color.b);
+        	uint32_t bmp_value = rbyte << 24 | gbyte << 16 | bbyte << 8 | 0xff;
+			// t_v4 linear = linear_to_srgb255((t_v4){.rgb = color, .a = 0xFF});
+			// int rbyte = (int)(linear.r);
+      		// int gbyte = (int)(linear.g);
+        	// int bbyte = (int)(linear.b);
+        	// uint32_t bmp_value = rbyte << 24 | gbyte << 16 | bbyte << 8 | 0xff;
+    		// uint32_t bmp_value = exact_rgba_pack4x8(color);
+    		mlx_put_pixel(minirt->image, x, y, bmp_value);
+
 			++x;
 		}
 		++y;
