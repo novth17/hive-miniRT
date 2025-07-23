@@ -17,13 +17,15 @@ HEADERS		= inc/mini_rt.h inc/rt_math.h
 
 SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/error.c \
+				$(SRC_DIR)/init.c \
 				$(SRC_DIR)/parser/validate.c \
-				$(SRC_DIR)/parser/init.c \
 				$(SRC_DIR)/parser/parse.c \
 				$(SRC_DIR)/parser/parse_float.c \
 				$(SRC_DIR)/parser/element.c \
 				$(SRC_DIR)/rt_math.c \
-				$(SRC_DIR)/camera.c
+				$(SRC_DIR)/camera.c \
+				$(SRC_DIR)/parser/color.c \
+				$(SRC_DIR)/parser/vector.c
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 

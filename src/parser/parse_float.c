@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 19:10:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 22:10:25 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 20:05:04 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ double parse_float(const char *str, bool *is_valid)
 	if (!is_valid_float(str))
 	{
 		*is_valid = false;
+		ft_dprintf(2,"String current is: %s", str);
+		ft_dprintf(2, "\n");
 		ft_dprintf(2, "Error: Wrong float format!\n");
 		return 0.0;
 	}

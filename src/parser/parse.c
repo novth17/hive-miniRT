@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 15:47:45 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:36:36 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,10 @@ static int	parse_line(char *line, t_minirt *minirt)
 			status = FAIL;
 	}
 	else if (ft_strcmp(tokens[0], "C") == 0)
-		ft_dprintf(2, "camera!\n");
+	{
+		if (parse_camera(tokens, &minirt->scene) == FAIL)
+			status = FAIL;
+	}
 	else if (ft_strcmp(tokens[0], "L") == 0)
 		ft_dprintf(2, "light!\n");
 	else if (ft_strcmp(tokens[0], "sp") == 0)
