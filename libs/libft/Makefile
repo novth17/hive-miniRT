@@ -11,6 +11,7 @@ SOURCES = src/ft_is/ft_isalnum.c \
           src/ft_is/ft_isascii.c \
           src/ft_is/ft_isdigit.c \
           src/ft_is/ft_isprint.c \
+		  src/ft_is/ft_isspace.c \
           src/ft_lst/ft_lstadd_back_bonus.c \
           src/ft_lst/ft_lstadd_front_bonus.c \
           src/ft_lst/ft_lstclear_bonus.c \
@@ -56,6 +57,7 @@ SOURCES = src/ft_is/ft_isalnum.c \
 		  src/ft_string/ft_count_2d.c \
           src/ft_to/ft_atoi.c \
 		  src/ft_to/ft_atof.c \
+		  src/ft_to/ft_atol.c \
           src/ft_to/ft_itoa.c \
           src/ft_to/ft_tolower.c \
           src/ft_to/ft_toupper.c \

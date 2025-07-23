@@ -21,7 +21,8 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/init.c \
 				$(SRC_DIR)/parser/parse.c \
 				$(SRC_DIR)/parser/parse_float.c \
-				$(SRC_DIR)/parser/element.c
+				$(SRC_DIR)/parser/element.c \
+				$(SRC_DIR)/parser/color.c
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 

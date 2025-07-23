@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 20:45:37 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 15:47:45 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static void normalize_whitespace(char *line)
 {
 	while (*line)
 	{
-		if (*line == '\t' || *line == '\v' || *line == '\f' || *line == '\r')
+		if (ft_isspace(*line))
 			*line = ' ';
 		line++;
 	}
@@ -63,7 +63,8 @@ static int	parse_line(char *line, t_minirt *minirt)
 		ft_free_2d(tokens);
 		return(FAIL);
 	}
-	ft_dprintf(1, "DEBUG!: tokens[0]: %s\n", tokens[0]);
+	for (int i = 0; tokens[i] != NULL; ++i)
+		ft_dprintf(1, "DEBUG!: tokens[%i]: <%s>\n", i, tokens[i]);
 	if (ft_strcmp(tokens[0], "A") == 0)
 	{
 		if (parse_ambient(tokens, &minirt->scene) == FAIL)
