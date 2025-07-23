@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 21:46:57 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 15:12:12 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,11 @@ int		init_minirt(t_minirt *minirt, char **argv);
 int		parse_file(t_minirt *minirt, char *filename);
 double	parse_float(const char *str, bool *is_valid);
 int		parse_ambient(char **tokens, t_scene *scene);
+t_color parse_color(char **tokens, char *str);
 
 /* ===================== FOR DRAW ===================== */
 
 /* ===================== FOR ERROR ===================== */
 void	exit_error(const char *msg);
-int		print_ret_error(const char *msg);
 
 # endif
