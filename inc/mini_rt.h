@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 17:26:52 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 17:27:00 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,8 @@ int		init_minirt(t_minirt *minirt, char **argv);
 int		parse_file(t_minirt *minirt, char *filename);
 int		parse_ambient(char **tokens, t_scene *scene);
 int		parse_camera(char **tokens, t_scene *scene);
+int		parse_light(char **tokens, t_scene *scene);
+
 bool	check_comma_and_move(char **str, bool *is_valid);
 
 /* ===================== Parse utils ===================== */
