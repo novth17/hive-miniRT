@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 16:30:30 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 16:01:51 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/23 16:15:21 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,14 @@
 
 int parse_ambient(char **tokens, t_scene *scene)
 {
+	bool is_valid;
+
+	is_valid = true;
 	if (ft_count_2d(tokens) != 3)
 	{
 		ft_dprintf(2, "Ambient: Number of arguments must be 3!\n");
 		return (FAIL);
 	}
-	bool is_valid = true;
 	scene->ambient.ratio = parse_float(tokens[1], &is_valid);
 	if (!is_valid)
 		return (FAIL);
