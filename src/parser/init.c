@@ -33,7 +33,7 @@ static int	setup_mlx(t_minirt *minirt)
 		ft_putstr_fd(mlx_strerror(mlx_errno), 2);
 		return (FAIL);
 	}
-	mlx_set_setting(MLX_STRETCH_IMAGE, true);
+	mlx_set_setting(MLX_STRETCH_IMAGE, false);
 	mlx_set_window_size(minirt->mlx, 1024, 1024);
 	return (SUCCESS);
 }

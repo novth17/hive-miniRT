@@ -1,6 +1,7 @@
 #include "../inc/rt_math.h"
 #include "../inc/mini_rt.h"
-
+#include <stdint.h>
+#include <math.h> // check
 
 // typedef struct
 // {
@@ -33,13 +34,13 @@
 // } t_camera;
 
 static inline
-t_v3	viewport_top_left(const t_v3 camera_center, const t_v3 viewport_u, const t_v3 viewport_v, const float focal_length)
+t_v3	viewport_top_left(const t_camera *cam, const t_v3 w)
 {
 	t_v3	result;
 
-	result = V3_SUB(camera_center, v3(0, 0, focal_length));
-	result = V3_SUB(result, v3_div_f32(viewport_u, 2.0f));
-	result = V3_SUB(result, v3_div_f32(viewport_v, 2.0f));
+	result = V3_SUB(cam->camera_center, f32_mul_v3(cam->focal_length, w));
+	result = V3_SUB(result, v3_div_f32(cam->viewport_u, 2.0f));
+	result = V3_SUB(result, v3_div_f32(cam->viewport_v, 2.0f));
 	return (result);
 }
 
@@ -63,25 +64,94 @@ void base_init_cam(t_minirt *minirt, t_camera *cam)
 		cam->image_height = (int32_t)(cam->image_width / cam->aspect_ratio);
 		if (cam->image_height < 1)
 			cam->image_height = 1;
-
 		cam->samples_per_pixel = 1;
 
+		cam->vfov = 90.0f;
+		cam->lookfrom = v3(0, 0, 0);
+		cam->lookat = v3(0, 0, -1);
+		cam->vup = v3(0, 1, 0); // might not need this in camera
 
-		cam->focal_length = 1.0f;
-		cam->viewport_height = 2.0f;
+		cam->focal_length = length(V3_SUB(cam->lookfrom, cam->lookat));
+		float h = (float)tan((cam->vfov * (M_PI / 180)) / 2);
+		cam->viewport_height = 2.0f * h * cam->focal_length;
 		cam->viewport_width = cam->viewport_height * ((float)(cam->image_width) / cam->image_height);
-		cam->camera_center = v3(0, 0, 0);
+		cam->camera_center = cam->lookfrom;
 
-		cam->viewport_u = v3(cam->viewport_width, 0, 0);
-		cam->viewport_v = v3(0, -cam->viewport_height, 0);
+		// cam->viewport_u = v3(cam->viewport_width, 0, 0);
+		// cam->viewport_v = v3(0, -cam->viewport_height, 0);
+
+		// cam->pixel_delta_u = v3_div_f32(cam->viewport_u, (float)cam->image_width);
+		// cam->pixel_delta_v = v3_div_f32(cam->viewport_v, (float)cam->image_height);
+
+		cam->viewport_upper_left = viewport_top_left(cam, unit_vector(V3_SUB(cam->lookfrom, cam->lookat)));
+
+		cam->pixel00_loc = pixel00_location(cam->viewport_upper_left, cam->pixel_delta_u, cam->pixel_delta_v);
+}
+
+void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
+{
+	const t_v3 w = unit_vector(V3_SUB(cam->lookfrom, cam->lookat));
+	const t_v3 u = unit_vector(cross(cam->vup, w));
+	const t_v3 v = cross(w, u);
+	const float h = (float)tan((cam->vfov * (M_PI / 180)) / 2);
+		// cam->aspect_ratio = 16.0 / 9.0;
+		// cam->image_width = 400;
+		cam->aspect_ratio = (float)minirt->image->width / minirt->image->height;
+		cam->image_width = minirt->image->width;
+		cam->image_height = (int32_t)(cam->image_width / cam->aspect_ratio);
+		if (cam->image_height < 1)
+			cam->image_height = 1;
+
+		// cam->samples_per_pixel = 10;
+
+
+		// cam->focal_length = 1.0f;
+		// cam->viewport_height = 2.0f;
+		cam->focal_length = length(V3_SUB(cam->lookfrom, cam->lookat));
+		cam->viewport_height = 2.0f * h * cam->focal_length;
+		cam->viewport_width = cam->viewport_height * ((float)(cam->image_width) / cam->image_height);
+		cam->camera_center = cam->lookfrom;
+
+		cam->viewport_u = f32_mul_v3(cam->viewport_width, u);
+		cam->viewport_v = f32_mul_v3(cam->viewport_height, neg(v));
 
 		cam->pixel_delta_u = v3_div_f32(cam->viewport_u, (float)cam->image_width);
 		cam->pixel_delta_v = v3_div_f32(cam->viewport_v, (float)cam->image_height);
 
-		cam->viewport_upper_left = viewport_top_left(cam->camera_center, cam->viewport_u, cam->viewport_v, cam->focal_length);
+		cam->viewport_upper_left = viewport_top_left(cam, w);
 
 		cam->pixel00_loc = pixel00_location(cam->viewport_upper_left, cam->pixel_delta_u, cam->pixel_delta_v);
 }
+
+// void init_camera_for_frame(t_camera *cam)
+// {
+// 	// ft_memmove(cam, base_cam, sizeof(*cam));
+// 	// cam->aspect_ratio = (float)minirt->image->width / minirt->image->height;
+// 	// cam->image_width = minirt->image->width;
+// 	// cam->image_height = (int32_t)(cam->image_width / cam->aspect_ratio);
+// 	// if (cam->image_height < 1)
+// 	// 	cam->image_height = 1;
+
+// 	// cam->samples_per_pixel = 10;
+
+
+// 	// cam->focal_length = 1.0f;
+// 	// cam->camera_center = v3(0, 0, 0);
+// 	// cam->viewport_height = 2.0f;
+
+// 	cam->viewport_width = cam->viewport_height * ((float)(cam->image_width) / cam->image_height);
+
+// 	cam->viewport_u = v3(cam->viewport_width, 0, 0);
+// 	cam->viewport_v = v3(0, -cam->viewport_height, 0);
+
+// 	cam->pixel_delta_u = v3_div_f32(cam->viewport_u, (float)cam->image_width);
+// 	cam->pixel_delta_v = v3_div_f32(cam->viewport_v, (float)cam->image_height);
+
+// 	cam->viewport_upper_left = viewport_top_left(cam->camera_center, cam->viewport_u, cam->viewport_v, cam->focal_length);
+
+// 	cam->pixel00_loc = pixel00_location(cam->viewport_upper_left, cam->pixel_delta_u, cam->pixel_delta_v);
+// }
+
 
 // #include <float.h>
 

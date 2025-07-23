@@ -40,9 +40,9 @@ typedef struct
 	int32_t max_bounce; // for mandatory 1 or 2 i guess;
 
 	float		vfov;
-	t_point3 origin;
-	t_point3 direction;
-	t_v3	 vup;
+	t_point3	lookfrom; // @QUESTION why this and camera_center??
+	t_point3	lookat;
+	t_v3		vup;
 
 	float focal_length;
 	float viewport_height;
@@ -63,8 +63,8 @@ typedef struct
 
 
 
-# define WINDOW_WIDTH 800
-# define WINDOW_HEIGHT 800
+# define WINDOW_WIDTH 1920
+# define WINDOW_HEIGHT 1080
 
 typedef struct s_vec3
 {
@@ -114,7 +114,7 @@ typedef struct s_mini_rt
 	mlx_t			*mlx;
 	mlx_image_t		*image;
 	t_scene			scene;
-
+	t_camera		base_cam;
 }	t_minirt;
 
 

@@ -79,6 +79,8 @@
 // }
 //
 // #include "camera.c"
+
+#include <float.h>
 #include <stdint.h>
 #include <math.h>
 
@@ -219,8 +221,10 @@ void set_face_normal(t_hit *rec, const t_ray *r, const t_v3 out_normal)
 	else
 		rec->normal = neg(out_normal);
 }
+
 static int hit = 0;
 static int miss = 0;
+
 static inline
 bool check_spheres(t_hit *rec, const t_spheres *spheres, const t_ray ray)
 {
@@ -253,42 +257,118 @@ bool check_spheres(t_hit *rec, const t_spheres *spheres, const t_ray ray)
 	return (temp_rec.distance < MAX_HIT_DIST);
 }
 
-static inline
-t_v3 get_offset(void)
+// static uint32_t rng_state = 25021129;
+
+// inline
+// uint32_t pcg_hash(uint32_t seed)
+// {
+//     const uint32_t state = seed * 747796405u + 2891336453u;
+//     const uint32_t word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+
+//     return ((word >> 22u) ^ word);
+// }
+
+inline
+float random_float(uint32_t *seed)
 {
-	t_v3 result = {};
-	// result.x =
+ 	const uint32_t state = *seed * 747796405u + 2891336453u;
+    const uint32_t result = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+
+    *seed = state;
+	return ((float)result / (float)UINT32_MAX);
+}
+
+t_v3 in_unit_sphere(uint32_t *seed)
+{
+	t_v3 result;
+
+	result.x = random_float(seed) * 2.0f - 1.0f;
+	result.y = random_float(seed) * 2.0f - 1.0f;
+	result.z = random_float(seed) * 2.0f - 1.0f;
+	result = normalize(result);
+	return (result);
+}
+
+inline
+float clamp(const float f, const float min, const float max)
+{
+	if (f < min)
+		return (min);
+	else if (f > max)
+		return (max);
+	else
+		return (f);
+}
+
+inline
+t_v3 sample_square(uint32_t *seed)
+{
+	t_v3 result;
+
+	result.x = random_float(seed) - 0.5f;
+	result.y = random_float(seed) - 0.5f;
+	result.z = 0;
 	return (result);
 }
 
 static inline
-t_ray init_ray(t_camera *cam, int32_t x, int32_t y)
+t_v3 get_offset(uint32_t *seed)
 {
-	const t_v3 offset = get_offset();
+	t_v3 result = {};
+	result = in_unit_sphere(seed);
+	return (result);
+}
+
+// static uint32_t seed = 124124;
+
+static inline
+t_v3 get_ray_direction(const t_camera *cam, int32_t x, int32_t y, uint32_t *seed)
+{
+	const t_v3 offset = sample_square(seed);
+	// printf("offset x <%f> offset y <%f>\n", offset.x, offset.y);
+	// t_v3 offset = {0, 0, 0};
 	const t_v3 x_delta = f32_mul_v3(x + offset.x, cam->pixel_delta_u);
 	const t_v3 y_delta = f32_mul_v3(y + offset.y, cam->pixel_delta_v);
 	const t_v3 pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
-	t_ray ray;
 
-	ray.origin = cam->camera_center;
-	ray.direction = V3_SUB(pixel_sample, ray.origin);
-	return (ray);
+	return (V3_SUB(pixel_sample, cam->camera_center));
 }
 
 static inline
-t_v3 ray_color(const t_ray ray, const t_spheres *spheres) // change to all objects;
+t_v3 ray_color(const t_ray ray, const t_spheres *spheres) // change to all objects or scene;
 {
+
+	t_v3 ambient = f32_mul_v3(1, v3(1, 1, 1));
+	t_v3 point_ligth_loc = v3(10, 10, -10);
+	t_v3 point_light_color = f32_mul_v3(0.5, v3(1, 1, 1));
+
+
 	// bounces mby here at some point
 	t_hit rec;
 	rec = (t_hit){};
 	rec.distance = MAX_HIT_DIST;
+	//check_planes(&rec, planes, ray);
 	check_spheres(&rec, spheres, ray);
-
-
-	if (rec.distance < MAX_HIT_DIST - 1)
+	//check_cylinders(&rec, spheres, ray);
+	if (rec.distance < MAX_HIT_DIST)
 	{
-		return (f32_mul_v3(0.5, V3_ADD(rec.normal, v3(1, 1, 1))));
+		t_v3 l =  V3_SUB(point_ligth_loc, rec.position);
+		float dist = length(l);
+		l = f32_mul_v3(1.0f / dist, l);
+		float var1 = clamp(dot(rec.normal, l), 0.0f, FLT_MAX);
+		t_v3 var2 = f32_mul_v3(var1, point_light_color);
+		t_v3 var3 = f32_mul_v3(1.0f / (dist * dist), var2);
+		t_v3 color = V3_ADD(ambient, var3);
+		color = v3_mul_v3(f32_mul_v3(0.5, V3_ADD(rec.normal, v3(1, 1, 1))), color); // reflectivity of material * color calc
+		return (color);
 	}
+
+	// t_v3 hit_color = v3_mul_v3(ambient, ray_color(ray, &spheres));
+	// hit_color = V3_ADD(hit_color, light_intercetion())
+
+
+
+
 	t_v3 unit_direction = unit_vector(ray.direction);
 	float a = 0.5 * (unit_direction.y + 1.0f);
 
@@ -305,10 +385,24 @@ void base_init_cam(t_minirt *minirt, t_camera *cam);
 
 // }
 
+
+
+inline
+t_v3 v3_clamp(const t_v3 a)
+{
+	t_v3 result;
+
+	result.x = clamp(a.x, 0, 1);
+	result.y = clamp(a.y, 0, 1);
+	result.z = clamp(a.z, 0, 1);
+	return (result);
+}
+
 inline
 uint32_t rgb_pack4x8(t_v3 unpacked)
 {
 	uint32_t result;
+
 
 	result = ((uint32_t)(0xFF) << 24)					|
 			((uint32_t)((unpacked.b) * 255.0f) << 16)	|
@@ -345,12 +439,44 @@ uint32_t rgb_pack4x8(t_v3 unpacked)
 // 	}
 // }
 
-static
-void render(t_minirt *minirt)
-{
-	t_camera cam;
 
-	base_init_cam(minirt, &cam);
+void key_hook(struct mlx_key_data data, void * param)
+{
+	const float speed = 0.5f;
+	t_minirt *minirt;
+	t_v3 direction;
+
+	minirt = (t_minirt *)param;
+	// printf("keyhookend at %f\n", minirt->mlx->delta_time);
+	// if (mlx_is_mouse_down(minirt->mlx, MLX_MOUSE_BUTTON_RIGHT))
+	if (data.action != MLX_RELEASE)
+	{
+		if (data.key == MLX_KEY_W)
+		{
+			direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->base_cam.lookat);
+			minirt->base_cam.lookfrom = V3_ADD(minirt->base_cam.lookfrom, direction);
+		}
+		else if (data.key == MLX_KEY_S)
+		{
+			direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->base_cam.lookat);
+			minirt->base_cam.lookfrom = V3_SUB(minirt->base_cam.lookfrom, direction);
+		}
+	}
+	// }
+}
+
+// mlx_key_hook(mlx_t *mlx, mlx_keyfunc func, void *param)
+
+
+static
+void render(t_scene *scene, const t_camera * restrict cam, uint32_t *out)
+{
+
+	// t_v3 ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
+	t_v3 ambient = f32_mul_v3(0.1, v3(1, 1, 1));
+	t_v3 point_ligth_loc = v3(10, 10, -10);
+	t_v3 point_light_color = f32_mul_v3(0.1, v3(1, 1, 1));
+
 	t_spheres spheres;
 	t_sphere arr[2];
 	spheres.count = 2;
@@ -359,45 +485,98 @@ void render(t_minirt *minirt)
 	arr[0].radius = 0.5f;
 	arr[0].color = v3(1, 0, 0);
 	arr[1].position = v3(0, -55, 0);
-	arr[1].radius = 50.0f;
+	arr[1].radius = 54.0f;
 	arr[1].color = v3(1, 1, 1);
 
-	uint32_t *out = (uint32_t *)minirt->image->pixels;
+	t_ray ray;
+	ray.origin = cam->camera_center;
+
+	const float pixel_sample_scale = 1.0f / cam->samples_per_pixel; // here  for now
+
 	int32_t y = 0;
-	while (y < cam.image_height)
+	while (y < cam->image_height)
 	{
 		int32_t x = 0;
-		while (x < cam.image_width)
+		while (x < cam->image_width)
 		{
-			t_v3 color;
+			t_v3 color = {};
 			int32_t sample;
 			sample = 0;
-			while (sample < cam.samples_per_pixel)
+			t_v3 incoming_light = {};
+			uint32_t seed = x + y * cam->image_height;
+			while (sample < cam->samples_per_pixel)
 			{
-				const t_ray ray = init_ray(&cam,  x, y);
-
-				color = ray_color(ray, &spheres);
+				ray.direction = get_ray_direction(cam, x, y, &seed);
+				t_v3 hit_color = ray_color(ray, &spheres);
+				// hit_color = V3_ADD(hit_color, light_intercetion())
+				incoming_light = V3_ADD(incoming_light, hit_color);
 				++sample;
 			}
-
-         	*out++ = rgb_pack4x8(color);
+			color = f32_mul_v3(pixel_sample_scale, incoming_light);
+			// color = get_ray_direction(&cam, x, y, x + y * cam.image_height);
+         	*out++ = rgb_pack4x8(v3_clamp(color)); // maybe dont need clamp or do it in color correction
 			++x;
 		}
 		++y;
 	}
-	ft_dprintf(2, "hit: %i\tmiss: %i\n", hit, miss);
 	// return (0);
 }
+void init_camera_for_frame(t_minirt *minirt, t_camera *cam);
+
+#include <stdio.h>
+
+static int32_t new_width = WINDOW_WIDTH;
+static int32_t new_height = WINDOW_HEIGHT;
+
+void per_frame(void * param)
+{
+	t_minirt *minirt;
+	mlx_t *mlx;
+
+	minirt = (t_minirt *)param;
+	mlx = minirt->mlx;
+	if (minirt->image->width != minirt->mlx->width || minirt->image->height != minirt->mlx->height)
+	{
+		mlx_resize_image(minirt->image, minirt->mlx->width, minirt->mlx->height);
+		// seems weird to do here
+	}
+	init_camera_for_frame(minirt, &minirt->base_cam);
+
+	t_camera frame_cam;
+	frame_cam = minirt->base_cam;
 
 
 
+	render(&minirt->scene, &frame_cam, (uint32_t *)minirt->image->pixels);
+	// printf("hit: %i\tmiss: %i\n", hit, miss);
 
+	// printf("delta: %f\n", minirt->mlx->delta_time);
+}
+
+static
+void on_resize(int32_t width, int32_t height, void *param)
+{
+	t_minirt *minirt;
+
+	minirt = (t_minirt *)param;
+	new_width = width;
+	new_height = height;
+	// mlx_resize_image(minirt->image, width, height);
+
+}
 
 static int	run_minirt(t_minirt *minirt, char **argv)
 {
 	if (init_minirt(minirt, argv) == FAIL)
 		return (FAIL);
-	render(minirt);
+	mlx_set_window_size(minirt->mlx, WINDOW_WIDTH, WINDOW_HEIGHT);
+	mlx_set_setting(MLX_STRETCH_IMAGE, false);
+
+	mlx_resize_hook(minirt->mlx, &on_resize, minirt);
+	mlx_key_hook(minirt->mlx, &key_hook, minirt);
+	mlx_loop_hook(minirt->mlx, &per_frame, minirt);
+
+	base_init_cam(minirt, &minirt->base_cam);
 
 	mlx_loop(minirt->mlx);
 	mlx_terminate(minirt->mlx);
