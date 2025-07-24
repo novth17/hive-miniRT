@@ -2,7 +2,7 @@ NAME		= mini_rt
 
 CC			= cc
 INCLUDE		:= -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
-CFLAGS		= $(INCLUDE) -Wall -Wextra #-Werror
+CFLAGS		= $(INCLUDE) -Wall -Wextra -g #-Werror
 
 LIBFT_DIR := libs/libft
 LIBFT := $(LIBFT_DIR)/libft.a
@@ -26,7 +26,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/parse.c \
 				$(SRC_DIR)/parser/validate.c \
 				$(SRC_DIR)/parser/vector.c
-				
+
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 
 all: $(NAME)

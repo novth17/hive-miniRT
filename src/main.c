@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 22:28:07 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 15:05:44 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:16:43 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ int	main(int argc, char **argv)
 		return (FAIL);
 	run_minirt(&minirt, argv);
 	ft_dprintf(1, "success hihihaha congrats\n");
+	delete_minirt(&minirt);
 	return (SUCCESS);
 }
 

@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 21:57:13 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:03:11 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,10 @@ static int	parse_line(char *line, t_minirt *minirt)
 
 	if (!tokens || !tokens[0])
 	{
-		ft_dprintf(2, "malloc failed!");
 		ft_free_2d(tokens);
-		return(FAIL);
+		return(print_error("Malloc failed!", NULL));
 	}
+
 	for (int i = 0; tokens[i] != NULL; ++i)
 		ft_dprintf(1, "DEBUG!: tokens[%i]: <%s>\n", i, tokens[i]);
 	if (ft_strcmp(tokens[0], "A") == 0)
@@ -81,11 +81,29 @@ static int	parse_line(char *line, t_minirt *minirt)
 			status = FAIL;
 	}
 	else if (ft_strcmp(tokens[0], "sp") == 0)
-		ft_dprintf(2, "sphere!\n");
+	{
+		if (parse_sphere(tokens, &minirt->scene) == FAIL)
+		{
+			status = FAIL;
+			delete_minirt(minirt);
+		}
+	}
 	else if (ft_strcmp(tokens[0], "pl") == 0)
-		ft_dprintf(2, "PLANE!\n");
+	{
+		if (parse_plane(tokens, &minirt->scene) == FAIL)
+		{
+			status = FAIL;
+			delete_minirt(minirt);
+		}
+	}
 	else if (ft_strcmp(tokens[0], "cy") == 0)
-		ft_dprintf(2, "CYLINDER!\n");
+	{
+		if (parse_cyl(tokens, &minirt->scene) == FAIL)
+		{
+			status = FAIL;
+			delete_minirt(minirt);
+		}
+	}
     else
     {
 		ft_dprintf(2, "Error: Unknown element: [%s]\n", tokens[0]);
