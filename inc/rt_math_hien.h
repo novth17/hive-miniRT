@@ -6,13 +6,14 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 16:14:19 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/07/24 16:10:46 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/24 16:27:38 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RT_MATH_H
 # define RT_MATH_H
 
+# include "mini_rt.h"
 # include <stdint.h>
 # include <float.h>
 // # include <math.h> // @TODO watch out for this

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 22:28:07 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 03:41:20 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/07/26 17:30:23 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -961,6 +961,7 @@ int	main(int argc, char **argv)
 	// 	return (FAIL);
 	run_minirt(&minirt, argv);
 	ft_dprintf(1, "success hihihaha congrats\n");
+	delete_minirt(&minirt);
 	return (SUCCESS);
 }
 // static

@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 17:07:08 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 21:09:37 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/24 16:31:38 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,17 @@ t_vec3 parse_vec3(char *str, bool *is_valid)
 
 	vec3.x = parse_vec3_comp(&str, is_valid);
 	if (!check_comma_and_move(&str, is_valid))
-		return ((t_vec3){0, 0, 0});
-		
+		return ((t_vec3){});
+
 	vec3.y = parse_vec3_comp(&str, is_valid);
 	if (!check_comma_and_move(&str, is_valid))
-		return ((t_vec3){0, 0, 0});
+		return ((t_vec3){});
 
 	vec3.z = parse_vec3_comp(&str, is_valid);
 	if (!*is_valid || (*str != '\0' && !ft_isspace(*str)))
 	{
 		*is_valid = false;
-		return ((t_vec3){0, 0, 0});
+		return ((t_vec3){});
 	}
 	return (vec3);
 }
