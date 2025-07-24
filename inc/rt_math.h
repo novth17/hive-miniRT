@@ -17,6 +17,12 @@
 # include <float.h>
 // # include <math.h> // @TODO watch out for this
 
+typedef struct u_cordinate
+{
+	uint32_t x;
+	uint32_t y;
+} t_cord;
+
 typedef union u_vec2
 {
 	struct
@@ -111,6 +117,7 @@ t_v3		v3_sub_v3(t_v3 a, t_v3 b); // vec3 a - vec3 b
 # define V3_SUB v3_sub_v3
 
 t_v3		v3_mul_v3(t_v3 a, t_v3 b); // vec3 a * vec3 b
+t_v3		v3_mul_f32(t_v3 a, float b);
 t_v3		f32_mul_v3(float a, t_v3 b); // float a * vec3 b;
 
 t_v3		f32_div_v3(float a, t_v3 b);
@@ -142,6 +149,7 @@ t_v3		unit_vector(t_v3 a);
 t_v3		normalize(t_v3 a);
 t_v3		noz(t_v3 a);
 
+float		sign(float value);
 t_v3		neg(t_v3 a);
 
 t_v3		hadamard(t_v3 a, t_v3 b); // hadamard attennuation

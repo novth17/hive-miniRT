@@ -28,7 +28,7 @@
 
 
 # include "../libs/libft/inc/libft.h"
-# include "../test_stuff/rt_math.h"
+# include "rt_math.h"
 # include "../libs/MLX42/include/MLX42/MLX42.h"
 
 typedef struct
@@ -37,14 +37,18 @@ typedef struct
 	int32_t image_width;
 	int32_t image_height;
 	int32_t samples_per_pixel;
+	float	pixel_sample_scale;
 	int32_t max_bounce; // for mandatory 1 or 2 i guess;
 
-	float		vfov;
+	float		fov;
 	t_point3	lookfrom; // @QUESTION why this and camera_center??
 	t_point3	lookat;
 	t_v3		vup;
 
-	float focal_length;
+ 	float defocus_angle;  // Variation angle of rays through each pixel
+    float focus_dist;
+
+	// float focal_length;
 	float viewport_height;
 	float viewport_width;
 	t_v3 camera_center;
