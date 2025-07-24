@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 17:30:17 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 17:31:37 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include "libft.h"
 # include "mini_rt.h"
 # include "object.h"
+# include "error.h"
 
 
 # include "../libs/libft/inc/libft.h"
@@ -95,13 +96,6 @@ typedef struct	s_ambient
 	float	ratio;
 	t_color	color;
 }			t_ambient;
-
-// typedef struct	s_camera
-// {
-// 	t_vec3	origin;
-// 	t_vec3	direction;  //must be normalized (range [-1,1])
-// 	float	fov; //Horizontal field of view in degrees in range [0,180]:
-// }	t_camera;
 
 typedef struct
 {
