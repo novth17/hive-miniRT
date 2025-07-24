@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/24 21:11:45 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:58:22 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,38 +20,18 @@
 # include "MLX42.h"
 # include "libft.h"
 # include "object.h"
+# include "error.h"
 
 # include "rt_math_hien.h"
 
 # define WINDOW_WIDTH 800
 # define WINDOW_HEIGHT 800
 
-// typedef struct s_vec3
-// {
-// 	float x;
-// 	float y;
-// 	float z;
-// }				t_vec3;
-
-// typedef struct s_color
-// {
-// 	float r;
-// 	float g;
-// 	float b;
-// }				t_color;
-
 typedef struct	s_ambient
 {
 	float	ratio;
 	t_color	color;
 }			t_ambient;
-
-// typedef struct	s_camera
-// {
-// 	t_vec3	origin;
-// 	t_vec3	direction;  //must be normalized (range [-1,1])
-// 	float	fov; //Horizontal field of view in degrees in range [0,180]:
-// }	t_camera;
 
 typedef struct
 {

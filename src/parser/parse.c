@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/24 21:03:11 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/24 22:08:29 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static int	parse_line(char *line, t_minirt *minirt)
 	if (!tokens || !tokens[0])
 	{
 		ft_free_2d(tokens);
-		return(print_error("Malloc failed!", NULL));
+		return(print_error(ERROR_MALLOC, NULL));
 	}
 
 	for (int i = 0; tokens[i] != NULL; ++i)
@@ -106,7 +106,7 @@ static int	parse_line(char *line, t_minirt *minirt)
 	}
     else
     {
-		ft_dprintf(2, "Error: Unknown element: [%s]\n", tokens[0]);
+		ft_dprintf(2, UNK_ELEMENT" %s\n", tokens[0]);
         status = FAIL;
     }
 	ft_free_2d(tokens);
