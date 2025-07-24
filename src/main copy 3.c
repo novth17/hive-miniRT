@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main copy 3.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 22:28:07 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/24 04:17:00 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/07/24 03:50:57 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,6 @@ typedef struct s_hit_record
 	float distance; // t
 	bool front_face; // maybe not needed;
 	t_v3 color;
-	bool did_hit; // can be removed later
 } t_hit;
 
 #define MIN_HIT_DIST 0.001f
@@ -202,8 +201,7 @@ bool sphere_hit(t_hit *rec, const t_sphere sp, const t_ray ray)
 	rec->distance = root;
 	rec->position = at(ray, rec->distance);
 	rec->normal = v3_div_f32(V3_SUB(rec->position, sp.position), sp.radius);
-	rec->color = sp.color; // maybe replace with material or material index?
-	rec->did_hit = true;
+	rec->color = sp.color;
 	return (true);
 }
 
@@ -237,7 +235,6 @@ bool check_spheres(t_hit *rec, const t_spheres *spheres, const t_ray ray)
 	t_hit temp_rec;
 	uint32_t i;
 
-	temp_rec = (t_hit){};
 	temp_rec.distance = MAX_HIT_DIST;
 	i = 0;
 	while (i < spheres->count)
@@ -261,7 +258,7 @@ bool check_spheres(t_hit *rec, const t_spheres *spheres, const t_ray ray)
 		// }
 		++i;
 	}
-	return (temp_rec.did_hit);
+	return (temp_rec.distance < MAX_HIT_DIST);
 }
 
 // static uint32_t rng_state = 25021129;
@@ -373,26 +370,9 @@ bool shadow_hit(const t_ray ray, const t_spheres *spheres) // change to all obje
 	;
 }
 
-inline
-float random_float_normal_dist(uint32_t *seed)
-{
-	const float theta = 2 * M_PI + random_float(seed);
-	const float rho = square_root(-2 * log(random_float(seed)));
-	return (rho * cos(theta));
-}
-
-inline
-t_v3 random_direction(uint32_t *seed)
-{
-	const float x = random_float_normal_dist(seed);
-	const float y = random_float_normal_dist(seed);
-	const float z = random_float_normal_dist(seed);
-
-	return (normalize((t_v3){x, y, z}));
-}
 
 static inline
-t_v3 trace(t_ray ray, const t_spheres *spheres, uint32_t *seed) // change to all objects or scene;
+t_v3 ray_color(const t_ray ray, const t_spheres *spheres) // change to all objects or scene;
 {
 
 	t_v3 ambient = f32_mul_v3(0.1, v3(1, 1, 1));
@@ -403,71 +383,37 @@ t_v3 trace(t_ray ray, const t_spheres *spheres, uint32_t *seed) // change to all
 
 	// bounces mby here at some point
 	t_v3 incoming_ligth;
-	t_v3 ray_color = {1, 1, 1};
-	t_hit last_rec;
+	t_hit rec;
 
 	incoming_ligth = (t_v3){};
-	bool hit_something = false;
-	for (int i = 0; i < 8; ++i)
+	rec = (t_hit){};
+	rec.distance = MAX_HIT_DIST;
+	//check_planes(&rec, planes, ray);
+	check_spheres(&rec, spheres, ray);
+	check_spheres(&rec, &point_ligth_visualization, ray);
+	//check_cylinders(&rec, spheres, ray);
+	if (rec.distance < MAX_HIT_DIST)
 	{
-		t_hit rec;
-		//check_planes(&rec, planes, ray);
-		rec = (t_hit){};
-		rec.distance = MAX_HIT_DIST;
-		check_spheres(&rec, spheres, ray);
-		check_spheres(&rec, &point_ligth_visualization, ray);
-		//check_cylinders(&rec, spheres, ray);
-		if (rec.did_hit == true)
-		{
-			ray.origin = rec.position;
-			ray.direction = normalize(V3_ADD(rec.normal, random_direction(seed)));
-			hit_something = true;
-			last_rec = rec;
-
-			t_v3 emmittedLight = v3(0.1f, 0.0f, 0.1f);
-			incoming_ligth = V3_ADD(incoming_ligth, v3_mul_v3(emmittedLight, ray_color));
-			ray_color = v3_mul_v3(ray_color, rec.color);
-			// t_v3 l =  V3_SUB(point_ligth_loc, rec.position);
-			// float dist = length(l);
-			// l = f32_mul_v3(1.0f / dist, l);
-			// // float light_angle = clamp(dot(rec.normal, l), 0.0f, FLT_MAX);
-			// float light_angle = smoothstep(dot(rec.normal, l), 0.0f, 4.0f);
-			// // float light_angle = dot(rec.normal, l);
-
-			// t_v3 color = f32_mul_v3(light_angle, point_light_color);
-			// color = f32_mul_v3(1.0f / (dist * dist), color);
-			// color = V3_ADD(ambient, color);
-			// // color = v3_mul_v3(f32_mul_v3(0.5, V3_ADD(rec.normal, v3(1, 1, 1))), color); // reflectivity of material * color calc
-			// color = v3_mul_v3(rec.color, color);
-
-		}
-		else
-		{
-			incoming_ligth = V3_ADD(incoming_ligth, v3_mul_v3(ambient, v3(1, 1, 1)));
-			break ;
-		}
-	}
-	if (hit_something)
-	{
-		t_v3 l =  V3_SUB(point_ligth_loc, last_rec.position);
+		t_v3 l =  V3_SUB(point_ligth_loc, rec.position);
 		float dist = length(l);
 		l = f32_mul_v3(1.0f / dist, l);
 		// float light_angle = clamp(dot(rec.normal, l), 0.0f, FLT_MAX);
-		float light_angle = smoothstep(dot(last_rec.normal, l), 0.0f, 4.0f);
+		float light_angle = smoothstep(dot(rec.normal, l), 0.0f, 4.0f);
 		// float light_angle = dot(rec.normal, l);
 
 		t_v3 color = f32_mul_v3(light_angle, point_light_color);
 		color = f32_mul_v3(1.0f / (dist * dist), color);
 		color = V3_ADD(ambient, color);
 		// color = v3_mul_v3(f32_mul_v3(0.5, V3_ADD(rec.normal, v3(1, 1, 1))), color); // reflectivity of material * color calc
-		color = v3_mul_v3(last_rec.color, color);
-		incoming_ligth = V3_ADD(incoming_ligth, color);
+		color = v3_mul_v3(rec.color, color);
+		return (color);
 	}
 	else
 	{
 		incoming_ligth = V3_ADD(incoming_ligth, v3_mul_v3(ambient, v3(1, 1, 1)));
+
 	}
-		// return (v3(.1,.1,.1));
+	// return (v3(.1,.1,.1));
 
 	// t_v3 hit_color = v3_mul_v3(ambient, ray_color(ray, &spheres));
 	// hit_color = V3_ADD(hit_color, light_intercetion())
@@ -658,7 +604,7 @@ void render(t_scene *scene, const t_camera *restrict cam, uint32_t *restrict out
 			while (sample < cam->samples_per_pixel)
 			{
 				ray.direction = get_ray_direction(cam, x, y, &seed);
-				t_v3 hit_color = trace(ray, &spheres, &seed);
+				t_v3 hit_color = ray_color(ray, &spheres);
 				// hit_color = V3_ADD(hit_color, light_intercetion())
 				incoming_light = V3_ADD(incoming_light, hit_color);
 				++sample;
