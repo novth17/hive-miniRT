@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/24 22:08:29 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 13:52:50 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ static int	parse_line(char *line, t_minirt *minirt)
     {
 		ft_dprintf(2, UNK_ELEMENT" %s\n", tokens[0]);
         status = FAIL;
+		delete_minirt(minirt);
     }
 	ft_free_2d(tokens);
 	return status;
