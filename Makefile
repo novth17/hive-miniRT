@@ -25,7 +25,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/color.c \
 				$(SRC_DIR)/parser/element.c \
 				$(SRC_DIR)/parser/object.c \
-				$(SRC_DIR)/parser/parse_float.c \
+				$(SRC_DIR)/parser/float.c \
 				$(SRC_DIR)/parser/parse.c \
 				$(SRC_DIR)/rt_math.c \
 				$(SRC_DIR)/camera.c \
