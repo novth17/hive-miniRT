@@ -6,15 +6,16 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 15:26:29 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 19:55:37 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 22:22:53 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "mini_rt.h"
 
-void	exit_error(const char *msg)
+void	exit_error(t_minirt *minirt,  char *msg)
 {
 	ft_dprintf(2, "%s\n", msg);
+	delete_minirt(minirt);
 	exit(FAIL);
 }
 
