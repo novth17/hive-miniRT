@@ -24,6 +24,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/delete.c \
 				$(SRC_DIR)/parser/parse.c \
 				$(SRC_DIR)/parser/validate.c \
+				$(SRC_DIR)/parser/fill_arr.c \
 				$(SRC_DIR)/parser/attribute/color.c \
 				$(SRC_DIR)/parser/attribute/float.c \
 				$(SRC_DIR)/parser/attribute/vector.c \

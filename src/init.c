@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 20:02:04 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 20:06:37 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 22:33:27 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,25 @@ int	init_minirt(t_minirt *minirt, char **argv)
 		ft_dprintf(2, "Parsing failed");
 		return (FAIL);
 	}
+
+
+	if (fill_spheres_arr(minirt, &minirt->scene) == SUCCESS)
+	{
+		for (uint32_t i = 0; i < minirt->scene.spheres_count; i++)
+		{
+			t_sphere *s = &minirt->scene.spheres[i];
+			ft_dprintf(1,
+				"DEBUG: sphere[%u]: center=(%.2f, %.2f, %.2f), diameter=%.2f, color=(%d, %d, %d)\n",
+				i,
+				s->center.x, s->center.y, s->center.z,
+				s->diameter,
+				s->color.r, s->color.g, s->color.b
+			);
+		}
+	}
+
+
+
 	if (setup_mlx(minirt) == FAIL)
 	{
 		ft_dprintf(2, "Failed to initialize MLX");
@@ -56,3 +75,6 @@ int	init_minirt(t_minirt *minirt, char **argv)
 	}
 	return (SUCCESS);
 }
+
+
+

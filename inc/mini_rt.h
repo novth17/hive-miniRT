@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/24 21:58:22 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 22:24:02 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,11 +126,15 @@ t_vec3	parse_vec3(char *str, bool *is_valid);
 bool	is_normalized_vec3(t_vec3 vector);
 bool	check_comma_and_move(char **str, bool *is_valid);
 
+/* ===================== FILL ARRAY ===================== */
+
+int fill_spheres_arr(t_minirt *minirt, t_scene *scene);
+
 /* ===================== FOR DRAW ===================== */
 
 /* ===================== FOR ERROR ===================== */
 int		check_id_args_count(char **tokens, const char *id, int expected);
-void	exit_error(const char *msg);
+void	exit_error(t_minirt *minirt,  char *msg);
 int		print_error(const char *msg, const char *value);
 
 /* ===================== FOR DELETE ===================== */
