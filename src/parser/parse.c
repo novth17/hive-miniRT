@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 21:17:56 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 21:50:48 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 //valgrind --leak-check=full  --suppressions=mlx42.supp ./mini_rt test_wrong.rt
 
 static int	parse_line(char *line, t_minirt *minirt);
+static void	normalize_whitespace(char *line);
+int			parse_elements(char **tokens, t_minirt *minirt);
 
 int	parse_file(t_minirt *minirt, char *filename)
 {
@@ -26,7 +28,7 @@ int	parse_file(t_minirt *minirt, char *filename)
 		exit_error("Error\nNo such file exists!");
 	while ((line = get_next_line(fd)))
 	{
-		if (line[0] != '\n' && line[0] != '\0' && parse_line(line, minirt) == FAIL)
+		if (line[0] != '\n' && line[0] != '\0' && parse_line(line, minirt))
 		{
 			delete_minirt(minirt);
 			free(line);
@@ -36,6 +38,29 @@ int	parse_file(t_minirt *minirt, char *filename)
 	}
 	close(fd);
 	return (SUCCESS);
+}
+
+static int	parse_line(char *line, t_minirt *minirt)
+{
+	char **tokens;
+	int status;
+
+	status = SUCCESS;
+	ft_dprintf(1, "\nDEBUG!: line: %s", line);
+	normalize_whitespace(line);
+	tokens = ft_split(line, ' ');
+	if (!tokens || !tokens[0])
+	{
+		ft_free_2d(tokens);
+		return(print_error(ERROR_MALLOC, NULL));
+	}
+
+	for (int i = 0; tokens[i] != NULL; ++i)
+		ft_dprintf(1, "DEBUG!: tokens[%i]: <%s>\n", i, tokens[i]);
+
+	status = parse_elements(tokens, minirt);
+	ft_free_2d(tokens);
+	return (status);
 }
 
 static void normalize_whitespace(char *line)
@@ -67,25 +92,4 @@ int	parse_elements(char **tokens, t_minirt *minirt)
 	return FAIL;
 }
 
-static int	parse_line(char *line, t_minirt *minirt)
-{
-	char **tokens;
-	int status;
 
-	status = SUCCESS;
-	ft_dprintf(1, "\nDEBUG!: line: %s", line);
-	normalize_whitespace(line);
-	tokens = ft_split(line, ' ');
-	if (!tokens || !tokens[0])
-	{
-		ft_free_2d(tokens);
-		return(print_error(ERROR_MALLOC, NULL));
-	}
-
-	for (int i = 0; tokens[i] != NULL; ++i)
-		ft_dprintf(1, "DEBUG!: tokens[%i]: <%s>\n", i, tokens[i]);
-
-	status = parse_elements(tokens, minirt);
-	ft_free_2d(tokens);
-	return status;
-}
