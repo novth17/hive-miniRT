@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 17:32:36 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 17:33:44 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,30 @@
 # include "object.h"
 # include "error.h"
 
+# include "rt_math_hien.h"
 
-# include "../libs/libft/inc/libft.h"
-# include "rt_math.h"
-# include "../libs/MLX42/include/MLX42/MLX42.h"
+# define WINDOW_WIDTH 1920
+# define WINDOW_HEIGHT 1080
+
+// typedef struct s_vec3
+// {
+// 	float x;
+// 	float y;
+// 	float z;
+// }				t_vec3;
+
+// typedef struct s_color
+// {
+// 	float r;
+// 	float g;
+// 	float b;
+// }				t_color;
+
+typedef struct	s_ambient
+{
+	float	ratio;
+	t_color	color;
+}			t_ambient;
 
 typedef struct
 {
@@ -97,35 +117,42 @@ typedef struct	s_ambient
 	t_color	color;
 }			t_ambient;
 
-typedef struct
+typedef struct	s_camera
 {
-	float		fov;
-	t_point3	origin; // @QUESTION why this and camera_center??
-	t_point3	direction;
+	t_vec3	origin;
+	t_vec3	direction;  //must be normalized (range [-1,1])
+	float	fov; //Horizontal field of view in degrees in range [0,180]:
+}	t_camera;
 
-	float	aspect_ratio; //
-	int32_t image_width;
-	int32_t image_height;
-	int32_t samples_per_pixel;
-	int32_t max_bounce; // for mandatory 1 or 2 i guess;
+// typedef struct
+// {
+// 	float		fov;
+// 	t_point3	origin; // @QUESTION why this and camera_center??
+// 	t_point3	direction;
 
-	t_v3		vup;
+// 	float	aspect_ratio; //
+// 	int32_t image_width;
+// 	int32_t image_height;
+// 	int32_t samples_per_pixel;
+// 	int32_t max_bounce; // for mandatory 1 or 2 i guess;
 
-	float focal_length;
-	float viewport_height;
-	float viewport_width;
-	t_v3 camera_center;
+// 	t_v3		vup;
 
-	t_v3 viewport_u;
-	t_v3 viewport_v;
+// 	float focal_length;
+// 	float viewport_height;
+// 	float viewport_width;
+// 	t_v3 camera_center;
 
-	t_v3 pixel_delta_u;
-	t_v3 pixel_delta_v;
+// 	t_v3 viewport_u;
+// 	t_v3 viewport_v;
 
-	t_v3 viewport_upper_left;
-	t_v3 pixel00_loc;
+// 	t_v3 pixel_delta_u;
+// 	t_v3 pixel_delta_v;
 
-} t_camera;
+// 	t_v3 viewport_upper_left;
+// 	t_v3 pixel00_loc;
+
+// } t_camera;
 
 typedef struct	s_light
 {
@@ -191,8 +218,7 @@ bool	check_comma_and_move(char **str, bool *is_valid);
 
 /* ===================== FILL ARRAY ===================== */
 
-int fill_spheres_arr(t_minirt *minirt, t_scene *scene);
-
+int fill_obj_arr(t_minirt *minirt, t_scene *scene);
 /* ===================== FOR DRAW ===================== */
 
 /* ===================== FOR ERROR ===================== */
