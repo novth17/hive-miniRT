@@ -20,17 +20,17 @@ HEADERS		= 	inc/error.h \
 
 SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/init.c \
-				$(SRC_DIR)/delete.c \
 				$(SRC_DIR)/error.c \
-				$(SRC_DIR)/parser/color.c \
-				$(SRC_DIR)/parser/element.c \
-				$(SRC_DIR)/parser/object.c \
-				$(SRC_DIR)/parser/float.c \
+				$(SRC_DIR)/delete.c \
 				$(SRC_DIR)/parser/parse.c \
 				$(SRC_DIR)/rt_math.c \
 				$(SRC_DIR)/camera.c \
 				$(SRC_DIR)/parser/validate.c \
-				$(SRC_DIR)/parser/vector.c
+				$(SRC_DIR)/parser/attribute/color.c \
+				$(SRC_DIR)/parser/attribute/float.c \
+				$(SRC_DIR)/parser/attribute/vector.c \
+				$(SRC_DIR)/parser/identifier/element.c \
+				$(SRC_DIR)/parser/identifier/object.c
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 
