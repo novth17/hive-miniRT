@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 16:30:30 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 13:46:27 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 20:07:30 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 int parse_ambient(char **tokens, t_scene *scene)
 {
-	scene->is_valid = true;
 	if (check_id_args_count(tokens, "Ambient", 3) == FAIL)
 		return (FAIL);
 
@@ -31,7 +30,6 @@ int parse_ambient(char **tokens, t_scene *scene)
 
 int parse_camera(char **tokens, t_scene *scene)
 {
-	scene->is_valid = true;
 	if (check_id_args_count(tokens, "Camera", 4) == FAIL)
 		return (FAIL);
 
@@ -57,7 +55,6 @@ int parse_camera(char **tokens, t_scene *scene)
 
 int parse_light(char **tokens, t_scene *scene)
 {
-	scene->is_valid = true;
 	if (check_id_args_count(tokens, "Light", 4) == FAIL)
 		return (FAIL);
 

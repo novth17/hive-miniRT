@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 13:52:50 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 20:19:03 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,13 @@ int	parse_file(t_minirt *minirt, char *filename)
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
-		exit_error("No such file exists!");
+		exit_error("Error\nNo such file exists!");
 	while ((line = get_next_line(fd)))
 	{
 		if (line[0] != '\n' && line[0] != '\0' && parse_line(line, minirt) == FAIL)
 		{
 			free(line);
-			exit_error("Scene parsing failed");
+			exit(FAIL);
 		}
 		free(line);
 	}
@@ -56,7 +56,6 @@ static int	parse_line(char *line, t_minirt *minirt)
 	ft_dprintf(1, "\nDEBUG!: line: %s", line);
 	normalize_whitespace(line);
 	tokens = ft_split(line, ' ');
-
 	if (!tokens || !tokens[0])
 	{
 		ft_free_2d(tokens);
@@ -65,6 +64,10 @@ static int	parse_line(char *line, t_minirt *minirt)
 
 	for (int i = 0; tokens[i] != NULL; ++i)
 		ft_dprintf(1, "DEBUG!: tokens[%i]: <%s>\n", i, tokens[i]);
+
+
+	//parse_tokens(minirt);
+
 	if (ft_strcmp(tokens[0], "A") == 0)
 	{
 		if (parse_ambient(tokens, &minirt->scene) == FAIL)
@@ -78,7 +81,7 @@ static int	parse_line(char *line, t_minirt *minirt)
 	else if (ft_strcmp(tokens[0], "L") == 0)
 	{
 		if (parse_light(tokens, &minirt->scene) == FAIL)
-			status = FAIL;
+			status = 1;
 	}
 	else if (ft_strcmp(tokens[0], "sp") == 0)
 	{
@@ -113,35 +116,3 @@ static int	parse_line(char *line, t_minirt *minirt)
 	ft_free_2d(tokens);
 	return status;
 }
-
-
-// static int	parse_line(char *line, t_minirt *minirt)
-// {
-// 	char **tokens;
-
-// 	tokens = ft_split(line, ' ');
-// 	if (!tokens || !tokens[0])
-// 	{
-// 		ft_free_2d(tokens);
-// 		return(FAIL);
-// 	}
-// 	if (ft_strcmp(tokens[0], "A") == 0)
-// 		return (parse_ambient(tokens, minirt->scene));
-// 	else if (ft_strcmp(tokens[0], "C") == 0)
-// 		return (parse_camera(tokens, minirt->scene));
-// 	else if (ft_strcmp(tokens[0], "L") == 0)
-// 		return (parse_light(tokens, minirt->scene));
-// 	else if (ft_strcmp(tokens[0], "sp") == 0)
-// 		return (parse_sphere(tokens, minirt->scene));
-// 	else if (ft_strcmp(tokens[0], "pl") == 0)
-// 		return (parse_plane(tokens, minirt->scene));
-// 	else if (ft_strcmp(tokens[0], "cy") == 0)
-// 		return (parse_cylinder(tokens, minirt->scene));
-//     else
-//     {
-//         free_split(tokens);
-// 		ft_dprintf(2, "Unknown element!");
-//         return (FAIL);
-//     }
-// }
-
