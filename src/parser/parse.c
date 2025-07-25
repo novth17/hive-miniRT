@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 20:19:03 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 21:17:56 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int	parse_file(t_minirt *minirt, char *filename)
 	{
 		if (line[0] != '\n' && line[0] != '\0' && parse_line(line, minirt) == FAIL)
 		{
+			delete_minirt(minirt);
 			free(line);
 			exit(FAIL);
 		}
@@ -45,6 +46,25 @@ static void normalize_whitespace(char *line)
 			*line = ' ';
 		line++;
 	}
+}
+
+int	parse_elements(char **tokens, t_minirt *minirt)
+{
+	if (ft_strcmp(tokens[0], "A") == 0)
+		return parse_ambient(tokens, &minirt->scene);
+	else if (ft_strcmp(tokens[0], "C") == 0)
+		return parse_camera(tokens, &minirt->scene);
+	else if (ft_strcmp(tokens[0], "L") == 0)
+		return parse_light(tokens, &minirt->scene);
+	else if (ft_strcmp(tokens[0], "sp") == 0)
+		return parse_sphere(tokens, &minirt->scene);
+	else if (ft_strcmp(tokens[0], "pl") == 0)
+		return parse_plane(tokens, &minirt->scene);
+	else if (ft_strcmp(tokens[0], "cy") == 0)
+		return parse_cyl(tokens, &minirt->scene);
+	print_error(UNK_ELEMENT, tokens[0]);
+
+	return FAIL;
 }
 
 static int	parse_line(char *line, t_minirt *minirt)
@@ -65,54 +85,7 @@ static int	parse_line(char *line, t_minirt *minirt)
 	for (int i = 0; tokens[i] != NULL; ++i)
 		ft_dprintf(1, "DEBUG!: tokens[%i]: <%s>\n", i, tokens[i]);
 
-
-	//parse_tokens(minirt);
-
-	if (ft_strcmp(tokens[0], "A") == 0)
-	{
-		if (parse_ambient(tokens, &minirt->scene) == FAIL)
-			status = FAIL;
-	}
-	else if (ft_strcmp(tokens[0], "C") == 0)
-	{
-		if (parse_camera(tokens, &minirt->scene) == FAIL)
-			status = FAIL;
-	}
-	else if (ft_strcmp(tokens[0], "L") == 0)
-	{
-		if (parse_light(tokens, &minirt->scene) == FAIL)
-			status = 1;
-	}
-	else if (ft_strcmp(tokens[0], "sp") == 0)
-	{
-		if (parse_sphere(tokens, &minirt->scene) == FAIL)
-		{
-			status = FAIL;
-			delete_minirt(minirt);
-		}
-	}
-	else if (ft_strcmp(tokens[0], "pl") == 0)
-	{
-		if (parse_plane(tokens, &minirt->scene) == FAIL)
-		{
-			status = FAIL;
-			delete_minirt(minirt);
-		}
-	}
-	else if (ft_strcmp(tokens[0], "cy") == 0)
-	{
-		if (parse_cyl(tokens, &minirt->scene) == FAIL)
-		{
-			status = FAIL;
-			delete_minirt(minirt);
-		}
-	}
-    else
-    {
-		ft_dprintf(2, UNK_ELEMENT" %s\n", tokens[0]);
-        status = FAIL;
-		delete_minirt(minirt);
-    }
+	status = parse_elements(tokens, minirt);
 	ft_free_2d(tokens);
 	return status;
 }
