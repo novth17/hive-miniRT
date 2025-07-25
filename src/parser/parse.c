@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 21:50:48 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 21:53:04 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 static int	parse_line(char *line, t_minirt *minirt);
 static void	normalize_whitespace(char *line);
-int			parse_elements(char **tokens, t_minirt *minirt);
+static int	parse_elements(char **tokens, t_minirt *minirt);
 
 int	parse_file(t_minirt *minirt, char *filename)
 {
@@ -73,7 +73,7 @@ static void normalize_whitespace(char *line)
 	}
 }
 
-int	parse_elements(char **tokens, t_minirt *minirt)
+static int	parse_elements(char **tokens, t_minirt *minirt)
 {
 	if (ft_strcmp(tokens[0], "A") == 0)
 		return parse_ambient(tokens, &minirt->scene);
@@ -91,5 +91,4 @@ int	parse_elements(char **tokens, t_minirt *minirt)
 
 	return FAIL;
 }
-
 
