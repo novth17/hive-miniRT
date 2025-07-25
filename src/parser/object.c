@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 22:15:36 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/24 22:01:14 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 20:08:01 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ static t_object	*create_objects(t_scene *scene, t_obj_type type)
 	t_object *obj;
 
 	obj = malloc(sizeof(t_object));
-
 	if (!obj)
 	{
 		print_error(ERROR_MALLOC, NULL);
@@ -34,8 +33,6 @@ int parse_sphere(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	scene->is_valid = true;
-
 	if (check_id_args_count(tokens, "Sphere", 4) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, SPHERE);
@@ -46,7 +43,7 @@ int parse_sphere(char **tokens, t_scene *scene)
 		return (print_error("Sphere: center: "ERROR_COORD, tokens[1]));
 	object->sphere.diameter = parse_float(tokens[2], &scene->is_valid);
 	if (!scene->is_valid)
-		return (print_error("Sphere: diameter"ERROR_FLOAT, tokens[2]));
+		return (print_error("Sphere: diameter: "ERROR_FLOAT, tokens[2]));
 	object->sphere.color = parse_color(tokens[3], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Sphere: "ERROR_COLOR, tokens[3]));
@@ -57,7 +54,6 @@ int parse_plane(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	scene->is_valid = true;
 	if (check_id_args_count(tokens, "Plane", 4) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, PLANE);
@@ -81,7 +77,6 @@ int parse_cyl(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	scene->is_valid = true;
 	if (check_id_args_count(tokens, "Cylinder", 6) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, CYLINDER);

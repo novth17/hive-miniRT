@@ -13,7 +13,10 @@ MLX42 := $(MLX42_DIR)/build/libmlx42.a
 OBJ_DIR		= obj/
 SRC_DIR		= src
 
-HEADERS		= inc/mini_rt.h inc/rt_math.h
+HEADERS		= 	inc/error.h \
+				inc/mini_rt.h \
+				inc/object.h \
+				inc/rt_math_hien.h
 
 SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/init.c \

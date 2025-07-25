@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 20:02:04 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 20:37:28 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 20:06:37 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,21 @@ int	init_minirt(t_minirt *minirt, char **argv)
 {
 	ft_bzero(minirt, sizeof(t_minirt));
 
+<<<<<<< HEAD
 	// if (parse_file(minirt, argv[1]) == FAIL)
 	// {
 	// 	ft_dprintf(2, "Parsing failed");
 	// 	return (FAIL);
 	// }
+=======
+	minirt->scene.is_valid = true;
+
+	if (parse_file(minirt, argv[1]) == FAIL)
+	{
+		ft_dprintf(2, "Parsing failed");
+		return (FAIL);
+	}
+>>>>>>> 9499bfd (fix error new line message)
 	if (setup_mlx(minirt) == FAIL)
 	{
 		ft_dprintf(2, "Failed to initialize MLX");
