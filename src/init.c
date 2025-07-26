@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 20:02:04 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 16:59:18 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 17:38:15 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int	setup_mlx(t_minirt *minirt)
 		ft_putstr_fd(mlx_strerror(mlx_errno), 2);
 		return (FAIL);
 	}
-	mlx_set_setting(MLX_STRETCH_IMAGE, true);
+	mlx_set_setting(MLX_STRETCH_IMAGE, false);
 	mlx_set_window_size(minirt->mlx, 1024, 1024);
 	return (SUCCESS);
 }
@@ -46,7 +46,10 @@ int	init_minirt(t_minirt *minirt, char **argv)
 	minirt->file_has_content = false;
 
 	if (parse_file(minirt, argv[1]) == FAIL)
-		return (print_error("Parsing failed", NULL));
+	{
+		ft_dprintf(2, "Parsing failed");
+		return (FAIL);
+	}
 
 	if (fill_obj_arr(minirt, &minirt->scene) == FAIL)
 		return (print_error("Filling object array failed", NULL));

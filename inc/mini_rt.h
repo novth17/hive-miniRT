@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 15:56:24 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 17:35:39 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,100 @@
 #define SUCCESS	0
 #define FAIL	1
 
+
+
+
+
+
 # include <fcntl.h>
 # include "MLX42.h"
 # include "libft.h"
+# include "mini_rt.h"
 # include "object.h"
 # include "error.h"
 
 # include "rt_math_hien.h"
 
-# define WINDOW_WIDTH 800
-# define WINDOW_HEIGHT 800
+# define WINDOW_WIDTH 1920
+# define WINDOW_HEIGHT 1080
 
+// typedef struct s_vec3
+// {
+// 	float x;
+// 	float y;
+// 	float z;
+// }				t_vec3;
+
+// typedef struct s_color
+// {
+// 	float r;
+// 	float g;
+// 	float b;
+// }				t_color;
+
+typedef struct	s_ambient
+{
+	float	ratio;
+	t_color	color;
+}			t_ambient;
+
+typedef struct
+{
+	float	aspect_ratio; //
+	int32_t image_width;
+	int32_t image_height;
+	int32_t samples_per_pixel;
+	float	pixel_sample_scale;
+	int32_t max_bounce; // for mandatory 1 or 2 i guess;
+
+	float		fov;
+	t_point3	lookfrom; // @QUESTION why this and camera_center??
+	t_point3	lookat;
+	t_v3		vup;
+
+ 	float defocus_angle;  // Variation angle of rays through each pixel
+    float focus_dist;
+
+	t_v3 defocus_disk_u;
+	t_v3 defocus_disk_v;
+
+
+
+	// float focal_length;
+	float viewport_height;
+	float viewport_width;
+	t_v3 camera_center;
+
+	t_v3 viewport_u;
+	t_v3 viewport_v;
+
+	t_v3 pixel_delta_u;
+	t_v3 pixel_delta_v;
+
+	t_v3 viewport_upper_left;
+	t_v3 pixel00_loc;
+
+
+} t_camera;
+
+
+
+# define WINDOW_WIDTH 1920
+# define WINDOW_HEIGHT 1080
+
+// typedef struct s_vec3
+// {
+// 	float x;
+// 	float y;
+// 	float z;
+// }				t_vec3;
+
+// typedef struct s_color
+// {
+// 	float r;
+// 	float g;
+// 	float b;
+// }				t_color;
 
 typedef struct	s_ambient
 {
@@ -109,6 +192,7 @@ typedef struct s_mini_rt
 	t_scene			scene;
 	bool			file_has_content;
 
+	t_camera		base_cam;
 }	t_minirt;
 
 
@@ -124,8 +208,6 @@ int		parse_light(char **tokens, t_scene *scene);
 int		parse_sphere(char **tokens, t_scene *scene);
 int		parse_plane(char **tokens, t_scene *scene);
 int		parse_cyl(char **tokens, t_scene *scene);
-
-
 
 /* ===================== Parse utils ===================== */
 double	parse_float(const char *str, bool *is_valid);

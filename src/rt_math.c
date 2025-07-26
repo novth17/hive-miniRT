@@ -1,4 +1,4 @@
-#include "rt_math.h"
+#include "../inc/rt_math.h"
 
 // @TODO delete probably
 // inline
@@ -124,6 +124,18 @@ t_v3 f32_mul_v3(float a, t_v3 b)
 }
 
 inline
+t_v3 v3_mul_f32(t_v3 a, float b)
+{
+	t_v3 result;
+
+	result.x = a.x * b;
+	result.y = a.y * b;
+	result.z = a.z * b;
+	return (result);
+}
+
+
+inline
 t_v3 f32_div_v3(float a, t_v3 b)
 {
 	t_v3 result;
@@ -143,6 +155,17 @@ t_v3 v3_div_f32(t_v3 a, float b)
 	result.y = a.y / b;
 	result.z = a.z / b;
 	return (result);
+}
+
+inline
+float sign(float value)
+{
+	if (value < 0.0)
+		return (-1.0f);
+	else if (value > 0.0)
+		return (1.0f);
+	else
+		return (0.0f);
 }
 
 inline

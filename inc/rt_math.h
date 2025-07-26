@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 16:14:19 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/24 19:17:41 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/07/23 00:28:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,12 @@
 # include <stdint.h>
 # include <float.h>
 // # include <math.h> // @TODO watch out for this
+
+typedef struct u_cordinate
+{
+	uint32_t x;
+	uint32_t y;
+} t_cord;
 
 typedef union u_vec2
 {
@@ -57,7 +63,9 @@ typedef union u_vec3
 	float	elements[3];
 }	t_v3;
 
+typedef t_v3	t_vec3;
 typedef t_v3	t_point3;
+typedef t_v3	t_color;
 
 typedef union u_vec4
 {
@@ -111,6 +119,7 @@ t_v3		v3_sub_v3(t_v3 a, t_v3 b); // vec3 a - vec3 b
 # define V3_SUB v3_sub_v3
 
 t_v3		v3_mul_v3(t_v3 a, t_v3 b); // vec3 a * vec3 b
+t_v3		v3_mul_f32(t_v3 a, float b);
 t_v3		f32_mul_v3(float a, t_v3 b); // float a * vec3 b;
 
 t_v3		f32_div_v3(float a, t_v3 b);
@@ -141,6 +150,9 @@ float		length(t_v3 a);
 t_v3		unit_vector(t_v3 a);
 t_v3		normalize(t_v3 a);
 t_v3		noz(t_v3 a);
+
+float		sign(float value);
+t_v3		neg(t_v3 a);
 
 t_v3		hadamard(t_v3 a, t_v3 b); // hadamard attennuation
 
