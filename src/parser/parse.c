@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 15:00:59 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:08:08 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	parse_file(t_minirt *minirt, char *filename)
 	line = NULL;
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
-		exit_error(minirt, "Error\nNo such file exists!");
+		exit_error(minirt, ERROR_NOT_EXIST);
 	while ((line = get_next_line(fd)))
 	{
 		if (!is_only_whitespace(line))
@@ -43,7 +43,7 @@ int	parse_file(t_minirt *minirt, char *filename)
 	}
 	close(fd);
 	if (!minirt->file_has_content)
-		exit_error(minirt, "Error\nFile is empty!");
+		exit_error(minirt, ERROR_EMPTY);
 	return (SUCCESS);
 }
 
