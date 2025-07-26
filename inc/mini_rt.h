@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 00:22:41 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 14:59:46 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ typedef struct s_mini_rt
 	mlx_image_t		*image;
 
 	t_scene			scene;
-	char			**tokens;
+	bool			file_has_content;
 
 }	t_minirt;
 
@@ -130,7 +130,7 @@ int		parse_cyl(char **tokens, t_scene *scene);
 double	parse_float(const char *str, bool *is_valid);
 t_color	parse_color(char *str, bool *is_valid);
 t_vec3	parse_vec3(char *str, bool *is_valid);
-bool	is_normalized_vec3(t_vec3 vector);
+bool	is_in_range_vec3(t_vec3 vector);
 bool	check_comma_and_move(char **str, bool *is_valid);
 
 /* ===================== FILL ARRAY ===================== */

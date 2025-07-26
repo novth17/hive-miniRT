@@ -12,6 +12,7 @@ SOURCES = src/ft_is/ft_isalnum.c \
           src/ft_is/ft_isdigit.c \
           src/ft_is/ft_isprint.c \
 		  src/ft_is/ft_isspace.c \
+		  src/ft_is/ft_is_only_whitespace.c \
           src/ft_lst/ft_lstadd_back_bonus.c \
           src/ft_lst/ft_lstadd_front_bonus.c \
           src/ft_lst/ft_lstclear_bonus.c \

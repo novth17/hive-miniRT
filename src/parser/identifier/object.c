@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 22:15:36 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 20:08:01 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 14:40:38 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ int parse_plane(char **tokens, t_scene *scene)
 	object->pl.axis = parse_vec3(tokens[2], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Plane: axis: "ERROR_COORD, tokens[2]));
-	if (!is_normalized_vec3(object->pl.axis))
-		return (print_error("Plane: axis: "ERROR_NORM, tokens[2]));
+	if (!is_in_range_vec3(object->pl.axis))
+		return (print_error("Plane: axis: "ERROR_IN_RANGE, tokens[2]));
 	object->pl.color = parse_color(tokens[3], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Plane: "ERROR_COLOR, tokens[3]));
@@ -88,8 +88,8 @@ int parse_cyl(char **tokens, t_scene *scene)
 	object->cyl.axis = parse_vec3(tokens[2], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Cylinder: axis: "ERROR_COORD, tokens[2]));
-	if (!is_normalized_vec3(object->cyl.axis))
-		return (print_error("Cylinder: axis: "ERROR_NORM, tokens[2]));
+	if (!is_in_range_vec3(object->cyl.axis))
+		return (print_error("Cylinder: axis: "ERROR_IN_RANGE, tokens[2]));
 	object->cyl.diameter = parse_float(tokens[3], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Cylinder: diameter: "ERROR_FLOAT, tokens[3]));

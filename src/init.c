@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 20:02:04 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 00:23:46 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:05:13 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,19 +43,13 @@ int	init_minirt(t_minirt *minirt, char **argv)
 	ft_bzero(minirt, sizeof(t_minirt));
 
 	minirt->scene.is_valid = true;
+	minirt->file_has_content = false;
 
 	if (parse_file(minirt, argv[1]) == FAIL)
-	{
-		ft_dprintf(2, "Parsing failed");
-		return (FAIL);
-	}
+		return (print_error("Parsing failed", NULL));
 
 	if (fill_obj_arr(minirt, &minirt->scene) == FAIL)
-	{
-		ft_dprintf(2, "Parsing failed");
-		return (FAIL);
-	}
-
+		return (print_error("Filling object array failed", NULL));
 
 	if (setup_mlx(minirt) == FAIL)
 	{
