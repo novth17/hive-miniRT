@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 20:02:04 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 16:51:23 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:58:34 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	init_minirt(t_minirt *minirt, char **argv)
 		return (print_error("Filling object array failed", NULL));
 
 
-
+	#include <stdio.h>
 	for (uint32_t i = 0; i < minirt->scene.spheres_count; i++)
 	{
 		t_sphere *s = &minirt->scene.spheres[i];
