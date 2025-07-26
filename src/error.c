@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 15:26:29 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 22:22:53 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:07:34 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	exit_error(t_minirt *minirt,  char *msg)
 {
-	ft_dprintf(2, "%s\n", msg);
+	ft_dprintf(2, RED"Error\n%s\n", msg);
 	delete_minirt(minirt);
 	exit(FAIL);
 }
