@@ -16,6 +16,9 @@
 # define WINDOW_HEIGHT 1080
 
 
+#define MIN_HIT_DIST 0.001f
+#define MAX_HIT_DIST FLT_MAX // for now
+
 typedef struct
 {
 	float	aspect_ratio; //
@@ -56,36 +59,12 @@ typedef struct
 } t_camera;
 
 
-
-# define WINDOW_WIDTH 1920
-# define WINDOW_HEIGHT 1080
-
-// typedef struct s_vec3
-// {
-// 	float x;
-// 	float y;
-// 	float z;
-// }				t_vec3;
-
-// typedef struct s_color
-// {
-// 	float r;
-// 	float g;
-// 	float b;
-// }				t_color;
-
 typedef struct	s_ambient
 {
 	float	ratio;
 	t_color	color;
 }			t_ambient;
 
-// typedef struct	s_camera
-// {
-// 	t_vec3	origin;
-// 	t_vec3	direction;  //must be normalized (range [-1,1])
-// 	float	fov; //Horizontal field of view in degrees in range [0,180]:
-// }	t_camera;
 
 typedef struct	s_light
 {
@@ -116,6 +95,17 @@ typedef struct s_scene
 
 
 }	t_scene;
+
+
+typedef struct s_hit_record
+{
+	t_v3 position; // p
+	t_v3 normal;
+	float distance; // t
+	bool front_face; // maybe not needed;
+	t_v3 color;
+	bool did_hit; // can be removed later
+} t_hit;
 
 typedef struct s_mini_rt
 {
@@ -151,9 +141,20 @@ bool	check_comma_and_move(char **str, bool *is_valid);
 bool	is_normalized(t_vec3 vec3);
 
 /* ===================== FILL ARRAY ===================== */
-
 int fill_obj_arr(t_minirt *minirt, t_scene *scene);
+
+/* ===================== FOR CONTROL ===================== */
+
+void key_hook(struct mlx_key_data data, void * param);
+void scroll_hook(double delta_x, double delta_y, void *param);
+
 /* ===================== FOR DRAW ===================== */
+bool init_camera_for_frame(t_minirt *minirt, t_camera *cam);
+void base_init_cam(t_minirt *minirt, t_camera *cam);
+
+void per_frame(void * param);
+
+
 
 /* ===================== FOR ERROR ===================== */
 int		check_id_args_count(char **tokens, const char *id, int expected);

@@ -24,6 +24,8 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/init.c \
 				$(SRC_DIR)/error.c \
 				$(SRC_DIR)/delete.c \
+        		$(SRC_DIR)/camera.c \
+				$(SRC_DIR)/render.c \
 				$(SRC_DIR)/parser/parse.c \
 				$(SRC_DIR)/parser/validate.c \
 				$(SRC_DIR)/parser/fill_arr.c \
@@ -33,7 +35,8 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/identifier/element.c \
 				$(SRC_DIR)/parser/identifier/object.c \
 				$(SRC_DIR)/math/rt_math.c \
-        		$(SRC_DIR)/camera.c
+				$(SRC_DIR)/math/random.c \
+				$(SRC_DIR)/control/hook.c
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 

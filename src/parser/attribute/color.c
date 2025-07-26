@@ -1,6 +1,6 @@
 #include "mini_rt.h"
 
-static int parse_rgb_comp(char **str, bool *is_valid_comp)
+static float parse_rgb_comp(char **str, bool *is_valid_comp)
 {
 	long	num;
 	int		i;
@@ -25,7 +25,7 @@ static int parse_rgb_comp(char **str, bool *is_valid_comp)
 		return (0);
 	}
 	*str += i;
-	return ((int)num);
+	return ((float)num / 255);
 }
 
 t_color parse_color(char *str, bool *is_valid)
