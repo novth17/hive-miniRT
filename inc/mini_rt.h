@@ -209,8 +209,6 @@ int		parse_sphere(char **tokens, t_scene *scene);
 int		parse_plane(char **tokens, t_scene *scene);
 int		parse_cyl(char **tokens, t_scene *scene);
 
-
-
 /* ===================== Parse utils ===================== */
 double	parse_float(const char *str, bool *is_valid);
 t_color	parse_color(char *str, bool *is_valid);

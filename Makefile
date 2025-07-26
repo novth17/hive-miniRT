@@ -2,7 +2,9 @@ NAME		= mini_rt
 
 CC			= cc
 INCLUDE		:= -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
+
 CFLAGS		= $(INCLUDE) -Wall -Wextra -O3 -flto -march=native #-Werror
+
 
 LIBFT_DIR := libs/libft
 LIBFT := $(LIBFT_DIR)/libft.a
@@ -23,8 +25,6 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/error.c \
 				$(SRC_DIR)/delete.c \
 				$(SRC_DIR)/parser/parse.c \
-				$(SRC_DIR)/rt_math.c \
-				$(SRC_DIR)/camera.c \
 				$(SRC_DIR)/parser/validate.c \
 				$(SRC_DIR)/parser/fill_arr.c \
 				$(SRC_DIR)/parser/attribute/color.c \
@@ -32,7 +32,8 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/attribute/vector.c \
 				$(SRC_DIR)/parser/identifier/element.c \
 				$(SRC_DIR)/parser/identifier/object.c \
-				$(SRC_DIR)/math/rt_math.c
+				$(SRC_DIR)/math/rt_math.c \
+        $(SRC_DIR)/camera.c
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 
