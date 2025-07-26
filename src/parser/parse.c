@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 16:08:08 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:12:44 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ static int	parse_elements(char **tokens, t_minirt *minirt)
 	else if (ft_strcmp(tokens[0], "cy") == 0)
 		return parse_cyl(tokens, &minirt->scene);
 	print_error(UNK_ELEMENT, tokens[0]);
-
-	return FAIL;
+	return (FAIL);
 }
 
