@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 21:57:32 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 16:08:37 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:09:19 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,5 @@
 #define	ERROR_NOT_EXIST	RED "No such file exists" RESET
 #define ERROR_MALLOC	RED "Malloc failed" RESET
 #define	UNK_ELEMENT		RED "Unknown element of element id:" RESET
-
-
-
 
 #endif

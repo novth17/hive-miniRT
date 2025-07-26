@@ -6,12 +6,11 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 17:07:08 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 15:57:42 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:13:29 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt.h"
-
 
 static uint32_t	calc_v3_len(t_vec3 vec3)
 {
