@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parse.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 17:00:09 by hiennguy         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 # include "mini_rt.h"
 
 //valgrind --leak-check=full --show-leak-kinds=all  --suppressions=mlx42.supp ./mini_rt test_scene.rt
