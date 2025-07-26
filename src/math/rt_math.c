@@ -8,6 +8,15 @@
 // 	return (result);
 // }
 
+inline // @TODO move this
+t_v3 at(const t_ray r, const float t)
+{
+	t_v3 result;
+
+	result = V3_ADD(r.origin, f32_mul_v3(t, r.direction));
+	return (result);
+}
+
 inline
 float square(float a)
 {
@@ -421,5 +430,41 @@ t_v3 hadamard(t_v3 a, t_v3 b)
 	t_v3 result;
 
 	result = (t_v3){a.x*b.x, a.y*b.y, a.z*b.z};
+	return (result);
+}
+
+
+inline
+float clamp(const float f, const float min, const float max)
+{
+	if (f < min)
+		return (min);
+	else if (f > max)
+		return (max);
+	else
+		return (f);
+}
+
+inline
+t_v3 v3_clamp(const t_v3 a)
+{
+	t_v3 result;
+
+	result.x = clamp(a.x, 0, 1);
+	result.y = clamp(a.y, 0, 1);
+	result.z = clamp(a.z, 0, 1);
+	return (result);
+}
+
+inline
+uint32_t rgb_pack4x8(t_v3 unpacked)
+{
+	uint32_t result;
+
+
+	result = ((uint32_t)(0xFF) << 24)					|
+			((uint32_t)((unpacked.b) * 255.0f) << 16)	|
+			((uint32_t)((unpacked.g) * 255.0f) << 8)	|
+			((uint32_t)((unpacked.r) * 255.0f) << 0);
 	return (result);
 }

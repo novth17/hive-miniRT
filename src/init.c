@@ -1,7 +1,4 @@
 # include "mini_rt.h"
-#include <stdio.h>
-
-
 
 static int	setup_mlx(t_minirt *minirt)
 {
@@ -25,7 +22,10 @@ static int	setup_mlx(t_minirt *minirt)
 		return (FAIL);
 	}
 	mlx_set_setting(MLX_STRETCH_IMAGE, false);
-	mlx_set_window_size(minirt->mlx, 1024, 1024);
+		// mlx_resize_hook(minirt->mlx, &on_resize, minirt);
+	mlx_key_hook(minirt->mlx, &key_hook, minirt);
+	mlx_scroll_hook(minirt->mlx, &scroll_hook, minirt);
+	mlx_loop_hook(minirt->mlx, &per_frame, minirt);
 	return (SUCCESS);
 }
 
