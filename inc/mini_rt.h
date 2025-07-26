@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_rt.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 21:46:57 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/25 00:25:09 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,11 @@ typedef struct
 
  	float defocus_angle;  // Variation angle of rays through each pixel
     float focus_dist;
+
+	t_v3 defocus_disk_u;
+	t_v3 defocus_disk_v;
+
+
 
 	// float focal_length;
 	float viewport_height;
