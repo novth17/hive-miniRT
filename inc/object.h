@@ -6,15 +6,16 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 14:51:03 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/22 17:47:41 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:55:57 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # ifndef OBJECT_H
 # define OBJECT_H
 
-# include "mini_rt.h"
+#include "types.h"
 
+//# include "rt_math_hien.h"
 typedef enum e_obj_type
 {
 	SPHERE,
@@ -23,11 +24,13 @@ typedef enum e_obj_type
 	// later: TRIANGLE, CAT UIIA, etc.
 }				t_obj_type;
 
-typedef struct s_object
+typedef struct
 {
-	t_obj_type	type; // type of the shape
-	void		*data;  // pointer to t_sphere, t_plane, etc.
-}				t_object;
+	t_color color;
+	float diffuse;
+	float specular;
+	float emitter;
+} t_material;
 
 typedef struct s_sphere
 {
@@ -39,17 +42,32 @@ typedef struct s_sphere
 typedef struct s_plane
 {
 	t_vec3	point;
-	t_vec3	norm_axis;
+	t_vec3	axis;
 	t_color	color; //0-255
 }				t_plane;
 
 typedef struct s_cylinder
 {
 	t_vec3	center;
-	t_vec3	norm_axis;
+	t_vec3	axis;
 	float	diameter;
 	float	height;
 	t_color	color;//0-255
 }				t_cylinder;
+
+typedef struct s_object
+{
+	t_obj_type	type; // type of the shape
+	union {
+
+		t_sphere	sphere;
+		t_cylinder	cyl;
+		t_plane		pl;
+	};
+	struct s_object	*next;
+}				t_object;
+
+
+
 
 #endif

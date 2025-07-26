@@ -60,3 +60,4 @@ libs/MLX42
 .DS_Store
 *.swp
 
+src/parser/draft.c

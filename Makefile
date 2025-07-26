@@ -2,7 +2,7 @@ NAME		= mini_rt
 
 CC			= cc
 INCLUDE		:= -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
-CFLAGS		= $(INCLUDE) -Wall -Wextra #-Werror
+CFLAGS		= $(INCLUDE) -Wall -Wextra -g #-Werror
 
 LIBFT_DIR := libs/libft
 LIBFT := $(LIBFT_DIR)/libft.a
@@ -13,20 +13,25 @@ MLX42 := $(MLX42_DIR)/build/libmlx42.a
 OBJ_DIR		= obj/
 SRC_DIR		= src
 
-HEADERS		= inc/mini_rt.h
+HEADERS		= 	inc/error.h \
+				inc/mini_rt.h \
+				inc/object.h \
+				inc/rt_math_hien.h
 
 SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/init.c \
-				$(SRC_DIR)/delete.c \
 				$(SRC_DIR)/error.c \
-				$(SRC_DIR)/parser/color.c \
-				$(SRC_DIR)/parser/element.c \
-				$(SRC_DIR)/parser/object.c \
-				$(SRC_DIR)/parser/parse_float.c \
+				$(SRC_DIR)/delete.c \
 				$(SRC_DIR)/parser/parse.c \
 				$(SRC_DIR)/parser/validate.c \
-				$(SRC_DIR)/parser/vector.c
-				
+				$(SRC_DIR)/parser/fill_arr.c \
+				$(SRC_DIR)/parser/attribute/color.c \
+				$(SRC_DIR)/parser/attribute/float.c \
+				$(SRC_DIR)/parser/attribute/vector.c \
+				$(SRC_DIR)/parser/identifier/element.c \
+				$(SRC_DIR)/parser/identifier/object.c \
+				$(SRC_DIR)/math/rt_math.c
+
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 
 all: $(NAME)

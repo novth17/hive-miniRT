@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:47:29 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 20:27:03 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:26:38 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,17 +48,17 @@ t_color parse_color(char *str, bool *is_valid)
 
 	color.r = parse_rgb_comp(&str, is_valid);
 	if (!check_comma_and_move(&str, is_valid))
-		return ((t_color){0, 0, 0});
+		return ((t_color){});
 
 	color.g = parse_rgb_comp(&str, is_valid);
 	if (!check_comma_and_move(&str, is_valid))
-		return ((t_color){0, 0, 0});
+		return ((t_color){});
 
 	color.b = parse_rgb_comp(&str, is_valid);
 	if (!*is_valid || (*str != '\0' && !ft_isspace(*str)))
 	{
 		*is_valid = false;
-		return ((t_color){0, 0, 0});
+		return ((t_color){});
 	}
 	return color;
 }
