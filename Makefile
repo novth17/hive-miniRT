@@ -29,7 +29,8 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/attribute/float.c \
 				$(SRC_DIR)/parser/attribute/vector.c \
 				$(SRC_DIR)/parser/identifier/element.c \
-				$(SRC_DIR)/parser/identifier/object.c
+				$(SRC_DIR)/parser/identifier/object.c \
+				$(SRC_DIR)/math/rt_math.c
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 

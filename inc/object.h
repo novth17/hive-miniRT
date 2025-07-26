@@ -6,15 +6,16 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 14:51:03 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/24 20:42:03 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:55:57 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # ifndef OBJECT_H
 # define OBJECT_H
 
-# include "mini_rt.h"
-# include "rt_math_hien.h"
+#include "types.h"
+
+//# include "rt_math_hien.h"
 typedef enum e_obj_type
 {
 	SPHERE,
