@@ -459,7 +459,7 @@ t_v3 trace(t_ray ray, const t_spheres *spheres, uint32_t *seed) // change to all
 	t_sphere point_ligth_spehre = {.color = v3(20, 20, 20), .position = point_ligth_loc, .radius = 0.05f};
 	t_spheres point_ligth_visualization = {.count = 1, .arr = &point_ligth_spehre};
 
-	t_new_light p_light = {point_ligth_loc, point_light_color};
+	// t_new_light p_light = {point_ligth_loc, point_light_color};
 	// bounces mby here at some point
 	t_hit rec;
 	//check_planes(&rec, planes, ray);

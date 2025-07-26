@@ -63,7 +63,9 @@ typedef union u_vec3
 	float	elements[3];
 }	t_v3;
 
+typedef t_v3	t_vec3;
 typedef t_v3	t_point3;
+typedef t_v3	t_color;
 
 typedef union u_vec4
 {

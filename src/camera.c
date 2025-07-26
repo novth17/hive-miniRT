@@ -3,36 +3,6 @@
 #include <stdint.h>
 #include <math.h> // check
 
-// typedef struct
-// {
-// 	float	aspect_ratio; //
-// 	int32_t image_width;
-// 	int32_t image_height;
-// 	int32_t samples_per_pixel;
-// 	int32_t max_bounce; // for mandatory 1 or 2 i guess;
-
-// 	float		fov;
-// 	t_point3 origin;
-// 	t_point3 direction;
-// 	t_v3	 vup;
-
-// 	float focal_length;
-// 	float viewport_height;
-// 	float viewport_width;
-// 	t_v3 camera_center;
-
-// 	t_v3 viewport_u;
-// 	t_v3 viewport_v;
-
-// 	t_v3 pixel_delta_u;
-// 	t_v3 pixel_delta_v;
-
-// 	t_v3 viewport_upper_left;
-// 	t_v3 pixel00_loc;
-
-
-// } t_camera;
-
 static inline
 t_v3	viewport_top_left(const t_camera *cam, const t_v3 w)
 {
@@ -59,7 +29,7 @@ void base_init_cam(t_minirt *minirt, t_camera *cam)
 {
 	ft_memset(cam, 0, sizeof(*cam));
 
-	cam->samples_per_pixel = 8;
+	cam->samples_per_pixel = 1;
 	cam->max_bounce = 1;
 
 	cam->fov = 90.0f;

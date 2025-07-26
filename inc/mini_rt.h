@@ -75,19 +75,19 @@ typedef struct
 # define WINDOW_WIDTH 1920
 # define WINDOW_HEIGHT 1080
 
-typedef struct s_vec3
-{
-	float x;
-	float y;
-	float z;
-}				t_vec3;
+// typedef struct s_vec3
+// {
+// 	float x;
+// 	float y;
+// 	float z;
+// }				t_vec3;
 
-typedef struct s_color
-{
-	float r;
-	float g;
-	float b;
-}				t_color;
+// typedef struct s_color
+// {
+// 	float r;
+// 	float g;
+// 	float b;
+// }				t_color;
 
 typedef struct	s_ambient
 {
