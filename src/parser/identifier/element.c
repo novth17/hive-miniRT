@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 16:30:30 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 15:26:34 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:17:51 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int parse_camera(char **tokens, t_scene *scene)
 	if (!scene->is_valid)
 		return (print_error("Camera: FOV: "ERROR_FLOAT, tokens[3]));
 	if (scene->camera.fov < 0 || scene->camera.fov > 180)
-		return (print_error("Camera: FOV must be in range [0,180]", tokens[3]));
+		return (print_error("Camera: "ERROR_FOV_IN_RANGE, tokens[3]));
 
 	return (SUCCESS);
 }
