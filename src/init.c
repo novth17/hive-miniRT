@@ -1,4 +1,7 @@
 # include "mini_rt.h"
+#include <stdio.h>
+
+
 
 static int	setup_mlx(t_minirt *minirt)
 {
@@ -42,14 +45,13 @@ int	init_minirt(t_minirt *minirt, char **argv)
 	if (fill_obj_arr(minirt, &minirt->scene) == FAIL)
 		return (print_error("Filling object array failed", NULL));
 
-	#include <stdio.h>
 	for (uint32_t i = 0; i < minirt->scene.spheres_count; i++)
 	{
 		t_sphere *s = &minirt->scene.spheres[i];
 		printf("DEBUG: sphere[%u]: center=(%.2f, %.2f, %.2f), diameter=%.2f, color=(%2f, %2f, %2f)\n",
 			i,
 			s->center.x, s->center.y, s->center.z,
-			s->diameter,
+			s->radius,
 			s->color.r, s->color.g, s->color.b
 		);
 	}
@@ -84,6 +86,3 @@ int	init_minirt(t_minirt *minirt, char **argv)
 	}
 	return (SUCCESS);
 }
-
-
-

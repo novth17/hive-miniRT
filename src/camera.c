@@ -27,14 +27,14 @@ t_v3	pixel00_location(const t_v3 viewport_upper_left, const t_v3 pixel_delta_u, 
 
 void base_init_cam(t_minirt *minirt, t_camera *cam)
 {
-	ft_memset(cam, 0, sizeof(*cam));
+	// ft_memset(cam, 0, sizeof(*cam));
 
 	cam->samples_per_pixel = 1;
 	cam->max_bounce = 1;
 
-	cam->fov = 90.0f;
-	cam->lookfrom = v3(0, 0, 0);
-	cam->lookat = v3(0, 0, -1);
+	// cam->fov = 90.0f;
+	// cam->lookfrom = v3(0, 0, 0);
+	// cam->lookat = v3(0, 0, -1);
 	cam->vup = v3(0, 1, 0); // might not need this in camera
 
 	cam->defocus_angle = 2;

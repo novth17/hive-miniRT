@@ -18,7 +18,7 @@ SRC_DIR		= src
 HEADERS		= 	inc/error.h \
 				inc/mini_rt.h \
 				inc/object.h \
-				inc/rt_math_hien.h
+				inc/rt_math.h
 
 SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/init.c \
@@ -33,7 +33,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/identifier/element.c \
 				$(SRC_DIR)/parser/identifier/object.c \
 				$(SRC_DIR)/math/rt_math.c \
-        $(SRC_DIR)/camera.c
+        		$(SRC_DIR)/camera.c
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 

@@ -23,7 +23,7 @@ typedef struct
 typedef struct s_sphere
 {
 	t_vec3	center;
-	float	diameter;
+	float	radius;
 	t_color	color; //0-255
 }				t_sphere;
 

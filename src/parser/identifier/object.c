@@ -29,7 +29,7 @@ int parse_sphere(char **tokens, t_scene *scene)
 	object->sphere.center = parse_vec3(tokens[1], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Sphere: center: "ERROR_COORD, tokens[1]));
-	object->sphere.diameter = parse_float(tokens[2], &scene->is_valid);
+	object->sphere.radius = parse_float(tokens[2], &scene->is_valid) / 2;
 	if (!scene->is_valid)
 		return (print_error("Sphere: diameter: "ERROR_FLOAT, tokens[2]));
 	object->sphere.color = parse_color(tokens[3], &scene->is_valid);
