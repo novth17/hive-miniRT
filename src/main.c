@@ -1,76 +1,11 @@
 #include "../inc/mini_rt.h"
 #include "../inc/rt_math.h"
 #include "../test_stuff/MLX42.h"
+#include "../inc/object.h"
 
 static bool g_recalculate_cam = true;
 static uint32_t g_accummulated_frames = 0;
 
-
-// #include "../test_stuff/rt_math.c"
-
-// static void	render(t_minirt *minirt)
-// {
-// float	aspect_ratio = WINDOW_WIDTH / WINDOW_HEIGHT;
-// 	int32_t image_width = WINDOW_WIDTH;
-// 	int32_t image_height = (int32_t)(image_width / aspect_ratio);
-// 	if (image_height < 1)
-// 		image_height = 1;
-
-// 	float focal_length = 1.0f;
-// 	float viewport_height = 2.0f;
-// 	float viewport_width = viewport_height * (float)(image_width) / image_height;
-// 	t_v3 camera_center = v3(0, 0, 0);
-
-// 	t_v3 viewport_u = v3(viewport_width, 0, 0);
-// 	t_v3 viewport_v = v3(0, -viewport_height, 0);
-
-// 	t_v3 pixel_delta_u = v3_div_f32(viewport_u, (float)image_width);
-// 	t_v3 pixel_delta_v = v3_div_f32(viewport_v, (float)image_height);
-
-// 	t_v3 viewport_upper_left = v3_sub_v3(camera_center, (v3_sub_v3(v3_sub_v3(v3(0, 0, focal_length), v3_div_f32(viewport_u, 2.0f)), v3_div_f32(viewport_v, 2.0f))));
-// 	t_v3 pixel00_location = v3_add_v3(viewport_upper_left, f32_mul_v3(0.5f, (v3_add_v3(pixel_delta_u, pixel_delta_v))));
-
-
-
-// 	t_v3 position = {.x = 0, .y = 0, .z = -1.0f};
-// 	float radius = 0.5f;
-
-// 	// t_v3 ray_origin = {.x = 0, .y = 0, .z = 0};
-// 	// t_v3 ray_direction;
-
-// 	uint32_t x;
-// 	uint32_t y;
-// 	y = 0;
-// 	while (y < minirt->image->height)
-// 	{
-// 		x = 0;
-// 		while (x < minirt->image->width)
-// 		{
-// 			t_v3 pixel_center = v3_add_v3(v3_add_v3(pixel00_location, f32_mul_v3((float)y, pixel_delta_u)),  f32_mul_v3((float)x, pixel_delta_v));
-// 			t_v3 ray_direction = v3_sub_v3(pixel_center, camera_center);
-// 			t_v3 ray_origin = camera_center;
-// 			t_v3 oc = v3_sub_v3(position, ray_origin);
-// 			// bool hit = 0;
-// 			float a = dot(ray_direction, ray_direction);
-// 			float b = -2.0f * dot(ray_direction, oc);
-// 			float c = dot(oc, oc) - radius*radius;
-// 			float discrimanant = b*b - 4*a*c;
-// 			printf("a:%f b: %f c: %f d:%f\n", a,b,c,
-// 				 discrimanant);
-// 			if (discrimanant >= 0)
-// 			{
-// 				// uint32_t color = rgba_pack();
-// 				mlx_put_pixel(minirt->image, x, y, 0x770000FF);
-// 			}
-// 			else
-// 				mlx_put_pixel(minirt->image, x, y, 0xFFFFFFFF + (uint32_t)discrimanant);
-// 			++x;
-// 		}
-// 		++y;
-// 	}
-// }
-//
-// #include "camera.c"
 
 #include <float.h>
 #include <stdint.h>
@@ -110,12 +45,12 @@ typedef struct
 // static inline
 // t_ray init_ray(t_camera *cam, int32_t x, int32_t y);
 
-typedef struct
-{
-	t_v3	position;
-	float	radius;
-	t_v3 	color;
-} t_sphere;
+// typedef struct
+// {
+// 	t_v3	position;
+// 	float	radius;
+// 	t_v3 	color;
+// } t_sphere;
 
 typedef struct
 {
@@ -174,7 +109,7 @@ t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float r
 	rec.did_hit = true;
 	rec.distance = root;
 	rec.position = at(ray, rec.distance);
-	rec.normal = v3_div_f32(V3_SUB(rec.position, sp.position), sp.radius);
+	rec.normal = v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius);
 	rec.color = sp.color;
 	rec.front_face = dot(ray.direction, rec.normal) < 0;
 	if (rec.front_face == false)
@@ -187,7 +122,7 @@ t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float r
 static inline
 bool sphere_hit(t_hit *rec, const t_sphere sp, const t_ray ray)
 {
-	const t_v3 oc = v3_sub_v3(sp.position, ray.origin);
+	const t_v3 oc = v3_sub_v3(sp.center, ray.origin);
 	const t_v3 v = {
 			.A = dot(ray.direction, ray.direction), 	// const float a = dot(ray.direction, ray.direction);
 			.H = dot(ray.direction, oc), 				// const float h = dot(ray.direction, oc);
@@ -229,7 +164,7 @@ static int hit = 0;
 static int miss = 0;
 
 static inline
-bool check_spheres(t_hit *rec, const t_spheres *spheres, const t_ray ray)
+bool check_spheres(t_hit *rec, const t_sphere *spheres, const uint32_t count, const t_ray ray)
 {
 	t_hit temp_rec;
 	uint32_t i;
@@ -237,9 +172,9 @@ bool check_spheres(t_hit *rec, const t_spheres *spheres, const t_ray ray)
 	temp_rec = (t_hit){};
 	temp_rec.distance = MAX_HIT_DIST;
 	i = 0;
-	while (i < spheres->count)
+	while (i < count)
 	{
-		if(sphere_hit(&temp_rec, spheres->arr[i], ray))
+		if(sphere_hit(&temp_rec, spheres[i], ray))
 		{
 			hit++;
 			if (temp_rec.distance < rec->distance)
@@ -418,16 +353,16 @@ typedef struct main
 
 
 static inline
-bool shadow_hit(t_ray ray, const t_spheres *spheres) // change to all objects or scene;
+bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects or scene;
 {
 	t_hit temp_rec;
 	uint32_t i;
 
 	temp_rec.distance = FLT_MAX;
 	i = 0;
-	while (i < spheres->count)
+	while (i < scene->spheres_count)
 	{
-		if(sphere_hit(&temp_rec, spheres->arr[i], ray))
+		if(sphere_hit(&temp_rec, scene->spheres[i], ray))
 		{
 			return (true);
 		}
@@ -438,14 +373,14 @@ bool shadow_hit(t_ray ray, const t_spheres *spheres) // change to all objects or
 
 
 static inline
-t_v3 trace(t_ray ray, const t_spheres *spheres, uint32_t *seed) // change to all objects or scene;
+t_v3 trace(t_ray ray, const t_scene *scene, uint32_t *seed) // change to all objects or scene;
 {
 
-	t_v3 ambient = f32_mul_v3(0.7, v3(0.1f, 0.2f, 0.8f));
-	t_v3 point_ligth_loc = v3(2, 2, 2);
-	t_v3 point_light_color = f32_mul_v3(10, v3(0.9, 0.2, 0.4));
-	t_sphere point_ligth_spehre = {.color = v3(20, 20, 20), .position = point_ligth_loc, .radius = 0.05f};
-	t_spheres point_ligth_visualization = {.count = 1, .arr = &point_ligth_spehre};
+	t_v3 ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
+	// t_v3 point_ligth_loc = v3(2, 2, 2);
+	t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio, scene->light.color);
+	t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f};
+	// t_spheres point_ligth_visualization = {.count = 1, .arr = &point_ligth_spehre};
 
 	// t_new_light p_light = {point_ligth_loc, point_light_color};
 	// bounces mby here at some point
@@ -453,16 +388,16 @@ t_v3 trace(t_ray ray, const t_spheres *spheres, uint32_t *seed) // change to all
 	//check_planes(&rec, planes, ray);
 	rec = (t_hit){};
 	rec.distance = MAX_HIT_DIST;
-	check_spheres(&rec, spheres, ray);
-	check_spheres(&rec, &point_ligth_visualization, ray);
+	check_spheres(&rec, scene->spheres, scene->spheres_count, ray);
+	check_spheres(&rec, &point_light_sphere, 1, ray);
 
 	if (rec.did_hit)
 	{
-		t_v3 l =  V3_SUB(point_ligth_loc, rec.position);
+		t_v3 l =  V3_SUB(scene->light.origin, rec.position);
 		t_ray shadow_ray;
 		shadow_ray.origin = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4));
 		shadow_ray.direction = l;
-		if (shadow_hit(shadow_ray, spheres) == false)
+		if (shadow_hit(scene, shadow_ray) == false)
 		{
 			float dist = length(l);
 			l = f32_mul_v3(1.0f / dist, l);
@@ -498,104 +433,6 @@ t_v3 trace(t_ray ray, const t_spheres *spheres, uint32_t *seed) // change to all
 	return (result);
 }
 
-// this is here for now, had some ideas for bonus stuff but not relevant currently
-/*
- *
-static inline
-t_v3 trace(t_ray ray, const t_spheres *spheres, uint32_t *seed) // change to all objects or scene;
-{
-
-	t_v3 ambient = f32_mul_v3(0.1, v3(1, 1, 1));
-	t_v3 point_ligth_loc = v3(10, 10, 10);
-	t_v3 point_light_color = f32_mul_v3(1000, v3(0.9, 0.2, 0.4));
-	t_sphere point_ligth_spehre = {.color = v3(1, 1, 1), .position = point_ligth_loc, .radius = 0.05f};
-	t_spheres point_ligth_visualization = {.count = 1, .arr = &point_ligth_spehre};
-
-	// bounces mby here at some point
-	t_v3 incoming_ligth;
-	t_v3 ray_color = {1, 1, 1};
-	t_hit last_rec;
-
-	incoming_ligth = (t_v3){};
-	bool hit_something = false;
-	for (int i = 0; i < 8; ++i)
-	{
-		t_hit rec;
-		//check_planes(&rec, planes, ray);
-		rec = (t_hit){};
-		rec.distance = MAX_HIT_DIST;
-		check_spheres(&rec, spheres, ray);
-		check_spheres(&rec, &point_ligth_visualization, ray);
-		//check_cylinders(&rec, spheres, ray);
-		if (rec.did_hit == true)
-		{
-			ray.origin = rec.position;
-			ray.direction = normalize(V3_ADD(rec.normal, random_direction(seed)));
-			hit_something = true;
-			last_rec = rec;
-
-			t_v3 emmittedLight = v3(0.1f, 0.1f, 0.1f);
-			incoming_ligth = V3_ADD(incoming_ligth, v3_mul_v3(emmittedLight, ray_color));
-			ray_color = v3_mul_v3(ray_color, rec.color);
-			// t_v3 l =  V3_SUB(point_ligth_loc, rec.position);
-			// float dist = length(l);
-			// l = f32_mul_v3(1.0f / dist, l);
-			// // float light_angle = clamp(dot(rec.normal, l), 0.0f, FLT_MAX);
-			// float light_angle = smoothstep(dot(rec.normal, l), 0.0f, 4.0f);
-			// // float light_angle = dot(rec.normal, l);
-
-			// t_v3 color = f32_mul_v3(light_angle, point_light_color);
-			// color = f32_mul_v3(1.0f / (dist * dist), color);
-			// color = V3_ADD(ambient, color);
-			// // color = v3_mul_v3(f32_mul_v3(0.5, V3_ADD(rec.normal, v3(1, 1, 1))), color); // reflectivity of material * color calc
-			// color = v3_mul_v3(rec.color, color);
-
-		}
-		else
-		{
-			incoming_ligth = V3_ADD(incoming_ligth, v3_mul_v3(ambient, v3(1, 1, 1)));
-			break ;
-		}
-	}
-	if (hit_something)
-	{
-		t_v3 l =  V3_SUB(point_ligth_loc, last_rec.position);
-		float dist = length(l);
-		l = f32_mul_v3(1.0f / dist, l);
-		// float light_angle = clamp(dot(rec.normal, l), 0.0f, FLT_MAX);
-		float light_angle = smoothstep(dot(last_rec.normal, l), 0.0f, 4.0f);
-		// float light_angle = dot(rec.normal, l);
-
-		t_v3 color = f32_mul_v3(light_angle, point_light_color);
-		color = f32_mul_v3(1.0f / (dist * dist), color);
-		color = V3_ADD(ambient, color);
-		// color = v3_mul_v3(f32_mul_v3(0.5, V3_ADD(rec.normal, v3(1, 1, 1))), color); // reflectivity of material * color calc
-		color = v3_mul_v3(last_rec.color, color);
-		incoming_ligth = V3_ADD(incoming_ligth, color);
-	}
-	else
-	{
-		incoming_ligth = V3_ADD(incoming_ligth, v3_mul_v3(ambient, v3(1, 1, 1)));
-	}
-		// return (v3(.1,.1,.1));
-
-	// t_v3 hit_color = v3_mul_v3(ambient, ray_color(ray, &spheres));
-	// hit_color = V3_ADD(hit_color, light_intercetion())
-
-
-
-	// not hit = background color
-	// t_v3 unit_direction = unit_vector(ray.direction);
-	// float a = 0.5 * (unit_direction.y + 1.0f);
-
-	// t_v3 result;
-	// result = f32_mul_v3(1.0 - a, v3(1.0, 1.0, 1.0));
-	// result = v3_add_v3(result, f32_mul_v3(a, v3(0.5, 0.7, 1.0)));
-	// incoming_ligth = result; // for now
-	return (incoming_ligth);
-}
- */
-
 
 void base_init_cam(t_minirt *minirt, t_camera *cam);
 
@@ -629,37 +466,6 @@ uint32_t rgb_pack4x8(t_v3 unpacked)
 			((uint32_t)((unpacked.r) * 255.0f) << 0);
 	return (result);
 }
-
-// void trace(t_scene *scene, const t_camera * restrict cam, uint32_t *pixels)
-// void trace(t_spheres *spheres, const t_camera * restrict cam, uint32_t *pixels)
-// {
-// 	uint32_t y;
-// 	uint32_t x;
-// 	uint32_t sample;
-// 	t_v3	color;
-
-// 	y = 0;
-// 	while (y < cam->image_height)
-// 	{
-// 		x = 0;
-// 		while (x < cam->image_width)
-// 		{
-// 			sample = 0;
-// 			while (sample < cam->samples_per_pixel)
-// 			{
-// 				color = ray_color(ray, const t_spheres *spheres)
-// 				++sample;
-// 			}
-// 			*pixels++ = rgb_pack4x8(color);
-// 			// mlx_put_pixel(minirt->image, x, y, uint32_t color)
-// 			++x;
-// 		}
-// 		++y;
-// 	}
-// }
-
-
-// mlx_key_hook(mlx_t *mlx, mlx_keyfunc func, void *param)
 
 
 static inline
@@ -739,14 +545,14 @@ t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const uint
 	t_sphere arr[count];
 	spheres.count = count;
 	spheres.arr = arr;
-	arr[0].position = v3(0, 0, -1);
+	arr[0].center = v3(0, 0, -1);
 	arr[0].radius = 0.5f;
 	arr[0].color = v3(1, 0, 0);
-	arr[1].position = v3(0, -55, 0);
+	arr[1].center = v3(0, -55, 0);
 	arr[1].radius = 54.0f;
 	arr[1].color = v3(1, 1, 1);
 
-	arr[2].position = v3(1, 1, 0);
+	arr[2].center = v3(1, 1, 0);
 	arr[2].radius = 0.3f;
 	arr[2].color = v3(0, 1, 1);
 /////////////////////////////////////////
@@ -773,7 +579,7 @@ t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const uint
 		if (cam->defocus_angle > 0)
 			ray.origin = defocus_disk_sample(cam, &seed);
 		ray.direction = get_ray_direction(cam, ray, (t_cord){x, y}, &seed);
-		color = trace(ray, &spheres, &seed);
+		color = trace(ray, scene, &seed);
 		incoming_light = V3_ADD(incoming_light, color);
 		++sample;
 	}
@@ -826,9 +632,9 @@ void per_frame(void * param)
 	}
 	if (g_recalculate_cam == true)
 	{
-		g_recalculate_cam = init_camera_for_frame(minirt, &minirt->base_cam);
+		g_recalculate_cam = init_camera_for_frame(minirt, &minirt->scene.camera);
 		g_accummulated_frames = 0;
-		frame_cam = minirt->base_cam;
+		frame_cam = minirt->scene.camera;
 	}
 
 
@@ -865,32 +671,32 @@ void scroll_hook(double delta_x, double delta_y, void *param)
 	if (mlx_is_key_down(minirt->mlx, MLX_KEY_LEFT_SHIFT))
 	{
 		if (delta_y > 0)
-			minirt->base_cam.focus_dist += 0.2f;
+			minirt->scene.camera.focus_dist += 0.2f;
 		else if (delta_y < 0)
 		{
-			minirt->base_cam.focus_dist -= 0.2f;
-			if (minirt->base_cam.focus_dist < 0.02f)
-				minirt->base_cam.focus_dist = 0.02f;
+			minirt->scene.camera.focus_dist -= 0.2f;
+			if (minirt->scene.camera.focus_dist < 0.02f)
+				minirt->scene.camera.focus_dist = 0.02f;
 		}
 	}
 	else if (mlx_is_key_down(minirt->mlx, MLX_KEY_LEFT_CONTROL))
 	{
 		if (delta_y > 0)
-			minirt->base_cam.defocus_angle += 0.2f;
+			minirt->scene.camera.defocus_angle += 0.2f;
 		else if (delta_y < 0)
 		{
-			minirt->base_cam.defocus_angle -= 0.2f;
-			if (minirt->base_cam.defocus_angle < 0.02f)
-			minirt->base_cam.defocus_angle = 0.02f;
+			minirt->scene.camera.defocus_angle -= 0.2f;
+			if (minirt->scene.camera.defocus_angle < 0.02f)
+			minirt->scene.camera.defocus_angle = 0.02f;
 		}
 	}
 	else
 	{
-		if (delta_y > 0 && minirt->base_cam.fov > 5.0f)
-			minirt->base_cam.fov -= 5.0f;
-		else if (delta_y < 0 && minirt->base_cam.fov < 175.0f)
+		if (delta_y > 0 && minirt->scene.camera.fov > 5.0f)
+			minirt->scene.camera.fov -= 5.0f;
+		else if (delta_y < 0 && minirt->scene.camera.fov < 175.0f)
 		{
-			minirt->base_cam.fov += 5.0f;
+			minirt->scene.camera.fov += 5.0f;
 		}
 	}
 }
@@ -909,13 +715,13 @@ void key_hook(struct mlx_key_data data, void * param)
 		g_recalculate_cam = true;
 		if (data.key == MLX_KEY_W)
 		{
-			direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->base_cam.lookat);
-			minirt->base_cam.lookfrom = V3_ADD(minirt->base_cam.lookfrom, direction);
+			direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.lookat);
+			minirt->scene.camera.lookfrom = V3_ADD(minirt->scene.camera.lookfrom, direction);
 		}
 		else if (data.key == MLX_KEY_S)
 		{
-			direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->base_cam.lookat);
-			minirt->base_cam.lookfrom = V3_SUB(minirt->base_cam.lookfrom, direction);
+			direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.lookat);
+			minirt->scene.camera.lookfrom = V3_SUB(minirt->scene.camera.lookfrom, direction);
 		}
 	}
 	// }
@@ -933,8 +739,8 @@ static int	run_minirt(t_minirt *minirt, char **argv)
 	mlx_key_hook(minirt->mlx, &key_hook, minirt);
 	mlx_scroll_hook(minirt->mlx, &scroll_hook, minirt);
 	mlx_loop_hook(minirt->mlx, &per_frame, minirt);
-	ft_memset(minirt->image->pixels, 0, minirt->image->height * minirt->image->width * sizeof(uint32_t));
-	base_init_cam(minirt, &minirt->base_cam);
+	ft_memset(minirt->image->pixels, 0xFFFFFFFF, minirt->image->height * minirt->image->width * sizeof(uint32_t));
+	base_init_cam(minirt, &minirt->scene.camera);
 
 	mlx_loop(minirt->mlx);
 	mlx_terminate(minirt->mlx);
@@ -945,8 +751,8 @@ int	main(int argc, char **argv)
 {
 	t_minirt minirt;
 
-	// if (validate_input(argc, argv[1]) == FAIL)
-	// 	return (FAIL);
+	if (validate_input(argc, argv[1]) == FAIL)
+		return (FAIL);
 	run_minirt(&minirt, argv);
 	ft_dprintf(1, "success hihihaha congrats\n");
 	delete_minirt(&minirt);

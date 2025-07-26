@@ -1,15 +1,5 @@
-#include "rt_math_hien.h"
-#include <math.h>
+#include "../../inc/rt_math.h"
 
-inline
-float square_root(float a)
-{
-	float result = (float)sqrt(a);
-
-	return (result);
-}
-
-/*
 // @TODO delete probably
 // inline
 // float Pow(float a, float b)
@@ -18,24 +8,33 @@ float square_root(float a)
 // 	return (result);
 // }
 
-// inline
-// float square(float a)
-// {
-// 	float result;
+inline
+float square(float a)
+{
+	float result;
 
-// 	result = a * a;
-// 	return (result);
-// }
+	result = a * a;
+	return (result);
+}
 
-// inline
-// float length_sq(t_v3 a)
-// {
-// 	float result;
+inline
+float length_sq(t_v3 a)
+{
+	float result;
 
-// 	result = inner(a, a);
-// 	return (result);
-// }
+	result = inner(a, a);
+	return (result);
+}
 
+#include <math.h>
+// @TODO remake mby
+inline
+float square_root(float a)
+{
+	float result = (float)sqrt(a);
+
+	return (result);
+}
 
 
 
@@ -125,6 +124,18 @@ t_v3 f32_mul_v3(float a, t_v3 b)
 }
 
 inline
+t_v3 v3_mul_f32(t_v3 a, float b)
+{
+	t_v3 result;
+
+	result.x = a.x * b;
+	result.y = a.y * b;
+	result.z = a.z * b;
+	return (result);
+}
+
+
+inline
 t_v3 f32_div_v3(float a, t_v3 b)
 {
 	t_v3 result;
@@ -144,6 +155,17 @@ t_v3 v3_div_f32(t_v3 a, float b)
 	result.y = a.y / b;
 	result.z = a.z / b;
 	return (result);
+}
+
+inline
+float sign(float value)
+{
+	if (value < 0.0)
+		return (-1.0f);
+	else if (value > 0.0)
+		return (1.0f);
+	else
+		return (0.0f);
 }
 
 inline
@@ -355,6 +377,15 @@ float length(t_v3 a)
 }
 
 inline
+t_v3 unit_vector(t_v3 a)
+{
+	t_v3 result;
+
+	result = v3_div_f32(a, length(a));
+	return result;
+}
+
+inline
 t_v3 normalize(t_v3 a)
 {
 	const float len = length(a);
@@ -392,4 +423,3 @@ t_v3 hadamard(t_v3 a, t_v3 b)
 	result = (t_v3){a.x*b.x, a.y*b.y, a.z*b.z};
 	return (result);
 }
- */

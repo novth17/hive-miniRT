@@ -21,17 +21,17 @@ int parse_camera(char **tokens, t_scene *scene)
 	if (check_id_args_count(tokens, "Camera", 4) == FAIL)
 		return (FAIL);
 
-	scene->camera.origin = parse_vec3(tokens[1], &scene->is_valid);
+	scene->camera.lookfrom = parse_vec3(tokens[1], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Camera: origin: "ERROR_COORD, tokens[1]));
 
-	scene->camera.direction = parse_vec3(tokens[2], &scene->is_valid);
+	scene->camera.lookat = parse_vec3(tokens[2], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Camera: direction: "ERROR_COORD, tokens[2]));
 
-	if (!is_in_range_vec3(scene->camera.direction))
+	if (!is_in_range_vec3(scene->camera.lookat))
 		return (print_error("Camera: ratio: "ERROR_IN_RANGE, NULL));
-	if(!is_normalized(scene->camera.direction))
+	if(!is_normalized(scene->camera.lookat))
 		return (print_error("Camera: ratio: "ERROR_NORM, NULL));
 
 	scene->camera.fov = parse_float(tokens[3], &scene->is_valid);
