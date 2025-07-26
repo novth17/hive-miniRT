@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 14:51:29 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 00:24:18 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:08:52 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ static void delete_obj_arr(t_minirt *minirt)
 {
 	if (minirt->scene.spheres)
 		free(minirt->scene.spheres);
-
 	if (minirt->scene.pls)
 		free(minirt->scene.pls);
 	if (minirt->scene.cyls)
@@ -40,8 +39,6 @@ void	delete_minirt(t_minirt *minirt)
 {
 	if (!minirt)
 		return;
-	if (minirt->tokens)
-		ft_free_2d(minirt->tokens);
 	delete_obj_arr(minirt);
 	delete_objects(minirt->scene.objects);
 }

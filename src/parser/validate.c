@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 20:54:52 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/23 21:33:43 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 14:37:36 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int validate_input(int argc, char *filename)
 	return (SUCCESS);
 }
 
-bool is_normalized_vec3(t_vec3 vector)
+bool is_in_range_vec3(t_vec3 vector)
 {
 	return (
 		vector.x >= -1.0 && vector.x <= 1.0 &&

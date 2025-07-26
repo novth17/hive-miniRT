@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 13:55:50 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 22:22:20 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:00:59 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,29 @@ static int	parse_elements(char **tokens, t_minirt *minirt);
 int	parse_file(t_minirt *minirt, char *filename)
 {
 	int		fd;
-	char	*line = NULL;
+	char	*line;
 
+	line = NULL;
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 		exit_error(minirt, "Error\nNo such file exists!");
 	while ((line = get_next_line(fd)))
 	{
-		if (line[0] != '\n' && line[0] != '\0' && parse_line(line, minirt))
+		if (!is_only_whitespace(line))
 		{
-			delete_minirt(minirt);
-			free(line);
-			exit(FAIL);
+			minirt->file_has_content = true;
+			if (parse_line(line, minirt) == FAIL)
+			{
+				delete_minirt(minirt);
+				free(line);
+				exit(FAIL);
+			}
 		}
 		free(line);
 	}
 	close(fd);
+	if (!minirt->file_has_content)
+		exit_error(minirt, "Error\nFile is empty!");
 	return (SUCCESS);
 }
 

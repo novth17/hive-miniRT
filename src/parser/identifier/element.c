@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 16:30:30 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 20:07:30 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 14:40:18 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int parse_ambient(char **tokens, t_scene *scene)
 	if (!scene->is_valid)
 		return (print_error("Ambient: ratio: "ERROR_FLOAT, tokens[1]));
 	if (scene->ambient.ratio < 0.0 || scene->ambient.ratio > 1.0)
-		return (print_error("Ambient: ratio: "ERROR_NORM, tokens[1]));
+		return (print_error("Ambient: ratio: "ERROR_IN_RANGE, tokens[1]));
 	scene->ambient.color = parse_color(tokens[2], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Ambient: "ERROR_COLOR, tokens[2]));
@@ -41,8 +41,8 @@ int parse_camera(char **tokens, t_scene *scene)
 	if (!scene->is_valid)
 		return (print_error("Camera: direction: "ERROR_COORD, tokens[2]));
 
-	if (!is_normalized_vec3(scene->camera.direction))
-		return (print_error("Camera: ratio: "ERROR_NORM, NULL));
+	if (!is_in_range_vec3(scene->camera.direction))
+		return (print_error("Camera: ratio: "ERROR_IN_RANGE, NULL));
 
 	scene->camera.fov = parse_float(tokens[3], &scene->is_valid);
 	if (!scene->is_valid)
@@ -67,7 +67,7 @@ int parse_light(char **tokens, t_scene *scene)
 		return print_error("Light: ratio: "ERROR_FLOAT, tokens[2]);
 
 	if (scene->light.bright_ratio < 0.0 || scene->light.bright_ratio > 1.0)
-		return print_error("Light: ratio: "ERROR_NORM, tokens[2]);
+		return print_error("Light: ratio: "ERROR_IN_RANGE, tokens[2]);
 
 	scene->light.color = parse_color(tokens[3], &scene->is_valid);
 	if (!scene->is_valid)

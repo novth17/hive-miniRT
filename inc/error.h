@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/24 21:57:32 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/25 20:10:03 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 14:39:45 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #define ERROR_COLOR 	RED "Invalid color format (commas and [0,255])" RESET
 #define ERROR_COORD 	RED "Invalid coordinates for vector" RESET
 #define ERROR_FLOAT 	RED "Invalid float" RESET
-#define ERROR_NORM  	RED "Component must be in range [-1,1]" RESET
+#define ERROR_IN_RANGE  RED "Component must be in range [-1,1]" RESET
 #define ERROR_MALLOC	RED "Malloc failed" RESET
 #define	UNK_ELEMENT		RED "Unknown element of element id:" RESET
 
