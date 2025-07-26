@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/18 20:02:04 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 15:05:13 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 16:51:23 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,42 @@ int	init_minirt(t_minirt *minirt, char **argv)
 
 	if (fill_obj_arr(minirt, &minirt->scene) == FAIL)
 		return (print_error("Filling object array failed", NULL));
+
+
+
+	for (uint32_t i = 0; i < minirt->scene.spheres_count; i++)
+	{
+		t_sphere *s = &minirt->scene.spheres[i];
+		printf("DEBUG: sphere[%u]: center=(%.2f, %.2f, %.2f), diameter=%.2f, color=(%2f, %2f, %2f)\n",
+			i,
+			s->center.x, s->center.y, s->center.z,
+			s->diameter,
+			s->color.r, s->color.g, s->color.b
+		);
+	}
+
+	for (uint32_t i = 0; i < minirt->scene.pl_count; i++)
+	{
+		t_plane *pl = &minirt->scene.pls[i];
+		printf("DEBUG: pl[%u]: point=(%.2f, %.2f, %.2f), axis=(%.2f, %.2f, %.2f), color=(%2f, %2f, %2f)\n",
+			i,
+			pl->point.x, pl->point.y, pl->point.z,
+			pl->axis.x, pl->axis.y, pl->axis.z,
+			pl->color.r, pl->color.g, pl->color.b
+		);
+	}
+
+	for (uint32_t i = 0; i < minirt->scene.cyls_count; i++)
+	{
+		t_cylinder *cy = &minirt->scene.cyls[i];
+		printf("DEBUG: cyl[%u]: center=(%.2f, %.2f, %.2f), axis=(%.2f, %.2f, %.2f),diameter=%.2f, height=%.2f color=(%2f, %2f, %2f)\n",
+			i,
+			cy->center.x, cy->center.y, cy->center.z,
+			cy->axis.x, cy->axis.y, cy->axis.z,
+			cy->diameter, cy->height,
+			cy->color.r, cy->color.g, cy->color.b
+		);
+	}
 
 	if (setup_mlx(minirt) == FAIL)
 	{
