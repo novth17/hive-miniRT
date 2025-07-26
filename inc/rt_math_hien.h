@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 16:14:19 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/07/26 00:22:49 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:52:51 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include "mini_rt.h"
 # include <stdint.h>
 # include <float.h>
-// # include <math.h> // @TODO watch out for this
 
 typedef union u_vec2
 {
@@ -58,19 +57,6 @@ typedef union u_vec3
 	float	elements[3];
 }	t_v3;
 
-typedef struct s_vec3
-{
-	float x;
-	float y;
-	float z;
-}				t_vec3;
-
-typedef struct s_color
-{
-	float r;
-	float g;
-	float b;
-}				t_color;
 
 // typedef t_v3	t_point3;
 // typedef t_v3	t_vec3;

@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 20:30:17 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/26 17:35:15 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 17:35:39 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,6 +217,7 @@ t_color	parse_color(char *str, bool *is_valid);
 t_vec3	parse_vec3(char *str, bool *is_valid);
 bool	is_in_range_vec3(t_vec3 vector);
 bool	check_comma_and_move(char **str, bool *is_valid);
+bool	is_normalized(t_vec3 vec3);
 
 /* ===================== FILL ARRAY ===================== */
 

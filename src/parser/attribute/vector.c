@@ -6,11 +6,24 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 17:07:08 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/07/24 16:31:38 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:57:42 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt.h"
+
+
+static uint32_t	calc_v3_len(t_vec3 vec3)
+{
+	return (square_root(vec3.x * vec3.x + vec3.y * vec3.y + vec3.z * vec3.z));
+}
+
+bool	is_normalized(t_vec3 vec3)
+{
+	if (calc_v3_len(vec3) == 1)
+		return (true);
+	return (false);
+}
 
 static double parse_vec3_comp(char **str, bool *is_valid_comp)
 {
