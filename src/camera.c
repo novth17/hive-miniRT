@@ -25,7 +25,9 @@ t_v3	pixel00_location(const t_v3 viewport_upper_left, const t_v3 pixel_delta_u, 
 	return (result);
 }
 
-void base_init_cam(t_minirt *minirt, t_camera *cam)
+
+// to set defaults
+void base_init_cam(t_camera *cam)
 {
 
 	cam->samples_per_pixel = 1;
@@ -74,4 +76,3 @@ bool init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 	cam->pixel00_loc = pixel00_location(cam->viewport_upper_left, cam->pixel_delta_u, cam->pixel_delta_v);
 	return (false);
 }
-

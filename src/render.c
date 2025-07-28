@@ -1,4 +1,4 @@
-# include "mini_rt.h"
+# include "../inc/mini_rt.h"
 
 extern bool g_recalculate_cam;
 extern uint32_t g_accummulated_frames;
@@ -29,98 +29,100 @@ t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float r
 }
 
 static inline
-bool sphere_hit(t_hit *rec, const t_sphere sp, const t_ray ray)
+float sphere_hit(const t_sphere sp, const t_ray ray)
 {
 	const t_v3 oc = v3_sub_v3(sp.center, ray.origin);
 	const t_v3 v = {
 			.A = dot(ray.direction, ray.direction), 	// const float a = dot(ray.direction, ray.direction);
 			.H = dot(ray.direction, oc), 				// const float h = dot(ray.direction, oc);
 			.C = dot(oc, oc) - sp.radius*sp.radius}; 	// const float c = dot(oc, oc) - sp.radius*sp.radius;
-	const float discrimanant = v.H*v.H - v.A*v.C;
+	const float discrimanint = v.H*v.H - v.A*v.C;
 	float sqrtd;
 	float root;
 
-	if (discrimanant < 0)
-		return (false);
-	sqrtd = square_root(discrimanant);
+	if (discrimanint < 0)
+		return (FLT_MAX);
+	sqrtd = square_root(discrimanint);
 	root = (v.H - sqrtd) / v.A;
 	if (root <= MIN_HIT_DIST || root >= MAX_HIT_DIST)
 	{
 		root = (v.H + sqrtd) / v.A;
 		if (root <= MIN_HIT_DIST || root >= MAX_HIT_DIST)
-			return (false);
+			return (FLT_MAX);
 	}
-	*rec = create_sphere_hit_record(ray, sp, root);
+	return (root);
+	// *rec = create_sphere_hit_record(ray, sp, root);
 	// rec->distance = root;
 	// rec->position = at(ray, rec->distance);
 	// rec->normal = v3_div_f32(V3_SUB(rec->position, sp.position), sp.radius);
 	// rec->color = sp.color; // maybe replace with material or material index?
 	// rec->did_hit = true;
-	return (true);
+	// return (true);
 }
 
-inline
-void set_face_normal(t_hit *rec, const t_ray *r, const t_v3 out_normal)
-{
-	const bool front_face = dot(r->direction, out_normal) < 0;
-	if (front_face)
-		rec->normal = out_normal;
-	else
-		rec->normal = neg(out_normal);
-}
-
-static int hit = 0;
-static int miss = 0;
+// inline
+// void set_face_normal(t_hit *rec, const t_ray *r, const t_v3 out_normal)
+// {
+// 	const bool front_face = dot(r->direction, out_normal) < 0;
+// 	if (front_face)
+// 		rec->normal = out_normal;
+// 	else
+// 		rec->normal = neg(out_normal);
+// }
 
 inline
-bool check_spheres(t_hit *rec, const t_sphere *spheres, const uint32_t count, const t_ray ray)
+float check_spheres(t_hit *restrict rec, const t_sphere *spheres, const uint32_t count, const t_ray ray)
 {
-	t_hit temp_rec;
+	// t_hit temp_rec;
 	uint32_t i;
 
-	temp_rec = (t_hit){};
-	temp_rec.distance = MAX_HIT_DIST;
+	// temp_rec = (t_hit){};
+	// temp_rec.distance = MAX_HIT_DIST;
+	float hit_distance;
+	float current_hit_distance = rec->distance;
 	i = 0;
 	while (i < count)
 	{
-		if(sphere_hit(&temp_rec, spheres[i], ray))
+		hit_distance = sphere_hit(spheres[i], ray);
+		if(hit_distance > MIN_HIT_DIST && hit_distance < current_hit_distance)
 		{
-			hit++;
-			if (temp_rec.distance < rec->distance)
-			{
-				*rec = temp_rec; // @QUESTION when to use set_face_normal - here or later?
-			}
+			*rec = create_sphere_hit_record(ray, spheres[i], hit_distance); // @QUESTION when to use set_face_normal - here or later?
+			current_hit_distance = hit_distance;
+			// *rec = temp_rec;
 		}
-		miss++;
-		// if (t > rec->distance)
-		// {
-		// 	hit.distance = t; hit.color = v3(1, 0, 0);//spheres->arr[i].color;
-		// }
-		// else
-		// {
-		// 	hit.color = ray_color(&ray);
-		// }
 		++i;
 	}
-	return (temp_rec.did_hit);
+	return (hit_distance);
 }
 
 static inline
 bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects or scene;
 {
-	t_hit temp_rec;
 	uint32_t i;
+	float hit_distance;
 
-	temp_rec.distance = FLT_MAX;
-	i = 0;
-	while (i < scene->spheres_count)
+	// i = -1;
+	// while (++i < scene->pl_count)
+	// {
+	// 	if (plane_shadow_hit(scene->pls[i], ray))
+	// 		return (true);
+	// 	++i;
+	// }
+	i = -1;
+	while (++i < scene->spheres_count)
 	{
-		if(sphere_hit(&temp_rec, scene->spheres[i], ray))
-		{
+		hit_distance = sphere_hit(scene->spheres[i], ray);
+		if(hit_distance > MIN_HIT_DIST && hit_distance < MAX_HIT_DIST)// sphere_hit(&temp_rec, scene->spheres[i], ray))
 			return (true);
-		}
-		++i;
 	}
+	// i = -1;
+	// while (++i < scene->cyls_count)
+	// {
+	// 	if (plane_shadow_hit(scene->cyls[i], ray))
+	// 	{
+	// 		return (true);
+	// 	}
+	// }
 	return (false);
 }
 
@@ -158,29 +160,26 @@ float smoothstep(const float edge0, const float edge1, float x)
 	return (x * x * (3.0f - 2.0f * x));
 }
 
-static inline
-t_v3 v3_smoothstep(const t_v3 value)
-{
-	t_v3 result;
+// static inline
+// t_v3 v3_smoothstep(const t_v3 value)
+// {
+// 	t_v3 result;
 
-	result.x = smoothstep(value.x, 0.0f, 1.0f);
-	result.y = smoothstep(value.x, 0.0f, 1.0f);
-	result.z = smoothstep(value.x, 0.0f, 1.0f);
-	return (result);
-}
+// 	result.x = smoothstep(value.x, 0.0f, 1.0f);
+// 	result.y = smoothstep(value.x, 0.0f, 1.0f);
+// 	result.z = smoothstep(value.x, 0.0f, 1.0f);
+// 	return (result);
+// }
 
 static inline
 t_v3 trace(t_ray ray, const t_scene *scene, uint32_t *seed) // change to all objects or scene;
 {
-
+	(void)seed; // for now -  this will be used for bounce directions
 	t_v3 ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
-	// t_v3 point_ligth_loc = v3(2, 2, 2);
-	t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * 100, scene->light.color);
+	t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
 	t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f};
-	// t_spheres point_ligth_visualization = {.count = 1, .arr = &point_ligth_spehre};
 
-	// t_new_light p_light = {point_ligth_loc, point_light_color};
-	// bounces mby here at some point
+
 	t_hit rec;
 	//check_planes(&rec, planes, ray);
 	rec = (t_hit){};
@@ -198,9 +197,7 @@ t_v3 trace(t_ray ray, const t_scene *scene, uint32_t *seed) // change to all obj
 		{
 			float dist = length(l);
 			l = f32_mul_v3(1.0f / dist, l);
-			// float light_angle = clamp(dot(rec.normal, l), 0.0f, FLT_MAX);
 			float light_angle = smoothstep(dot(rec.normal, l), 0.0f, 2.0f);
-			// float light_angle = dot(rec.normal, l);
 
 			t_v3 color = f32_mul_v3(light_angle, point_light_color);
 			color = f32_mul_v3(1.0f / (dist * dist), color);
@@ -250,16 +247,16 @@ t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const uint
 	return (color);
 }
 
-static inline
-t_v3 rgb_u8_to_float(const uint8_t r, const uint8_t g, const uint8_t b)
-{
-	t_v3 result;
+// static inline
+// t_v3 rgb_u8_to_float(const uint8_t r, const uint8_t g, const uint8_t b)
+// {
+// 	t_v3 result;
 
-	result.r = (float)r / 255.0f;
-	result.g = (float)g / 255.0f;
-	result.b = (float)b / 255.0f;
-	return (result);
-}
+// 	result.r = (float)r / 255.0f;
+// 	result.g = (float)g / 255.0f;
+// 	result.b = (float)b / 255.0f;
+// 	return (result);
+// }
 
 static inline
 t_v3 rgb_u32_to_float(uint32_t c)
@@ -287,11 +284,13 @@ t_v3 accumulate(const t_v3 old_color, const t_v3 new_color)
 void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restrict out)
 {
 	t_v3 color;
+	int32_t x;
+	int32_t y;
 
-	uint32_t y = 0;
+	y = 0;
 	while (y < cam->image_height)
 	{
-		uint32_t x = 0;
+		x = 0;
 		while (x < cam->image_width)
 		{
 			color = sample_pixel(scene, cam, x, y);
@@ -306,6 +305,7 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 	// return (0);
 }
 
+
 void per_frame(void * param)
 {
 	static t_camera frame_cam = {};
@@ -314,7 +314,7 @@ void per_frame(void * param)
 
 	minirt = (t_minirt *)param;
 	mlx = minirt->mlx;
-	if (minirt->image->width != minirt->mlx->width || minirt->image->height != minirt->mlx->height)
+	if (minirt->image->width != (uint)minirt->mlx->width || minirt->image->height !=  (uint)minirt->mlx->height)
 	{
 		mlx_resize_image(minirt->image, minirt->mlx->width, minirt->mlx->height);
 		g_recalculate_cam = true;

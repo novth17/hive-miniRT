@@ -4,6 +4,8 @@
 #define SUCCESS	0
 #define FAIL	1
 
+#include <stdio.h> // @WARNING FOR DEBUGGING CURRENTLY
+
 # include <fcntl.h>
 # include "../libs/MLX42/include/MLX42/MLX42.h"
 # include "../libs/libft/inc/libft.h"
@@ -17,7 +19,7 @@
 
 
 #define MIN_HIT_DIST 0.001f
-#define MAX_HIT_DIST FLT_MAX // for now
+#define MAX_HIT_DIST 1000.0f // for now
 
 typedef struct
 {
@@ -79,6 +81,7 @@ typedef struct s_scene
 	t_ambient	ambient;
 	t_camera	camera;
 	t_light		light;
+	float		light_strength_mult;
 
 	uint32_t	spheres_count;
 	t_sphere	*spheres;
@@ -150,7 +153,7 @@ void scroll_hook(double delta_x, double delta_y, void *param);
 
 /* ===================== FOR DRAW ===================== */
 bool init_camera_for_frame(t_minirt *minirt, t_camera *cam);
-void base_init_cam(t_minirt *minirt, t_camera *cam);
+void base_init_cam(t_camera *cam);
 
 void per_frame(void * param);
 
