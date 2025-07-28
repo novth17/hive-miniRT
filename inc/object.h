@@ -14,17 +14,19 @@ typedef enum e_obj_type
 
 typedef struct
 {
-	t_color color;
-	float diffuse;
-	float specular;
-	float emitter;
+	t_color	color;
+	float	specular_probability;
+	float	diffuse;
+	float	emitter;
 } t_material;
 
 typedef struct s_sphere
 {
-	t_vec3	center;
-	float	radius;
-	t_color	color; //0-255
+	t_vec3		center;
+	float		radius;
+	//t_color		color; //0-255
+	t_material	material;
+
 }				t_sphere;
 
 typedef struct s_plane
@@ -32,6 +34,7 @@ typedef struct s_plane
 	t_vec3	point;
 	t_vec3	axis;
 	t_color	color; //0-255
+	t_material	material;
 }				t_plane;
 
 typedef struct s_cylinder
@@ -41,6 +44,7 @@ typedef struct s_cylinder
 	float	diameter;
 	float	height;
 	t_color	color;//0-255
+	t_material	material;
 }				t_cylinder;
 
 typedef struct s_object
