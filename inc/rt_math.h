@@ -74,6 +74,7 @@ uint32_t	rgb_pack4x8(t_v3 unpacked);
 float random_float(uint32_t *seed);
 t_v3 in_unit_sphere(uint32_t *seed);
 t_v3 random_in_unit_disk(uint32_t *seed);
+t_v3 random_direction(uint32_t *seed);
 t_v3 sample_square(uint32_t *seed);
 t_v2 random_point_in_circle(uint32_t *state);
 

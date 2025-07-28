@@ -52,16 +52,6 @@ t_v3 random_direction_normal_dist(uint32_t *seed)
 	return (normalize(v3(x, y, z)));
 }
 
-inline
-t_v3 random_direction(uint32_t *seed)
-{
-	const float x = random_float(seed);
-	const float y = random_float(seed);
-	const float z = random_float(seed);
-
-	return (normalize(v3(x, y, z)));
-}
-
 t_v3 random_direction_in_hemisphere(const t_v3 normal, uint32_t *rng_seed)
 {
 	const t_v3 dir = random_direction_normal_dist(rng_seed);
@@ -84,7 +74,8 @@ static int	run_minirt(t_minirt *minirt, char **argv)
 
 
 	base_init_cam(&minirt->scene.camera);
-	minirt->scene.light_strength_mult = 10;
+	minirt->scene.light_strength_mult = 5;
+	minirt->scene.use_point_light = true;
 
 	mlx_loop(minirt->mlx);
 	mlx_terminate(minirt->mlx);

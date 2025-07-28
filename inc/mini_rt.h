@@ -82,6 +82,7 @@ typedef struct s_scene
 	t_camera	camera;
 	t_light		light;
 	float		light_strength_mult;
+	bool		use_point_light;
 
 	uint32_t	spheres_count;
 	t_sphere	*spheres;
@@ -108,6 +109,7 @@ typedef struct s_hit_record
 	bool front_face; // maybe not needed;
 	t_v3 color;
 	bool did_hit; // can be removed later
+	t_material mat; // for now maybe have material index or smth idunno
 } t_hit;
 
 typedef struct s_mini_rt

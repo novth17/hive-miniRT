@@ -47,6 +47,16 @@ t_v3 random_in_unit_disk(uint32_t *seed)
 }
 
 inline
+t_v3 random_direction(uint32_t *seed)
+{
+	const float x = random_float(seed);
+	const float y = random_float(seed);
+	const float z = random_float(seed);
+
+	return (normalize(v3(x, y, z)));
+}
+
+inline
 t_v3 sample_square(uint32_t *seed)
 {
 	t_v3 result;

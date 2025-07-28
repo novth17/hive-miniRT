@@ -1,4 +1,5 @@
 # include "../inc/mini_rt.h"
+#include <stdint.h>
 
 extern bool g_recalculate_cam;
 extern uint32_t g_accummulated_frames;
@@ -92,6 +93,10 @@ float check_spheres(t_hit *restrict rec, const t_sphere *spheres, const uint32_t
 		}
 		++i;
 	}
+	if (rec->color.r == 1.0f && rec->color.g == 1.0f && rec->color.b == 1.0f)
+	{
+		rec->mat.emitter = 100.0f;
+	}
 	return (hit_distance);
 }
 
@@ -172,44 +177,139 @@ float smoothstep(const float edge0, const float edge1, float x)
 // }
 
 static inline
-t_v3 trace(t_ray ray, const t_scene *scene, uint32_t *seed) // change to all objects or scene;
+t_v3 point_light_color(const t_scene *restrict scene, const t_hit *restrict rec, t_v3 light_direction)
+{
+	// const t_color ambient_light = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
+	const t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
+	const float dist = length(light_direction);
+	float light_angle;
+	t_v3 color;
+
+	light_direction = f32_mul_v3(1.0f / dist, light_direction);
+	light_angle = smoothstep(dot(rec->normal, light_direction), 0.0f, 2.0f);
+	color = f32_mul_v3(light_angle, point_light_color);
+	color = f32_mul_v3(1.0f / (dist * dist), color);
+	// color = V3_ADD(ambient_light, color);
+	// color = v3_mul_v3(rec->color, color);
+	return (color);
+}
+
+static inline
+t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
+{
+	t_v3 l;
+	t_ray shadow_ray;
+	t_v3 light_color;
+
+	l = V3_SUB(scene->light.origin, rec->position);
+	shadow_ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4));
+	shadow_ray.direction = l;
+	light_color = v3(0, 0, 0);
+	if (shadow_hit(scene, shadow_ray) == false)
+	{
+		light_color = point_light_color(scene, rec, l);
+	}
+	return (light_color);
+}
+
+
+static inline
+t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict scene)
+{
+	const t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f}; // debugging
+
+	t_hit hit_record;
+
+	hit_record = (t_hit){};
+	hit_record.distance = MAX_HIT_DIST;
+	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
+	check_spheres(&hit_record, &point_light_sphere, 1, ray);
+	t_material mat =
+	{
+		.color = hit_record.color,
+		.specular_color = v3(1, 1, 1),//v3(1, 1, 1),
+		.specular_probability = 0.7f,
+		.diffuse = 0.99f,
+		.emitter = 0.0f,
+	};
+	if (hit_record.mat.emitter == 0.0f)
+		hit_record.mat = mat;
+	else
+	{
+		float temp_emmit =  hit_record.mat.emitter;
+		hit_record.mat = mat;
+		hit_record.mat.emitter = temp_emmit;
+	}
+	return (hit_record);
+}
+
+static inline
+t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_bounce, uint32_t *seed)
+{
+
+	// const float mat_diffuse_amount = 1; // temp for testing
+	const t_v3 random_bounce = noz(v3_add_v3(rec->normal, in_unit_sphere(seed))); // do we need to normalize?
+	t_v3 pure_bounce;
+
+	ray.origin = rec->position;
+	// inner product (or dot product) gives us the angle difference between
+	// the normal at the hit point and the direction of the ray
+	// that angle times 2 is the direction we want the mirror reflection to go
+	pure_bounce = f32_mul_v3(2.0f*inner(ray.direction, rec->normal), rec->normal);
+	pure_bounce = v3_sub_v3(ray.direction, pure_bounce);
+
+	ray.direction = noz(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
+	return (ray);
+}
+
+static inline
+t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, uint32_t *seed) // change to all objects or scene;
 {
 	(void)seed; // for now -  this will be used for bounce directions
 	t_v3 ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
-	t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
-	t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f};
+	// t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
+	// t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f};
+	int32_t i;
+	t_color total_incoming_light;
 
 
 	t_hit rec;
-	//check_planes(&rec, planes, ray);
-	rec = (t_hit){};
-	rec.distance = MAX_HIT_DIST;
-	check_spheres(&rec, scene->spheres, scene->spheres_count, ray);
-	check_spheres(&rec, &point_light_sphere, 1, ray);
-
-	if (rec.did_hit)
+	t_color ray_color;
+	ray_color = v3(1, 1, 1);
+	i = 0;
+	total_incoming_light = v3(0, 0, 0);
+	bool hit_once = false;
+	while (i <= max_bounce)
 	{
-		t_v3 l =  V3_SUB(scene->light.origin, rec.position);
-		t_ray shadow_ray;
-		shadow_ray.origin = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4));
-		shadow_ray.direction = l;
-		if (shadow_hit(scene, shadow_ray) == false)
+		rec = find_closest_ray_intesection(ray, scene);
+		if (rec.did_hit)
 		{
-			float dist = length(l);
-			l = f32_mul_v3(1.0f / dist, l);
-			float light_angle = smoothstep(dot(rec.normal, l), 0.0f, 2.0f);
+			hit_once = true;
 
-			t_v3 color = f32_mul_v3(light_angle, point_light_color);
-			color = f32_mul_v3(1.0f / (dist * dist), color);
-			color = V3_ADD(ambient, color);
-			color = v3_mul_v3(rec.color, color);
-			return (color);
+			if (scene->use_point_light)
+			{
+				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), ray_color));
+			}
+			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
+			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
+			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
+			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
+			// color = V3_ADD(ambient, color);
+			// color = v3_mul_v3(rec.color, color);
+			ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
+			// ray.direction = rec.normal;
+			++i;
 		}
-		return (v3_mul_v3(ambient, rec.color));
+		else
+		{
+			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
+			// color = V3_ADD(ambient, color);
+			// color = v3_mul_v3(rec.color, color);
+			break ;
+		}
 	}
-
-
-
+	if (hit_once)
+		return (total_incoming_light);
 
 	// not hit = background color
 	t_v3 unit_direction = unit_vector(ray.direction);
@@ -239,7 +339,7 @@ t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const uint
 		if (cam->defocus_angle > 0)
 			ray.origin = defocus_disk_sample(cam, &seed);
 		ray.direction = get_ray_direction(cam, ray, (t_cord){x, y}, &seed);
-		color = trace(ray, scene, &seed);
+		color = trace(ray, scene, cam->max_bounce, &seed);
 		incoming_light = V3_ADD(incoming_light, color);
 		++sample;
 	}
