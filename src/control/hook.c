@@ -47,25 +47,33 @@ void key_hook(struct mlx_key_data data, void * param)
 {
 	const float speed = 0.5f;
 	t_minirt *minirt;
-	t_v3 direction;
+	t_v3 right_direction;
+	t_v3 forward_direction;
 
 	minirt = (t_minirt *)param;
+	right_direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.right);
+	forward_direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.lookat);
 	// printf("keyhookend at %f\n", minirt->mlx->delta_time);
 	// if (mlx_is_mouse_down(minirt->mlx, MLX_MOUSE_BUTTON_RIGHT))
 	if (data.action != MLX_RELEASE)
 	{
 		g_recalculate_cam = true;
+		// direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.lookat);
 		if (data.key == MLX_KEY_W)
 		{
-			direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.lookat);
-			minirt->scene.camera.lookfrom = V3_ADD(minirt->scene.camera.lookfrom, direction);
-			minirt->scene.camera.lookat = V3_ADD(minirt->scene.camera.lookat, direction);
+			minirt->scene.camera.lookfrom = V3_ADD(minirt->scene.camera.lookfrom, forward_direction);
 		}
 		else if (data.key == MLX_KEY_S)
 		{
-			direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.lookat);
-			minirt->scene.camera.lookfrom = V3_SUB(minirt->scene.camera.lookfrom, direction);
-			minirt->scene.camera.lookat = V3_ADD(minirt->scene.camera.lookat, direction);
+			minirt->scene.camera.lookfrom = V3_SUB(minirt->scene.camera.lookfrom, forward_direction);
+		}
+		if (data.key == MLX_KEY_D)
+		{
+			minirt->scene.camera.lookfrom = V3_ADD(minirt->scene.camera.lookfrom, right_direction);
+		}
+		else if (data.key == MLX_KEY_A)
+		{
+			minirt->scene.camera.lookfrom = V3_SUB(minirt->scene.camera.lookfrom, right_direction);
 		}
 	}
 	// }

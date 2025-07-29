@@ -237,8 +237,7 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 static inline
 t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, uint32_t *seed) // change to all objects or scene;
 {
-	static const t_color specular_color = {1, 1, 1};
-	(void)seed; // for now -  this will be used for bounce directions
+	static const t_color specular_color = {.r = 1.0f, .g = 1.0f, .b = 1.0f};
 	t_v3 ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
 	// t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
 	// t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f};

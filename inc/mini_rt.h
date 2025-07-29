@@ -1,6 +1,7 @@
 #ifndef MINI_RT_H
 #define MINI_RT_H
 
+#include "types.h"
 #define SUCCESS	0
 #define FAIL	1
 
@@ -18,7 +19,7 @@
 # define WINDOW_HEIGHT 1080
 
 
-#define MIN_HIT_DIST 0.001f
+#define MIN_HIT_DIST 0.1f
 #define MAX_HIT_DIST 1000.0f // for now
 
 typedef struct
@@ -34,6 +35,7 @@ typedef struct
 	t_point3	lookfrom; // @QUESTION why this and camera_center??
 	t_point3	lookat;
 	t_v3		vup;
+	t_v3		right;
 
  	float defocus_angle;  // Variation angle of rays through each pixel
     float focus_dist;
@@ -96,7 +98,7 @@ typedef struct s_scene
 	t_object	*objects;
 	bool		is_valid;
 
-	
+
 
 
 

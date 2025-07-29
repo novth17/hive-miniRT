@@ -47,6 +47,7 @@ bool init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 	const t_v3 u = unit_vector(cross(cam->vup, w));
 	const t_v3 v = cross(w, u);
 	const float h = tanf((cam->fov * M_PI / 180) / 2);
+	const float defocus_radius = cam->focus_dist * tanf((cam->defocus_angle / 2) * M_PI / 180);
 
 	cam->pixel_sample_scale = 1.0f / cam->samples_per_pixel;
 	cam->aspect_ratio = (float)minirt->image->width / minirt->image->height;
@@ -54,6 +55,7 @@ bool init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 	cam->image_height = (int32_t)(cam->image_width / cam->aspect_ratio);
 	if (cam->image_height < 1)
 		cam->image_height = 1;
+	cam->right = u;
 
 
 	// cam->focal_length = length(V3_SUB(cam->lookfrom, cam->lookat));
@@ -69,7 +71,6 @@ bool init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 
 	cam->viewport_upper_left = viewport_top_left(cam, w);
 
- 	const float defocus_radius = cam->focus_dist * tanf((cam->defocus_angle / 2) * M_PI / 180);
   	cam->defocus_disk_u = v3_mul_f32(u, defocus_radius);
     cam->defocus_disk_v = v3_mul_f32(v, defocus_radius);
 
