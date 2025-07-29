@@ -1,4 +1,4 @@
-#include "mini_rt.h"
+#include "../../inc/mini_rt.h"
 
 extern bool g_recalculate_cam;
 
@@ -59,11 +59,13 @@ void key_hook(struct mlx_key_data data, void * param)
 		{
 			direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.lookat);
 			minirt->scene.camera.lookfrom = V3_ADD(minirt->scene.camera.lookfrom, direction);
+			minirt->scene.camera.lookat = V3_ADD(minirt->scene.camera.lookat, direction);
 		}
 		else if (data.key == MLX_KEY_S)
 		{
 			direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.lookat);
 			minirt->scene.camera.lookfrom = V3_SUB(minirt->scene.camera.lookfrom, direction);
+			minirt->scene.camera.lookat = V3_ADD(minirt->scene.camera.lookat, direction);
 		}
 	}
 	// }
