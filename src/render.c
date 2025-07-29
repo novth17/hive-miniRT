@@ -18,7 +18,7 @@ t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float r
 	rec.did_hit = true;
 	rec.distance = root;
 	rec.position = at(ray, rec.distance);
-	rec.color = sp.color;
+	rec.color = sp.material.color;
 	rec.normal = v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius);
 	rec.front_face = dot(ray.direction, rec.normal) < 0;
 	if (rec.front_face == false)
@@ -176,7 +176,7 @@ t_v3 trace(t_ray ray, const t_scene *scene, uint32_t *seed) // change to all obj
 	t_v3 ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
 	// t_v3 point_ligth_loc = v3(2, 2, 2);
 	t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * 100, scene->light.color);
-	t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f};
+	t_sphere point_light_sphere = {.material.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f};
 	// t_spheres point_ligth_visualization = {.count = 1, .arr = &point_ligth_spehre};
 
 	// t_new_light p_light = {point_ligth_loc, point_light_color};
