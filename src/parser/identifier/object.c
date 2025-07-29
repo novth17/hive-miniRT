@@ -1,5 +1,7 @@
 #include "mini_rt.h"
 
+static int parse_material(char **tokens, int offset, t_scene *scene, t_material *m);
+
 static t_object	*create_objects(t_scene *scene, t_obj_type type)
 {
 	t_object *obj;
@@ -21,7 +23,7 @@ int parse_sphere(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	if (check_id_args_count(tokens, "Sphere", 4) == FAIL)
+	if (check_id_args_count(tokens, "Sphere", 6) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, SPHERE);
 	if (!object)
@@ -32,9 +34,8 @@ int parse_sphere(char **tokens, t_scene *scene)
 	object->sphere.radius = parse_float(tokens[2], &scene->is_valid) / 2;
 	if (!scene->is_valid)
 		return (print_error("Sphere: diameter: "ERROR_FLOAT, tokens[2]));
-	object->sphere.color = parse_color(tokens[3], &scene->is_valid);
-	if (!scene->is_valid)
-		return (print_error("Sphere: "ERROR_COLOR, tokens[3]));
+	if (parse_material(tokens, scene, &scene->is_valid, 3))
+		return (print_error(RED"Sphere\n", NULL));
 	return (SUCCESS);
 }
 
@@ -42,7 +43,7 @@ int parse_plane(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	if (check_id_args_count(tokens, "Plane", 4) == FAIL)
+	if (check_id_args_count(tokens, "Plane", 7) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, PLANE);
 	if (!object)
@@ -57,9 +58,8 @@ int parse_plane(char **tokens, t_scene *scene)
 		return (print_error("Plane: axis: "ERROR_IN_RANGE, tokens[2]));
 	if(!is_normalized(object->pl.axis))
 		return (print_error("Plane: axis: "ERROR_NORM, tokens[2]));
-	object->pl.color = parse_color(tokens[3], &scene->is_valid);
-	if (!scene->is_valid)
-		return (print_error("Plane: "ERROR_COLOR, tokens[3]));
+	if (parse_material(tokens, scene, &scene->is_valid, 3))
+		return (print_error(RED"Plane\n", NULL));
 	return (SUCCESS);
 }
 
@@ -67,7 +67,7 @@ int parse_cyl(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	if (check_id_args_count(tokens, "Cylinder", 6) == FAIL)
+	if (check_id_args_count(tokens, "Cylinder", 8) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, CYLINDER);
 	if (!object)
@@ -88,8 +88,28 @@ int parse_cyl(char **tokens, t_scene *scene)
 	object->cyl.height = parse_float(tokens[4], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Cylinder: height: "ERROR_FLOAT, tokens[4]));
-	object->cyl.color = parse_color(tokens[5], &scene->is_valid);
-	if (!scene->is_valid)
-		return (print_error("Cylinder: "ERROR_COLOR, tokens[5]));
+	if (parse_material(tokens, scene, &scene->is_valid, 5))
+		return (print_error(RED"Cylinder\n", NULL));
 	return (SUCCESS);
 }
+static int parse_material(char **tokens, int offset, t_scene *scene, t_material *m)
+{
+	m->color = parse_color(tokens[offset], &scene->is_valid);
+	if (!scene->is_valid)
+		return print_error("Material: "ERROR_COLOR, tokens[offset]);
+
+	m->diffuse = parse_float(tokens[offset + 1], &scene->is_valid);
+	if (!scene->is_valid)
+		return print_error("Material: diffuse: "ERROR_FLOAT, tokens[offset + 1]);
+
+	m->specular_probability = parse_float(tokens[offset + 2], &scene->is_valid);
+	if (!scene->is_valid)
+		return print_error("Material: specular: "ERROR_FLOAT, tokens[offset + 2]);
+
+	m->emitter = parse_float(tokens[offset + 3], &scene->is_valid);
+	if (!scene->is_valid)
+		return print_error("Material: emitter: "ERROR_FLOAT, tokens[offset + 3]);
+
+	return (SUCCESS);
+}
+

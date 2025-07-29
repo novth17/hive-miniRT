@@ -33,7 +33,7 @@ typedef struct s_plane
 {
 	t_vec3	point;
 	t_vec3	axis;
-	t_color	color; //0-255
+	//t_color	color; //0-255
 	t_material	material;
 }				t_plane;
 
@@ -43,7 +43,7 @@ typedef struct s_cylinder
 	t_vec3	axis;
 	float	diameter;
 	float	height;
-	t_color	color;//0-255
+	//t_color	color;//0-255
 	t_material	material;
 }				t_cylinder;
 
@@ -58,8 +58,6 @@ typedef struct s_object
 	};
 	struct s_object	*next;
 }				t_object;
-
-
 
 
 #endif

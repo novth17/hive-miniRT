@@ -66,26 +66,3 @@ int parse_light(char **tokens, t_scene *scene)
 	return (SUCCESS);
 }
 
-int parse_material(char **tokens, t_scene *scene, t_material *m)
-{
-	if (check_id_args_count(tokens, "Material", 4) == FAIL)
-		return (FAIL);
-
-	m->color = parse_color(tokens[4], &scene->is_valid);
-	if (!scene->is_valid)
-		return print_error("Material: "ERROR_COLOR, tokens[4]);
-
-	m->diffuse = parse_float(tokens[5], &scene->is_valid);
-	if (!scene->is_valid)
-		return print_error("Material: ratio: "ERROR_FLOAT, tokens[5]);
-
-	m->specular_probability = parse_float(tokens[6], &scene->is_valid);
-	if (!scene->is_valid)
-		return print_error("Material: ratio: "ERROR_FLOAT, tokens[6]);
-
-	m->emitter = parse_float(tokens[7], &scene->is_valid);
-	if (!scene->is_valid)
-		return print_error("Material: ratio: "ERROR_FLOAT, tokens[7]);
-
-	return (SUCCESS);
-}
