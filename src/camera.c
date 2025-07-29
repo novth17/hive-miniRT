@@ -31,7 +31,7 @@ void base_init_cam(t_camera *cam)
 {
 
 	cam->samples_per_pixel = 1;
-	cam->max_bounce = 4;
+	cam->max_bounce = 8;
 
 	cam->vup = v3(0, 1, 0); // might not need this in camera
 

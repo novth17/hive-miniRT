@@ -19,7 +19,7 @@ t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float r
 	rec.did_hit = true;
 	rec.distance = root;
 	rec.position = at(ray, rec.distance);
-	rec.color = sp.material.color;
+	rec.mat = sp.material;
 	rec.normal = v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius);
 	rec.front_face = dot(ray.direction, rec.normal) < 0;
 	if (rec.front_face == false)
@@ -224,21 +224,6 @@ t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict sce
 	hit_record.distance = MAX_HIT_DIST;
 	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
 	check_spheres(&hit_record, &point_light_sphere, 1, ray);
-	t_material mat =
-	{
-		.color = hit_record.color,
-		.specular_probability = 0.7f,
-		.diffuse = 0.99f,
-		.emitter = 0.0f,
-	};
-	if (hit_record.mat.emitter == 0.0f)
-		hit_record.mat = mat;
-	else
-	{
-		float temp_emmit =  hit_record.mat.emitter;
-		hit_record.mat = mat;
-		hit_record.mat.emitter = temp_emmit;
-	}
 	return (hit_record);
 }
 
@@ -246,7 +231,6 @@ static inline
 t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_bounce, uint32_t *seed)
 {
 
-	// const float mat_diffuse_amount = 1; // temp for testing
 	const t_v3 random_bounce = noz(v3_add_v3(rec->normal, in_unit_sphere(seed))); // do we need to normalize?
 	t_v3 pure_bounce;
 
