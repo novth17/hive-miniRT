@@ -52,13 +52,6 @@ float sphere_hit(const t_sphere sp, const t_ray ray)
 			return (FLT_MAX);
 	}
 	return (root);
-	// *rec = create_sphere_hit_record(ray, sp, root);
-	// rec->distance = root;
-	// rec->position = at(ray, rec->distance);
-	// rec->normal = v3_div_f32(V3_SUB(rec->position, sp.position), sp.radius);
-	// rec->color = sp.color; // maybe replace with material or material index?
-	// rec->did_hit = true;
-	// return (true);
 }
 
 // inline
@@ -92,10 +85,6 @@ float check_spheres(t_hit *restrict rec, const t_sphere *spheres, const uint32_t
 			// *rec = temp_rec;
 		}
 		++i;
-	}
-	if (rec->color.r == 1.0f && rec->color.g == 1.0f && rec->color.b == 1.0f)
-	{
-		rec->mat.emitter = 100.0f;
 	}
 	return (hit_distance);
 }
@@ -269,7 +258,8 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 		if (rec.did_hit)
 		{
 			hit_once = true;
-
+			// there is a bug here relating to ambient light and how that affects the color of an object
+			// it seems to cause the object to take on the color of the ambient light even if it should not
 			if (scene->use_point_light)
 			{
 				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), ray_color));
