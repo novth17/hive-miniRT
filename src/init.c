@@ -52,7 +52,7 @@ int	init_minirt(t_minirt *minirt, char **argv)
 			i,
 			s->center.x, s->center.y, s->center.z,
 			s->radius,
-			s->color.r, s->color.g, s->color.b
+			s->material.color.r,s->material.color.g, s->material.color.b
 		);
 	}
 
@@ -63,7 +63,7 @@ int	init_minirt(t_minirt *minirt, char **argv)
 			i,
 			pl->point.x, pl->point.y, pl->point.z,
 			pl->axis.x, pl->axis.y, pl->axis.z,
-			pl->color.r, pl->color.g, pl->color.b
+			pl->material.color.r, pl->material.color.g, pl->material.color.b
 		);
 	}
 
@@ -75,7 +75,7 @@ int	init_minirt(t_minirt *minirt, char **argv)
 			cy->center.x, cy->center.y, cy->center.z,
 			cy->axis.x, cy->axis.y, cy->axis.z,
 			cy->diameter, cy->height,
-			cy->color.r, cy->color.g, cy->color.b
+			cy->material.color.r, cy->material.color.g, cy->material.color.b
 		);
 	}
 
