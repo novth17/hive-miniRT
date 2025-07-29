@@ -19,7 +19,7 @@ t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float r
 	rec.did_hit = true;
 	rec.distance = root;
 	rec.position = at(ray, rec.distance);
-	rec.color = sp.color;
+	rec.color = sp.material.color;
 	rec.normal = v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius);
 	rec.front_face = dot(ray.direction, rec.normal) < 0;
 	if (rec.front_face == false)
@@ -216,7 +216,7 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 static inline
 t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict scene)
 {
-	const t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f}; // debugging
+	const t_sphere point_light_sphere = {.material.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f}; // debugging
 
 	t_hit hit_record;
 
@@ -227,7 +227,6 @@ t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict sce
 	t_material mat =
 	{
 		.color = hit_record.color,
-		.specular_color = v3(1, 1, 1),//v3(1, 1, 1),
 		.specular_probability = 0.7f,
 		.diffuse = 0.99f,
 		.emitter = 0.0f,
@@ -265,6 +264,7 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 static inline
 t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, uint32_t *seed) // change to all objects or scene;
 {
+	static const t_color specular_color = {1, 1, 1};
 	(void)seed; // for now -  this will be used for bounce directions
 	t_v3 ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
 	// t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
@@ -293,7 +293,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
 			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
-			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
+			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, specular_color));
 			// color = V3_ADD(ambient, color);
 			// color = v3_mul_v3(rec.color, color);
 			ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
