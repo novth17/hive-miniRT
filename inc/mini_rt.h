@@ -96,6 +96,8 @@ typedef struct s_scene
 	t_object	*objects;
 	bool		is_valid;
 
+	
+
 
 
 }	t_scene;

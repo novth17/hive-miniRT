@@ -65,4 +65,3 @@ int parse_light(char **tokens, t_scene *scene)
 
 	return (SUCCESS);
 }
-
