@@ -209,11 +209,11 @@ float saturate(float f)
 // 	return (result);
 // }
 
-static inline
-uint8_t float_to_u8_sat(float f)
-{
-	return ((saturate(f)) * 255.0f + 0.5f); // + 0.5f ?
-}
+// static inline
+// uint8_t float_to_u8_sat(float f)
+// {
+// 	return ((saturate(f)) * 255.0f + 0.5f); // + 0.5f ?
+// }
 
 static inline
 uint32_t float_to_u32_sat(float f)
@@ -299,10 +299,10 @@ t_v4 rgba_unpack(uint32_t packed)
 {
 	t_v4 result;
 
-	result = (t_v4){(float)((packed >> 0) & 0xFF),
+	result = v4((float)((packed >> 0) & 0xFF),
 					(float)((packed >> 8) & 0xFF),
 					(float)((packed >> 16) & 0xFF),
-					(float)((packed >> 24) & 0xFF)};
+					(float)((packed >> 24) & 0xFF));
 	return (result);
 }
 
@@ -414,6 +414,7 @@ t_v3 noz(t_v3 a)
 	t_v3 result;
 	const float lensq = length_sq(a);
 
+	result = (t_v3){};
 	if (lensq > square(0.0001f))
 	{
 		result.x = a.x * (1.0f / square_root(lensq));
@@ -429,7 +430,7 @@ t_v3 hadamard(t_v3 a, t_v3 b)
 {
 	t_v3 result;
 
-	result = (t_v3){a.x*b.x, a.y*b.y, a.z*b.z};
+	result = v3(a.x*b.x, a.y*b.y, a.z*b.z);
 	return (result);
 }
 

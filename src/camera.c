@@ -25,15 +25,17 @@ t_v3	pixel00_location(const t_v3 viewport_upper_left, const t_v3 pixel_delta_u, 
 	return (result);
 }
 
-void base_init_cam(t_minirt *minirt, t_camera *cam)
+
+// to set defaults
+void base_init_cam(t_camera *cam)
 {
 
 	cam->samples_per_pixel = 1;
-	cam->max_bounce = 1;
+	cam->max_bounce = 8;
 
 	cam->vup = v3(0, 1, 0); // might not need this in camera
 
-	cam->defocus_angle = 2;
+	cam->defocus_angle = 0.0f;
 	cam->focus_dist = 1.0;
 
 }
@@ -44,7 +46,7 @@ bool init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 	const t_v3 w = unit_vector(V3_SUB(cam->lookfrom, cam->lookat));
 	const t_v3 u = unit_vector(cross(cam->vup, w));
 	const t_v3 v = cross(w, u);
-	const float h = (float)tan((cam->fov * M_PI / 180) / 2);
+	const float h = tanf((cam->fov * M_PI / 180) / 2);
 
 	cam->pixel_sample_scale = 1.0f / cam->samples_per_pixel;
 	cam->aspect_ratio = (float)minirt->image->width / minirt->image->height;
@@ -67,11 +69,10 @@ bool init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 
 	cam->viewport_upper_left = viewport_top_left(cam, w);
 
- 	const float defocus_radius = cam->focus_dist * tan((cam->defocus_angle / 2) * M_PI / 180);
+ 	const float defocus_radius = cam->focus_dist * tanf((cam->defocus_angle / 2) * M_PI / 180);
   	cam->defocus_disk_u = v3_mul_f32(u, defocus_radius);
     cam->defocus_disk_v = v3_mul_f32(v, defocus_radius);
 
 	cam->pixel00_loc = pixel00_location(cam->viewport_upper_left, cam->pixel_delta_u, cam->pixel_delta_v);
 	return (false);
 }
-

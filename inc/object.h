@@ -12,7 +12,7 @@ typedef enum e_obj_type
 	// later: TRIANGLE, CAT UIIA, etc.
 }				t_obj_type;
 
-typedef struct
+typedef struct s_material
 {
 	t_color	color;
 	float	specular_probability;

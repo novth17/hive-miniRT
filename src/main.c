@@ -11,30 +11,28 @@ uint32_t g_accummulated_frames = 0;
 #include <stdint.h>
 #include <math.h>
 
-void base_init_cam(t_minirt *minirt, t_camera *cam);
+// static
+// float ExactLinearTosRGB(float L)
+// {
+// 	float S;
 
-static
-float ExactLinearTosRGB(float L)
-{
-	float S;
+// 	if (L < 0.0f)
+// 	{
+// 		L = 0.0f;
+// 	}
 
-	if (L < 0.0f)
-	{
-		L = 0.0f;
-	}
+// 	if (L > 1.0f)
+// 	{
+// 		L = 1.0f;
+// 	}
 
-	if (L > 1.0f)
-	{
-		L = 1.0f;
-	}
-
-	S = L * 12.92;
-	if (L > 0.0031308)
-	{
-		S = 1.055F*pow(L, 1.0f/2.4f) - 0.055f;
-	}
-	return (S);
-}
+// 	S = L * 12.92;
+// 	if (L > 0.0031308)
+// 	{
+// 		S = 1.055F*pow(L, 1.0f/2.4f) - 0.055f;
+// 	}
+// 	return (S);
+// }
 
 inline
 float random_float_normal_dist(uint32_t *seed)
@@ -51,17 +49,7 @@ t_v3 random_direction_normal_dist(uint32_t *seed)
 	const float y = random_float_normal_dist(seed);
 	const float z = random_float_normal_dist(seed);
 
-	return (normalize((t_v3){x, y, z}));
-}
-
-inline
-t_v3 random_direction(uint32_t *seed)
-{
-	const float x = random_float(seed);
-	const float y = random_float(seed);
-	const float z = random_float(seed);
-
-	return (normalize((t_v3){x, y, z}));
+	return (normalize(v3(x, y, z)));
 }
 
 t_v3 random_direction_in_hemisphere(const t_v3 normal, uint32_t *rng_seed)
@@ -71,13 +59,13 @@ t_v3 random_direction_in_hemisphere(const t_v3 normal, uint32_t *rng_seed)
 }
 
 // not used
-static inline
-t_v3 get_offset(uint32_t *seed)
-{
-	t_v3 result = {};
-	result = in_unit_sphere(seed);
-	return (result);
-}
+// static inline
+// t_v3 get_offset(uint32_t *seed)
+// {
+// 	t_v3 result = {};
+// 	result = in_unit_sphere(seed);
+// 	return (result);
+// }
 
 static int	run_minirt(t_minirt *minirt, char **argv)
 {
@@ -85,7 +73,9 @@ static int	run_minirt(t_minirt *minirt, char **argv)
 		return (FAIL);
 
 
-	base_init_cam(minirt, &minirt->scene.camera);
+	base_init_cam(&minirt->scene.camera);
+	minirt->scene.light_strength_mult = 5;
+	minirt->scene.use_point_light = true;
 
 	mlx_loop(minirt->mlx);
 	mlx_terminate(minirt->mlx);
@@ -103,4 +93,3 @@ int	main(int argc, char **argv)
 	delete_minirt(&minirt);
 	return (SUCCESS);
 }
-
