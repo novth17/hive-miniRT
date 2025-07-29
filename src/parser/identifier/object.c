@@ -25,7 +25,7 @@ int parse_sphere(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	if (check_id_args_count(tokens, "Sphere", 6) == FAIL)
+	if (check_id_args_count(tokens, "Sphere", 7) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, SPHERE);
 	if (!object)
