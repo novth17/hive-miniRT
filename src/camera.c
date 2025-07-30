@@ -28,8 +28,8 @@ t_v3	pixel00_location(const t_v3 viewport_upper_left, const t_v3 pixel_delta_u, 
 void base_init_cam(t_camera *cam)
 {
 
-	cam->samples_per_pixel = 8;
-	cam->max_bounce = 4;
+	cam->samples_per_pixel = 1;
+	cam->max_bounce = 0;
 
 	cam->vup = v3(0, 1, 0); // might not need this in camera
 
@@ -138,10 +138,9 @@ t_mat4 inverse(t_mat4 m)
 
 t_mat4 look_at(const t_camera *restrict cam)
 {
-	const t_v3 f = unit_vector(V3_SUB(cam->lookfrom, cam->lookat));
-	t_v3 u = unit_vector(cam->vup);
-	const t_v3 s = cross(f, u);
-	u = cross(s, f);
+	const t_v3 f = unit_vector(V3_SUB(V3_ADD(cam->lookfrom, cam->lookat), cam->lookfrom));
+	const t_v3 s = unit_vector(cross(f, cam->vup));
+	const t_v3 u = cross(s, f);
 
 
     t_mat4 result;
@@ -165,13 +164,34 @@ t_mat4 look_at(const t_camera *restrict cam)
 }
 
 
+float deg_to_rad(float a)
+{
+	return (a * M_PI / 180);
+}
+
+t_mat4 perspective_fov(float fov, float width, float height, float near, float far)
+{
+	const float rad = fov;
+	const float h = cosf(0.5f * rad) / sinf(0.5f * rad);
+	const float w = h * height / width;
+	t_mat4 result;
+
+	ft_memset(&result, 0, sizeof(result));
+	result.mat[0][0] = w;
+	result.mat[1][1] = h;
+	result.mat[2][2] = far / (near - far);
+	result.mat[2][3] = -1.0f;
+	result.mat[3][2] = -(far * near) / (far - near);
+	return (result);
+}
+
 void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 {
 	const t_v3 w = unit_vector(V3_SUB(cam->lookfrom, cam->lookat));
 	const t_v3 u = unit_vector(cross(cam->vup, w));
 	const t_v3 v = cross(w, u);
-	const float h = tanf((cam->fov * M_PI / 180) / 2);
-	const float defocus_radius = cam->focus_dist * tanf((cam->defocus_angle / 2) * M_PI / 180);
+	const float h = tanf(deg_to_rad(cam->fov) * 0.5);
+	const float defocus_radius = cam->focus_dist * tanf(deg_to_rad(cam->defocus_angle * 0.5));
 
 
 	cam->pixel_sample_scale = 1.0f / cam->samples_per_pixel;
@@ -204,12 +224,7 @@ void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 
 	// t_mat4 projection;
 
-	ft_memset(&cam->projection, 0, sizeof(cam->projection));
-	cam->projection.mat[0][0] = h * cam->viewport_height / cam->viewport_width;
-	cam->projection.mat[1][1] = h;
-	cam->projection.mat[2][2] = MAX_HIT_DIST / (MIN_HIT_DIST - MAX_HIT_DIST);
-	cam->projection.mat[2][3] = -1.0f;
-	cam->projection.mat[3][2] = -(MAX_HIT_DIST * MIN_HIT_DIST) / (MAX_HIT_DIST - MIN_HIT_DIST);
+	cam->projection = perspective_fov(deg_to_rad(cam->fov), (float)cam->image_width, (float)cam->image_height, MIN_HIT_DIST, MAX_HIT_DIST);
 	cam->inverse_projection = inverse(cam->projection);
 	cam->view = look_at(cam);
 	cam->inverse_view = inverse(cam->view);

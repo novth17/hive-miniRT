@@ -135,43 +135,9 @@ t_v3 defocus_disk_sample(const t_camera *restrict cam, uint32_t *rng_state)
 }
 
 
-static inline
-t_v3 v4_to_v3(t_v4 a)
-{
-	return (v3(a.x, a.y, a.z));
-}
 
-static inline
-t_v4 quaternion_thingy_dont_know(t_v4 target)
-{
-	t_v3 target_v3 = v4_to_v3(target);
-	target_v3 =  normalize(v3_div_f32(target_v3, target.w));
-	target = (t_v4){.xyz = target_v3, .w = 0};
-	return (target);
-}
 
-static inline
-t_v3 get_ray_direction(const t_camera *cam, const t_ray ray, t_cord cord, uint32_t *seed)
-{
-	static uint64_t num = 0;
-	const t_v3 offset = sample_square(seed);
-	// printf("offset x <%f> offset y <%f>\n", offset.x, offset.y);
-	// t_v3 offset = {0, 0, 0};
-	const t_v3 x_delta = f32_mul_v3(cord.x + offset.x, cam->pixel_delta_u);
-	const t_v3 y_delta = f32_mul_v3(cord.y + offset.y, cam->pixel_delta_v);
-	const t_v3 pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
 
-	// cord.x = (cord.x + offset.x) / cam->viewport_width;
-	// cord.y = (cord.y + offset.y) / cam->viewport_height;
-
-	// t_v4 target = mat_mul_v4(cam->inverse_projection, v4(pixel_sample.x, pixel_sample.y, 1.0f, 1.0f));
-	// t_v3 direction = v4_to_v3(mat_mul_v4(cam->inverse_view, quaternion_thingy_dont_know(target)));
-	t_v3 direction = V3_SUB(pixel_sample, ray.origin);
-	// t_v3 direction = V3_SUB(v4_to_v3(target), ray.origin);
-	// if (num++ % 4096 == 0)
-	// 	printf("%f %f %f\n", direction.x, direction.y, direction.z);
-	return (direction);
-}
 
 static inline
 float smoothstep(const float edge0, const float edge1, float x)
@@ -305,14 +271,17 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 		}
 		else
 		{
-			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
+			// total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
 			// color = V3_ADD(ambient, color);
 			// color = v3_mul_v3(rec.color, color);
 			break ;
 		}
 	}
 	if (hit_once)
+	{
+		total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
 		return (total_incoming_light);
+	}
 
 	// not hit = background color
 	t_v3 unit_direction = unit_vector(ray.direction);
@@ -323,6 +292,51 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 	result = v3_add_v3(result, f32_mul_v3(a, v3(0.5, 0.7, 1.0)));
 	// incoming_ligth = result; // for now
 	return (result);
+}
+
+static inline
+t_v3 v4_to_v3(t_v4 a)
+{
+	return (v3(a.x, a.y, a.z));
+}
+
+static inline
+t_v4 quaternion_thingy_dont_know(t_v4 target)
+{
+	t_v3 target_v3 = v4_to_v3(target);
+	target_v3 =  unit_vector(v3_div_f32(target_v3, target.w));
+	target = (t_v4){.xyz = target_v3, .w = 0};
+	return (target);
+}
+
+static inline
+t_v3 get_ray_direction(const t_camera *cam, const t_ray ray, t_cord cord, uint32_t *seed)
+{
+	static uint64_t num = 0;
+	const t_v3 offset = sample_square(seed);
+	// printf("offset x <%f> offset y <%f>\n", offset.x, offset.y);
+	// t_v3 offset = {0, 0, 0};
+	const t_v3 x_delta = f32_mul_v3(cord.x + offset.x, cam->pixel_delta_u);
+	const t_v3 y_delta = f32_mul_v3(cord.y + offset.y, cam->pixel_delta_v);
+	const t_v3 pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
+
+	cord.x = (float)(cord.x + offset.x) / (float)cam->image_width;
+	cord.y = (float)(cord.y + offset.y) / (float)cam->image_height;
+
+	cord.x = cord.x * 2.0f - 1.0f;
+	cord.y = cord.y * 2.0f - 1.0f;
+	// t_v4 target = mat_mul_v4(cam->inverse_projection, v4(cord.x, cord.y, 1.0f, 1.0f));
+	// t_v3 direction = v4_to_v3(mat_mul_v4(cam->inverse_view, quaternion_thingy_dont_know(target)));
+	t_v3 direction = V3_SUB(pixel_sample, ray.origin);
+	// t_v4 temp = (t_v4){.xyz = direction, 0};
+
+	// temp = mat_mul_v4(cam->inverse_projection, temp);
+	// temp = mat_mul_v4(cam->inverse_view, temp);
+	// direction = v4_to_v3(temp);
+	// t_v3 direction = V3_SUB(v4_to_v3(target), ray.origin);
+	// if (num++ % 4096 == 0)
+	// 	printf("%f %f %f\n", direction.x, direction.y, direction.z);
+	return (direction);
 }
 
 t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const uint32_t x, const uint32_t y)

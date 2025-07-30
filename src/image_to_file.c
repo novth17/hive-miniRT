@@ -27,17 +27,62 @@ t_bitmap_header make_header(mlx_image_t *image)
 	return (header);
 }
 
+uint32_t reorder_color(uint32_t color)
+{
+	const uint32_t r = (color) & 0xFF;
+	const uint32_t g = (color >> 8) & 0xFF;
+	const uint32_t b = (color >> 16) & 0xFF;
+	const uint32_t a = (color >> 24) & 0xFF;
+
+	return ((a << 24) | (r << 16) | (g << 8) | (b << 0));
+
+}
+
+uint32_t	*convert_mlx_image_to_output_image(mlx_image_t *image, uint32_t output_pixel_size)
+{
+	const uint32_t *src = (uint32_t *)image->pixels;
+	uint32_t *pixels;
+	uint32_t color;
+	size_t x;
+	size_t y;
+
+	pixels = malloc(output_pixel_size);
+	if (pixels == NULL)
+	{
+		print_error("Failed to allocate for output image", NULL);
+		return (NULL);
+	}
+	y = 0;
+	while (y < image->height)
+	{
+		x = 0;
+		while (x < image->width)
+		{
+			color = src[((image->height - 1 - y )  * image->width) + x];
+			pixels[y * image->width + x] = reorder_color(color);
+			x++;
+		}
+		y++;
+	}
+	return (pixels);
+}
+
 static
 int write_image(mlx_image_t *image, int fd)
 {
 	const uint32_t output_pixel_size = image->width * image->height * sizeof(uint32_t);
 	const t_bitmap_header header = make_header(image);
+	uint32_t *output_image;
 
 	if (fd == -1)
 		return (1);
+	output_image = convert_mlx_image_to_output_image(image, output_pixel_size);
+	if (output_image == NULL)
+		return (1);
 	write(fd, &header, sizeof(header));
-	write(fd, image->pixels, output_pixel_size);
+	write(fd, output_image, output_pixel_size);
 	close(fd);
+	free(output_image);
 	return (0);
 }
 
@@ -65,45 +110,38 @@ char	*create_file_name(uint32_t num)
 {
 	static const uint32_t filename_length = sizeof(OUTPUT_FILENAME) - 1;
 	static char name_buf[OUTPUT_FILENAME_BUFFER_SIZE] = OUTPUT_FILENAME;
-	uint32_t	num_temp;
 	uint8_t		i;
 
-	num_temp = num;
 	i = num_len(num);
 	name_buf[filename_length + i] = '\0';
 	while (i--)
 	{
-		name_buf[filename_length + i] = (num_temp % 10) + '0';
-		num_temp = num_temp / 10;
+		name_buf[filename_length + i] = (num % 10) + '0';
+		num = num / 10;
 	}
 	return (name_buf);
 }
 
 void pixels_to_image_file(mlx_image_t *image)
 {
-	const static char extension[] = ".bmp";
+	static const char extension[] = ".bmp";
 	uint32_t num;
 	char *filename;
 	int fd;
 
-	num = 0;
-	fd = 0;
-	while (fd != -1)
+	num = 1;
+	fd = -1;
+	while (fd == -1)
 	{
 		filename = create_file_name(num);
 		ft_strlcat(filename, extension, OUTPUT_FILENAME_BUFFER_SIZE);
 		fd = open(filename, O_CREAT | O_EXCL | O_TRUNC | O_RDWR, 0644);
-		if (fd == -1)
+		if (fd == -1 && errno != EEXIST)
 		{
-			if (errno == EEXIST)
-			{
-				++num;
-				fd = 0;
-				continue;
-			}
-			// error // maybe print something
+			print_error("Failed to create image file", NULL);
 			return ;
 		}
+		++num;
 	}
 	write_image(image, fd);
 }
