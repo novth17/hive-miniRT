@@ -45,6 +45,7 @@ int	init_minirt(t_minirt *minirt, char **argv)
 	if (fill_obj_arr(minirt, &minirt->scene) == FAIL)
 		return (print_error("Filling object array failed", NULL));
 
+	//TEST
 	for (uint32_t i = 0; i < minirt->scene.spheres_count; i++)
 	{
 		t_sphere *s = &minirt->scene.spheres[i];
@@ -54,6 +55,13 @@ int	init_minirt(t_minirt *minirt, char **argv)
 			s->radius,
 			s->material.color.r,s->material.color.g, s->material.color.b
 		);
+		if (1)
+		{
+			printf("DEBUG: sphere[%u]: diffuse=%.2f, emitter=%.2f, probability=%.2f\n",
+				i,
+				s->material.diffuse, s->material.specular_probability, s->material.emitter
+			);
+		}
 	}
 
 	for (uint32_t i = 0; i < minirt->scene.pl_count; i++)
@@ -65,6 +73,13 @@ int	init_minirt(t_minirt *minirt, char **argv)
 			pl->axis.x, pl->axis.y, pl->axis.z,
 			pl->material.color.r, pl->material.color.g, pl->material.color.b
 		);
+		if (1)
+		{
+			printf("DEBUG: pl[%u]: diffuse=%.2f, emitter=%.2f, probability=%.2f\n",
+				i,
+				pl->material.diffuse, pl->material.specular_probability, pl->material.emitter
+			);
+		}
 	}
 
 	for (uint32_t i = 0; i < minirt->scene.cyls_count; i++)
@@ -77,7 +92,16 @@ int	init_minirt(t_minirt *minirt, char **argv)
 			cy->diameter, cy->height,
 			cy->material.color.r, cy->material.color.g, cy->material.color.b
 		);
+		if (1)
+		{
+			printf("DEBUG: cy[%u]: diffuse=%.2f, emitter=%.2f, probability=%.2f \n",
+				i,
+				cy->material.diffuse, cy->material.specular_probability, cy->material.emitter
+			);
+		}
 	}
+
+	//TEST ENDS
 
 	if (setup_mlx(minirt) == FAIL)
 	{
