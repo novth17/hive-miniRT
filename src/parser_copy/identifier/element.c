@@ -38,7 +38,7 @@ int parse_camera(char **tokens, t_scene *scene)
 	if (!scene->is_valid)
 		return (print_error("Camera: FOV: "ERROR_FLOAT, tokens[3]));
 	if (scene->camera.fov < 0 || scene->camera.fov > 180)
-		return (print_error("Camera: "ERROR_FOV_IN_RANGE, tokens[3]));
+		return (print_error("Camera: "ERROR_FOV, tokens[3]));
 
 	return (SUCCESS);
 }
