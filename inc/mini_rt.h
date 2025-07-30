@@ -128,6 +128,7 @@ typedef struct s_mini_rt
 	t_scene			scene;
 	bool			file_has_content;
 
+	bool			write_image_to_file;
 	// t_camera		base_cam;
 }	t_minirt;
 

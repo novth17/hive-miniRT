@@ -1,5 +1,8 @@
 # include "../inc/mini_rt.h"
+#include <stdbool.h>
 #include <stdint.h>
+#include "../inc/image_to_file.h"
+
 
 extern bool g_recalculate_cam;
 extern uint32_t g_accummulated_frames;
@@ -158,12 +161,12 @@ t_v3 get_ray_direction(const t_camera *cam, const t_ray ray, t_cord cord, uint32
 	const t_v3 y_delta = f32_mul_v3(cord.y + offset.y, cam->pixel_delta_v);
 	const t_v3 pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
 
-	cord.x = (cord.x + offset.x) / cam->viewport_width;
-	cord.y = (cord.y + offset.y) / cam->viewport_height;
+	// cord.x = (cord.x + offset.x) / cam->viewport_width;
+	// cord.y = (cord.y + offset.y) / cam->viewport_height;
 
-	t_v4 target = mat_mul_v4(cam->inverse_projection, v4(pixel_sample.x, pixel_sample.y, 1.0f, 1.0f));
-	t_v3 direction = v4_to_v3(mat_mul_v4(cam->inverse_view, quaternion_thingy_dont_know(target)));
-	// t_v3 direction = V3_SUB(pixel_sample, ray.origin);
+	// t_v4 target = mat_mul_v4(cam->inverse_projection, v4(pixel_sample.x, pixel_sample.y, 1.0f, 1.0f));
+	// t_v3 direction = v4_to_v3(mat_mul_v4(cam->inverse_view, quaternion_thingy_dont_know(target)));
+	t_v3 direction = V3_SUB(pixel_sample, ray.origin);
 	// t_v3 direction = V3_SUB(v4_to_v3(target), ray.origin);
 	// if (num++ % 4096 == 0)
 	// 	printf("%f %f %f\n", direction.x, direction.y, direction.z);
@@ -234,8 +237,10 @@ t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict sce
 
 	hit_record = (t_hit){};
 	hit_record.distance = MAX_HIT_DIST;
+	//check_planes();
 	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
 	check_spheres(&hit_record, &point_light_sphere, 1, ray);
+	//check_cylinders();
 	return (hit_record);
 }
 
@@ -279,7 +284,9 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 		rec = find_closest_ray_intesection(ray, scene);
 		if (rec.did_hit)
 		{
+			rec.mat.specular_color = rec.mat.color;
 			hit_once = true;
+			// might not be a bug technically just related to the fact that the specular bounce is always the same
 			// there is a bug here relating to ambient light and how that affects the color of an object
 			// it seems to cause the object to take on the color of the ambient light even if it should not
 			if (scene->use_point_light)
@@ -289,7 +296,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
 			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
-			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, specular_color));
+			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			// color = V3_ADD(ambient, color);
 			// color = v3_mul_v3(rec.color, color);
 			ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
@@ -410,6 +417,11 @@ void per_frame(void * param)
 
 	minirt = (t_minirt *)param;
 	mlx = minirt->mlx;
+	if (minirt->write_image_to_file == true)
+	{
+		pixels_to_image_file(minirt->image);
+		minirt->write_image_to_file = false;
+	}
 	if (minirt->image->width != (uint)mlx->width || minirt->image->height !=  (uint)mlx->height)
 	{
 		mlx_resize_image(minirt->image, mlx->width, mlx->height);
@@ -422,12 +434,7 @@ void per_frame(void * param)
 		g_accummulated_frames = 0;
 		frame_cam = minirt->scene.camera;
 	}
-	// if (g_accummulated_frames < ACCUMULATE_MAX)
-	// {
 	render(&minirt->scene, &frame_cam, (uint32_t *)minirt->image->pixels);
 	++g_accummulated_frames;
-	// }
-	// printf("hit: %i\tmiss: %i\n", hit, miss);
-
 	printf("delta: %f\n", minirt->mlx->delta_time);
 }

@@ -15,6 +15,7 @@ typedef enum e_obj_type
 typedef struct s_material
 {
 	t_color	color;
+	t_color specular_color;
 	float	specular_probability;
 	float	diffuse;
 	float	emitter;

@@ -85,6 +85,10 @@ void key_hook(struct mlx_key_data data, void * param)
 		{
 			minirt->scene.camera.lookfrom = V3_SUB(minirt->scene.camera.lookfrom, right_direction);
 		}
+		if (data.key == MLX_KEY_P)
+		{
+			minirt->write_image_to_file = true;
+		}
 	}
 	esc_key_func(data, minirt);
 	// }

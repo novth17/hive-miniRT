@@ -26,6 +26,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/delete.c \
         		$(SRC_DIR)/camera.c \
 				$(SRC_DIR)/render.c \
+				$(SRC_DIR)/image_to_file.c \
 				$(SRC_DIR)/parser/parse.c \
 				$(SRC_DIR)/parser/validate.c \
 				$(SRC_DIR)/parser/fill_arr.c \

@@ -28,8 +28,8 @@ t_v3	pixel00_location(const t_v3 viewport_upper_left, const t_v3 pixel_delta_u, 
 void base_init_cam(t_camera *cam)
 {
 
-	cam->samples_per_pixel = 1;
-	cam->max_bounce = 1;
+	cam->samples_per_pixel = 8;
+	cam->max_bounce = 4;
 
 	cam->vup = v3(0, 1, 0); // might not need this in camera
 
@@ -172,10 +172,7 @@ void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 	const t_v3 v = cross(w, u);
 	const float h = tanf((cam->fov * M_PI / 180) / 2);
 	const float defocus_radius = cam->focus_dist * tanf((cam->defocus_angle / 2) * M_PI / 180);
-<<<<<<< HEAD
 
-=======
->>>>>>> 5ee436f (some camera movement testing)
 
 	cam->pixel_sample_scale = 1.0f / cam->samples_per_pixel;
 	cam->aspect_ratio = (float)minirt->image->width / minirt->image->height;
