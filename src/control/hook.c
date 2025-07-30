@@ -48,6 +48,7 @@ static void	esc_key_func(mlx_key_data_t keydata, t_minirt *minirt)
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
 	{
 		mlx_terminate(minirt->mlx);
+		delete_minirt(minirt);
 		exit(EXIT_SUCCESS);
 	}
 }
