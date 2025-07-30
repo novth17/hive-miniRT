@@ -469,3 +469,30 @@ uint32_t rgb_pack4x8(t_v3 unpacked)
 			((uint32_t)((unpacked.r) * 255.0f) << 0);
 	return (result);
 }
+
+
+#if 0
+inline
+t_v4 mat_mul_v4(t_mat4 m, t_v4 v)
+{
+	t_v4 result;
+
+	result.x = v.x * m.mat[0][0] + v.y * m.mat[0][1] + v.z * m.mat[0][2] + v.w * m.mat[0][3];
+	result.y = v.x * m.mat[1][0] + v.y * m.mat[1][1] + v.z * m.mat[1][2] + v.w * m.mat[1][3];
+	result.z = v.x * m.mat[2][0] + v.y * m.mat[2][1] + v.z * m.mat[2][2] + v.w * m.mat[2][3];
+	result.w = v.x * m.mat[3][0] + v.y * m.mat[3][1] + v.z * m.mat[3][2] + v.w * m.mat[3][3];
+	return (result);
+}
+#else
+inline
+t_v4 mat_mul_v4(t_mat4 m, t_v4 v)
+{
+	t_v4 result;
+
+	result.x = v.x * m.mat[0][0] + v.y * m.mat[1][0] + v.z * m.mat[2][0] + v.w * m.mat[3][0];
+	result.y = v.x * m.mat[0][1] + v.y * m.mat[1][1] + v.z * m.mat[2][1] + v.w * m.mat[3][1];
+	result.z = v.x * m.mat[0][2] + v.y * m.mat[1][2] + v.z * m.mat[2][2] + v.w * m.mat[3][2];
+	result.w = v.x * m.mat[0][3] + v.y * m.mat[1][3] + v.z * m.mat[2][3] + v.w * m.mat[3][3];
+	return (result);
+}
+#endif

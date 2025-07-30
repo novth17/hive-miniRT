@@ -20,7 +20,7 @@
 
 
 #define MIN_HIT_DIST 0.1f
-#define MAX_HIT_DIST 1000.0f // for now
+#define MAX_HIT_DIST FLT_MAX // for now
 
 typedef struct
 {
@@ -36,6 +36,7 @@ typedef struct
 	t_point3	lookat;
 	t_v3		vup;
 	t_v3		right;
+
 
  	float defocus_angle;  // Variation angle of rays through each pixel
     float focus_dist;
@@ -59,7 +60,10 @@ typedef struct
 	t_v3 viewport_upper_left;
 	t_v3 pixel00_loc;
 
-
+	t_mat4 projection;
+	t_mat4 inverse_projection;
+	t_mat4 view;
+	t_mat4 inverse_view;
 } t_camera;
 
 
@@ -158,7 +162,7 @@ void key_hook(struct mlx_key_data data, void * param);
 void scroll_hook(double delta_x, double delta_y, void *param);
 
 /* ===================== FOR DRAW ===================== */
-bool init_camera_for_frame(t_minirt *minirt, t_camera *cam);
+void init_camera_for_frame(t_minirt *minirt, t_camera *cam);
 void base_init_cam(t_camera *cam);
 
 void per_frame(void * param);
