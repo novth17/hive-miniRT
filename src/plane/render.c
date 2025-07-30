@@ -1,68 +1,65 @@
 #include "mini_rt.h"
 
-t_hit create_plane_hit_record(const t_ray ray, const t_sphere sp, const float root)
-{
-	t_hit rec;
-
-
-	return (rec);
-}
-
-
 bool plane_hit(const t_plane pl, const t_ray ray, float *out_t)
 {
-	float t;
-	float denom;
-	float D;
-
-	denom = dot(pl.axis, ray.direction);
+	float denom = dot(pl.axis, ray.direction);
 
 	if (fabsf(denom) < 1e-6f) // Ray is parallel to plane
 		return false;
 
-	D = dot(pl.axis, pl.point);
-	t = (D - dot(pl.axis, ray.origin)) / denom;
+	float t = dot(pl.axis, v3_sub_v3(pl.point, ray.origin)) / denom;
 
 	if (t < MIN_HIT_DIST || t > MAX_HIT_DIST)
 		return false;
+
 	*out_t = t;
-	return true;
+	return (true);
 }
 
-t_hit create_plane_hit_record(const t_ray ray, const t_sphere sp, const float root)
+/*
+- If the dot product is negative, the ray is hitting
+the front face (i.e. opposite to the normal).
+- If it’s positive, the ray is hitting the back side 
+(i.e. same direction as the normal).
+If it hits the front: use the normal as-is.
+If it hits the back: flip the normal so it still
+points against the ray direction.
+*/
+t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl, const float t)
 {
-	t_hit rec;
+	t_hit	rec;
+	t_v3	face_normal;
 
+	rec.color = pl.material.color;
+	rec.mat = pl.material;
 	rec.did_hit = true;
-	rec.distance = root;
+	rec.distance = t;
 	rec.position = at(ray, rec.distance);
-	rec.mat = sp.material;
-	rec.normal = v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius);
-	rec.front_face = dot(ray.direction, rec.normal) < 0;
-	if (rec.front_face == false)
-	{
-		rec.normal = neg(rec.normal);
-	}
+
+	face_normal = normalize(pl.axis);//maybe no need normalize?
+	rec.front_face = dot(ray.direction, face_normal) < 0;
+	if (rec.front_face)
+		rec.normal = face_normal;
+	else
+		rec.normal = neg(face_normal);
 	return (rec);
 }
 
-
-static inline
-t_hit create_plane_hit_record(const t_ray ray, const t_plane pl, const float t)
+float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t count, const t_ray ray)
 {
-	t_hit rec;
+	uint32_t i;
+	float t;
+	float closest = rec->distance;
 
-	rec.distance = t;
-	rec.position = vec_add(ray.origin, vec_mul(ray.direction, t));
-
-	// Face orientation
-	t_v3 outward_normal = vec_normalize(pl.axis);
-	rec.front_face = dot(ray.direction, outward_normal) < 0;
-	rec.normal = rec.front_face ? outward_normal : vec_mul(outward_normal, -1.0f);
-
-	rec.color = pl.material.color;  // assuming material contains color
-	rec.mat = pl.material;
-	rec.did_hit = true;
-
-	return rec;
+	i = 0;
+	while (i < count)
+	{
+		if (plane_hit(planes[i], ray, &t) && t < closest)
+		{
+			*rec = create_plane_hit_record(ray, planes[i], t);
+			closest = t;
+		}
+		++i;
+	}
+	return (closest);
 }
