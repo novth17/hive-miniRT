@@ -1,20 +1,20 @@
 #include "mini_rt.h"
 
-bool plane_hit(const t_plane pl, const t_ray ray, float *out_t)
+bool plane_hit(const t_plane pl, const t_ray ray, float *t)
 {
 	float denom = dot(pl.axis, ray.direction);
 
 	if (fabsf(denom) < 1e-6f) // Ray is parallel to plane
 		return false;
 
-	float t = dot(pl.axis, v3_sub_v3(pl.point, ray.origin)) / denom;
+	*t = dot(pl.axis, v3_sub_v3(pl.point, ray.origin)) / denom;
 
-	if (t < MIN_HIT_DIST || t > MAX_HIT_DIST)
+	if (*t < MIN_HIT_DIST || *t > MAX_HIT_DIST)
 		return false;
 
-	*out_t = t;
-	return (true);
+	return true;
 }
+
 
 /*
 - If the dot product is negative, the ray is hitting
@@ -49,8 +49,9 @@ float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t co
 {
 	uint32_t i;
 	float t;
-	float closest = rec->distance;
-
+	float closest;
+	
+	closest = rec->distance;
 	i = 0;
 	while (i < count)
 	{
