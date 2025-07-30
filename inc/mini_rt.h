@@ -166,7 +166,7 @@ void per_frame(void * param);
 int		check_id_args_count(char **tokens, const char *id, int expected);
 void	exit_error(t_minirt *minirt,  char *msg);
 int		print_error(const char *msg, const char *value);
-int		check_obj_args_count(char **tokens, const char *id, int expected);
+int check_obj_args_count(char **tokens, const char *id, int min, int max);
 
 /* ===================== FOR DELETE ===================== */
 
