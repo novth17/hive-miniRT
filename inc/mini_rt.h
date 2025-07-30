@@ -168,11 +168,11 @@ void base_init_cam(t_camera *cam);
 void per_frame(void * param);
 
 
-
 /* ===================== FOR ERROR ===================== */
 int		check_id_args_count(char **tokens, const char *id, int expected);
 void	exit_error(t_minirt *minirt,  char *msg);
 int		print_error(const char *msg, const char *value);
+int		check_obj_args_count(char **tokens, const char *id, int expected);
 
 /* ===================== FOR DELETE ===================== */
 

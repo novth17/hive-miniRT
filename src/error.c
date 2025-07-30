@@ -25,3 +25,13 @@ int check_id_args_count(char **tokens, const char *id, int expected)
 	}
 	return (SUCCESS);
 }
+
+int check_obj_args_count(char **tokens, const char *id, int expected)
+{
+	if (ft_count_2d(tokens) > expected)
+	{
+		ft_dprintf(2, "%s: Number of obj arguments must be %d!\n", id, expected);
+		return (FAIL);
+	}
+	return (SUCCESS);
+}
