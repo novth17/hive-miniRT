@@ -20,11 +20,7 @@
 
 
 #define MIN_HIT_DIST 0.1f
-<<<<<<< HEAD
 #define MAX_HIT_DIST FLT_MAX // for now
-=======
-#define MAX_HIT_DIST 1000.0f // for now
->>>>>>> 5ee436f (some camera movement testing)
 
 typedef struct
 {
@@ -40,10 +36,7 @@ typedef struct
 	t_point3	lookat;
 	t_v3		vup;
 	t_v3		right;
-<<<<<<< HEAD
 
-=======
->>>>>>> 5ee436f (some camera movement testing)
 
  	float defocus_angle;  // Variation angle of rays through each pixel
     float focus_dist;
