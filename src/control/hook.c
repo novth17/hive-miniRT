@@ -43,6 +43,16 @@ void scroll_hook(double delta_x, double delta_y, void *param)
 	}
 }
 
+static void	esc_key_func(mlx_key_data_t keydata, t_minirt *minirt)
+{
+	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
+	{
+		mlx_terminate(minirt->mlx);
+		delete_minirt(minirt);
+		exit(EXIT_SUCCESS);
+	}
+}
+
 void key_hook(struct mlx_key_data data, void * param)
 {
 	const float speed = 0.5f;
@@ -68,5 +78,6 @@ void key_hook(struct mlx_key_data data, void * param)
 			minirt->scene.camera.lookat = V3_ADD(minirt->scene.camera.lookat, direction);
 		}
 	}
+	esc_key_func(data, minirt);
 	// }
 }

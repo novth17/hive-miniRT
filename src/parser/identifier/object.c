@@ -25,7 +25,7 @@ int parse_sphere(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	if (check_id_args_count(tokens, "Sphere", 7) == FAIL)
+	if (check_obj_args_count(tokens, "Sphere", 4, 7) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, SPHERE);
 	if (!object)
@@ -37,7 +37,10 @@ int parse_sphere(char **tokens, t_scene *scene)
 	if (!scene->is_valid)
 		return (print_error("Sphere: diameter: " ERROR_FLOAT, tokens[2]));
 	if (parse_material(tokens, scene, &object->sphere.material, 3))
-		return (print_error(RED "Sphere\n", NULL));
+	{
+		ft_dprintf(2, RED "Error from Sphere\n" RESET);
+		return (FAIL);
+	}
 	return (SUCCESS);
 }
 
@@ -45,7 +48,7 @@ int parse_plane(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	if (check_id_args_count(tokens, "Plane", 7) == FAIL)
+	if (check_obj_args_count(tokens, "Plane", 4, 7) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, PLANE);
 	if (!object)
@@ -61,7 +64,10 @@ int parse_plane(char **tokens, t_scene *scene)
 	if (!is_normalized(object->pl.axis))
 		return (print_error("Plane: axis: " ERROR_NORM, tokens[2]));
 	if (parse_material(tokens, scene, &object->pl.material, 3))
-		return (print_error(RED "Plane\n", NULL));
+	{
+		ft_dprintf(2, RED "Error from Plane\n" RESET);
+		return (FAIL);
+	}
 	return (SUCCESS);
 }
 
@@ -69,7 +75,7 @@ int parse_cyl(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	if (check_id_args_count(tokens, "Cylinder", 9) == FAIL)
+	if (check_obj_args_count(tokens, "Cylinder", 6, 9) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, CYLINDER);
 	if (!object)
@@ -91,7 +97,10 @@ int parse_cyl(char **tokens, t_scene *scene)
 	if (!scene->is_valid)
 		return (print_error("Cylinder: height: " ERROR_FLOAT, tokens[4]));
 	if (parse_material(tokens, scene, &object->cyl.material, 5))
-		return (print_error(RED "Cylinder\n", NULL));
+	{
+		ft_dprintf(2, RED "Error from Cylinder\n" RESET);
+		return (FAIL);
+	}
 	return (SUCCESS);
 }
 
@@ -100,18 +109,25 @@ static int parse_material(char **tokens, t_scene *scene, t_material *m, int offs
 	m->color = parse_color(tokens[offset], &scene->is_valid);
 	if (!scene->is_valid)
 		return print_error("Material: " ERROR_COLOR, tokens[offset]);
+	if (tokens[offset + 1] && tokens[offset + 2] && tokens[offset + 3])
+	{
+		m->diffuse = parse_float(tokens[offset + 1], &scene->is_valid);
+		if (!scene->is_valid)
+			return print_error("Material: diffuse: "ERROR_FLOAT, tokens[offset + 1]);
 
-	m->diffuse = parse_float(tokens[offset + 1], &scene->is_valid);
-	if (!scene->is_valid)
-		return print_error("Material: diffuse: " ERROR_FLOAT, tokens[offset + 1]);
+		m->specular_probability = parse_float(tokens[offset + 2], &scene->is_valid);
+		if (!scene->is_valid)
+			return print_error("Material: specular: "ERROR_FLOAT, tokens[offset + 2]);
 
-	m->specular_probability = parse_float(tokens[offset + 2], &scene->is_valid);
-	if (!scene->is_valid)
-		return print_error("Material: specular: " ERROR_FLOAT, tokens[offset + 2]);
-
-	m->emitter = parse_float(tokens[offset + 3], &scene->is_valid);
-	if (!scene->is_valid)
-		return print_error("Material: emitter: " ERROR_FLOAT, tokens[offset + 3]);
-
+		m->emitter = parse_float(tokens[offset + 3], &scene->is_valid);
+		if (!scene->is_valid)
+			return print_error("Material: emitter: "ERROR_FLOAT, tokens[offset + 3]);
+	}
+	else
+	{
+		m->diffuse = 0.0f;
+		m->specular_probability = 0.0f;
+		m->emitter = 0.0f;
+	}
 	return (SUCCESS);
 }
