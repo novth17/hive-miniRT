@@ -94,13 +94,14 @@ bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects 
 	uint32_t i;
 	float hit_distance;
 
-	// i = -1;
-	// while (++i < scene->pl_count)
-	// {
-	// 	if (plane_shadow_hit(scene->pls[i], ray))
-	// 		return (true);
-	// 	++i;
-	// }
+	i = -1;
+	while (++i < scene->pl_count)
+	{
+		hit_distance = plane_hit(scene->pls[i], ray);
+		if (hit_distance > MIN_HIT_DIST && hit_distance < MAX_HIT_DIST)
+			return (true);
+	}
+
 	i = -1;
 	while (++i < scene->spheres_count)
 	{

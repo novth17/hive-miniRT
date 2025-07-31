@@ -21,7 +21,7 @@
 
 
 #define MIN_HIT_DIST 0.1f
-#define MAX_HIT_DIST 1000.0f // for now
+#define MAX_HIT_DIST FLT_MAX // for now
 
 
 #ifndef CAMERA_H // for compatibility - delete later
@@ -171,9 +171,9 @@ void base_init_cam(t_camera *cam);
 
 void per_frame(void * param);
 
-
 /* ===================== FOR CHECK HIT ===================== */
 float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t count, const t_ray ray);
+float plane_hit(const t_plane pl, const t_ray ray);
 
 
 /* ===================== FOR ERROR ===================== */
