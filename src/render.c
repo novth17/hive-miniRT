@@ -7,12 +7,22 @@
 extern bool g_recalculate_cam;
 extern uint32_t g_accummulated_frames;
 
-
-
+#if 1
+	#define STRATI
+#endif
 
 #define A x
 #define H y
 #define C z
+
+inline
+void set_face_normal(t_hit * restrict rec, const t_ray *restrict ray)
+{
+	rec->front_face = dot(ray->direction, rec->normal) < 0;
+	if (false == rec->front_face)
+		rec->normal = neg(rec->normal);
+}
+
 
 static inline
 t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float root)
@@ -24,11 +34,7 @@ t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float r
 	rec.position = at(ray, rec.distance);
 	rec.mat = sp.material;
 	rec.normal = v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius);
-	rec.front_face = dot(ray.direction, rec.normal) < 0;
-	if (rec.front_face == false)
-	{
-		rec.normal = neg(rec.normal);
-	}
+	set_face_normal(&rec, &ray);
 	return (rec);
 }
 
@@ -56,16 +62,6 @@ float sphere_hit(const t_sphere sp, const t_ray ray)
 	}
 	return (root);
 }
-
-// inline
-// void set_face_normal(t_hit *rec, const t_ray *r, const t_v3 out_normal)
-// {
-// 	const bool front_face = dot(r->direction, out_normal) < 0;
-// 	if (front_face)
-// 		rec->normal = out_normal;
-// 	else
-// 		rec->normal = neg(out_normal);
-// }
 
 static inline
 float check_spheres(t_hit *restrict rec, const t_sphere *spheres, const uint32_t count, const t_ray ray)
@@ -123,16 +119,6 @@ bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects 
 	return (false);
 }
 
-
-t_v3 defocus_disk_sample(const t_camera *restrict cam, uint32_t *rng_state)
-{
-	const t_point3 point = random_in_unit_disk(rng_state);
-	t_v3 result;
-
-	result = V3_ADD(cam->camera_center, f32_mul_v3(point.x, cam->defocus_disk_u));
-	result = V3_ADD(result, f32_mul_v3(point.y, cam->defocus_disk_v));
-	return (result);
-}
 
 
 
@@ -197,8 +183,10 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 static inline
 t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict scene)
 {
-	const t_sphere point_light_sphere = {.material.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f}; // debugging
-
+	t_sphere point_light_sphere = {.material.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f}; // debugging
+	point_light_sphere.material.emitter = 0.0f;
+	point_light_sphere.material.diffuse = 0.0f;
+	point_light_sphere.material.specular_probability = 0.0f;
 	t_hit hit_record;
 
 	hit_record = (t_hit){};
@@ -211,19 +199,56 @@ t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict sce
 }
 
 static inline
+float random_float_normal_dist(uint32_t *seed)
+{
+	const float theta = 2 * M_PI + random_float(seed);
+	const float rho = square_root(-2 * log(random_float(seed)));
+	return (rho * cos(theta));
+}
+
+static inline
+t_v3 random_direction_normal_dist(uint32_t *seed)
+{
+	const float x = random_float_normal_dist(seed);
+	const float y = random_float_normal_dist(seed);
+	const float z = random_float_normal_dist(seed);
+
+	return (normalize(v3(x, y, z)));
+}
+
+t_v3 random_direction_in_hemisphere(const t_v3 normal, uint32_t *rng_seed)
+{
+	const t_v3 dir = random_direction_normal_dist(rng_seed);
+	return (v3_mul_f32(dir, sign(dot(normal, dir))));
+}
+
+// Return true if the vector is close to zero in all dimensions.
+static
+bool near_zero(const t_v3 a) {
+    const float s = 1e-8;
+    return ((fabsf(a.x) < s) && (fabsf(a.y) < s) && (fabsf(a.z) < s));
+}
+
+
+// not normalizing the random bounce direction and the final ray direction
+// causes the image to be noticably brighter
+// it is also quite a bit faster to render
+// the light seems to not spread properly
+static inline
 t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_bounce, uint32_t *seed)
 {
-
-	const t_v3 random_bounce = noz(v3_add_v3(rec->normal, in_unit_sphere(seed))); // do we need to normalize?
+	const t_v3 scatter = in_unit_sphere(seed);
+	const t_v3 random_bounce = noz(V3_ADD(rec->normal, v3_mul_f32(scatter, !near_zero(scatter))));
+	// const t_v3 random_bounce = noz(random_direction_in_hemisphere(rec->normal, seed)); // do we need to normalize?
 	t_v3 pure_bounce;
 
-	ray.origin = rec->position;
 	// inner product (or dot product) gives us the angle difference between
 	// the normal at the hit point and the direction of the ray
 	// that angle times 2 is the direction we want the mirror reflection to go
-	pure_bounce = f32_mul_v3(2.0f*inner(ray.direction, rec->normal), rec->normal);
+	pure_bounce = f32_mul_v3(2.0f*dot(ray.direction, rec->normal), rec->normal);
 	pure_bounce = v3_sub_v3(ray.direction, pure_bounce);
 
+	ray.origin = rec->position;
 	ray.direction = noz(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
 	return (ray);
 }
@@ -250,11 +275,11 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 		rec = find_closest_ray_intesection(ray, scene);
 		if (rec.did_hit)
 		{
-			rec.mat.specular_color = rec.mat.color;
+			rec.mat.specular_color = rec.mat.color; // here for now
 			hit_once = true;
-			// might not be a bug technically just related to the fact that the specular bounce is always the same
 			// there is a bug here relating to ambient light and how that affects the color of an object
 			// it seems to cause the object to take on the color of the ambient light even if it should not
+			// might not be a bug technically just related to the fact that the specular bounce is always the same
 			if (scene->use_point_light)
 			{
 				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), ray_color));
@@ -265,6 +290,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			// color = V3_ADD(ambient, color);
 			// color = v3_mul_v3(rec.color, color);
+
 			ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
 			// ray.direction = rec.normal;
 			++i;
@@ -284,14 +310,15 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 	}
 
 	// not hit = background color
-	t_v3 unit_direction = unit_vector(ray.direction);
-	float a = 0.5 * (unit_direction.y + 1.0f);
+	// t_v3 unit_direction = unit_vector(ray.direction);
+	// float a = 0.5 * (unit_direction.y + 1.0f);
 
-	t_v3 result;
-	result = f32_mul_v3(1.0 - a, v3(1.0, 1.0, 1.0));
-	result = v3_add_v3(result, f32_mul_v3(a, v3(0.5, 0.7, 1.0)));
-	// incoming_ligth = result; // for now
-	return (result);
+	// t_v3 result;
+	// result = f32_mul_v3(1.0 - a, v3(1.0, 1.0, 1.0));
+	// result = v3_add_v3(result, f32_mul_v3(a, v3(0.5, 0.7, 1.0)));
+	// // incoming_ligth = result; // for now
+	// return (result);
+	return (v3(0, 0, 0));
 }
 
 static inline
@@ -309,58 +336,108 @@ t_v4 quaternion_thingy_dont_know(t_v4 target)
 	return (target);
 }
 
-static inline
-t_v3 get_ray_direction(const t_camera *cam, const t_ray ray, t_cord cord, uint32_t *seed)
+t_v3 defocus_disk_sample(const t_camera *restrict cam, uint32_t *rng_state)
 {
-	static uint64_t num = 0;
-	const t_v3 offset = sample_square(seed);
-	// printf("offset x <%f> offset y <%f>\n", offset.x, offset.y);
-	// t_v3 offset = {0, 0, 0};
+	const t_point3 point = random_in_unit_disk(rng_state);
+	t_v3 result;
+
+	result = V3_ADD(cam->camera_center, f32_mul_v3(point.x, cam->defocus_disk_u));
+	result = V3_ADD(result, f32_mul_v3(point.y, cam->defocus_disk_v));
+	return (result);
+}
+
+static inline
+t_ray get_ray(const t_camera *cam, t_cord cord, t_cord strati, uint32_t *seed)
+{
+#ifdef STRATI
+	const t_v2 offset = sample_square_stratified(strati.x, strati.y, cam->recip_sqrt_spp, seed);
+#else
+	const t_v2 offset = sample_square(seed);
+#endif
 	const t_v3 x_delta = f32_mul_v3(cord.x + offset.x, cam->pixel_delta_u);
 	const t_v3 y_delta = f32_mul_v3(cord.y + offset.y, cam->pixel_delta_v);
 	const t_v3 pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
+	t_ray ray;
 
-	cord.x = (float)(cord.x + offset.x) / (float)cam->image_width;
-	cord.y = (float)(cord.y + offset.y) / (float)cam->image_height;
-
-	cord.x = cord.x * 2.0f - 1.0f;
-	cord.y = cord.y * 2.0f - 1.0f;
-	// t_v4 target = mat_mul_v4(cam->inverse_projection, v4(cord.x, cord.y, 1.0f, 1.0f));
-	// t_v3 direction = v4_to_v3(mat_mul_v4(cam->inverse_view, quaternion_thingy_dont_know(target)));
-	t_v3 direction = V3_SUB(pixel_sample, ray.origin);
-	// t_v4 temp = (t_v4){.xyz = direction, 0};
-
-	// temp = mat_mul_v4(cam->inverse_projection, temp);
-	// temp = mat_mul_v4(cam->inverse_view, temp);
-	// direction = v4_to_v3(temp);
-	// t_v3 direction = V3_SUB(v4_to_v3(target), ray.origin);
-	// if (num++ % 4096 == 0)
-	// 	printf("%f %f %f\n", direction.x, direction.y, direction.z);
-	return (direction);
+	ray.origin = cam->camera_center;
+	if (cam->defocus_angle > 0)
+		ray.origin = defocus_disk_sample(cam, seed);
+	ray.direction = V3_SUB(pixel_sample, ray.origin);
+	return (ray);
 }
 
-t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const uint32_t x, const uint32_t y)
+// static inline
+// t_v3 get_ray_direction(const t_camera *cam, const t_ray ray, t_cord cord, uint32_t *seed)
+// {
+// 	static uint64_t num = 0;
+// 	const t_v2 offset = sample_square_stratified(cord.x, cord.y, cam->recip_sqrt_spp, seed);
+// 	// printf("offset x <%f> offset y <%f>\n", offset.x, offset.y);
+// 	// t_v3 offset = {0, 0, 0};
+// 	const t_v3 x_delta = f32_mul_v3(cord.x + offset.x, cam->pixel_delta_u);
+// 	const t_v3 y_delta = f32_mul_v3(cord.y + offset.y, cam->pixel_delta_v);
+// 	const t_v3 pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
+
+// 	cord.x = (float)(cord.x + offset.x) / (float)cam->image_width;
+// 	cord.y = (float)(cord.y + offset.y) / (float)cam->image_height;
+
+// 	cord.x = cord.x * 2.0f - 1.0f;
+// 	cord.y = cord.y * 2.0f - 1.0f;
+// 	// t_v4 target = mat_mul_v4(cam->inverse_projection, v4(cord.x, cord.y, 1.0f, 1.0f));
+// 	// t_v3 direction = v4_to_v3(mat_mul_v4(cam->inverse_view, quaternion_thingy_dont_know(target)));
+// 	t_v3 direction = V3_SUB(pixel_sample, ray.origin);
+// 	// t_v4 temp = (t_v4){.xyz = direction, 0};
+
+// 	// temp = mat_mul_v4(cam->inverse_projection, temp);
+// 	// temp = mat_mul_v4(cam->inverse_view, temp);
+// 	// direction = v4_to_v3(temp);
+// 	// t_v3 direction = V3_SUB(v4_to_v3(target), ray.origin);
+// 	// if (num++ % 4096 == 0)
+// 	// 	printf("%f %f %f\n", direction.x, direction.y, direction.z);
+// 	return (direction);
+// }
+
+t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_cord cord, uint32_t seed)
 {
 	t_ray ray;
 	t_v3 color;
-	int32_t sample;
 	t_v3 incoming_light;
-	uint32_t seed;
 
-	seed = (y * cam->image_width + x) + g_accummulated_frames * 792858;
 	incoming_light = v3(0, 0, 0);
-	ray.origin = cam->camera_center;
+	// ray.origin = cam->camera_center;
+
+
+#ifdef STRATI
+	int y_s;
+	int x_s;
+
+	y_s = 0;
+	while (y_s < cam->sqrt_spp)
+	{
+		x_s = 0;
+		while (x_s < cam->sqrt_spp)
+		{
+
+			ray = get_ray(cam, cord, (t_cord){x_s, y_s}, &seed);
+			color = trace(ray, scene, cam->max_bounce, &seed);
+			incoming_light = V3_ADD(incoming_light, color);
+			++x_s;
+		}
+		++y_s;
+	}
+	color = f32_mul_v3(cam->pixel_sample_scale_strati, incoming_light);
+#else
+	int32_t sample;
+
 	sample = 0;
 	while (sample < cam->samples_per_pixel)
 	{
-		if (cam->defocus_angle > 0)
-			ray.origin = defocus_disk_sample(cam, &seed);
-		ray.direction = get_ray_direction(cam, ray, (t_cord){x, y}, &seed);
+		ray = get_ray(cam, cord, cord, &seed);
 		color = trace(ray, scene, cam->max_bounce, &seed);
 		incoming_light = V3_ADD(incoming_light, color);
 		++sample;
 	}
 	color = f32_mul_v3(cam->pixel_sample_scale, incoming_light);
+#endif
 	return (color);
 }
 
@@ -403,6 +480,7 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 	t_v3 color;
 	int32_t x;
 	int32_t y;
+	uint32_t rng_seed;
 
 	y = 0;
 	while (y < cam->image_height)
@@ -410,7 +488,8 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 		x = 0;
 		while (x < cam->image_width)
 		{
-			color = sample_pixel(scene, cam, x, y);
+			rng_seed = (y * cam->image_width + x) + g_accummulated_frames * 792858;
+			color = sample_pixel(scene, cam, (t_cord){x, y}, rng_seed);
 			// color = get_ray_direction(&cam, x, y, x + y * cam.image_height);
 			// if (g_accummulated_frames != 0)
 			color = accumulate(rgb_u32_to_float(*out), color);

@@ -14,14 +14,17 @@
 # include "error.h"
 
 # include "rt_math.h"
+# include "camera.h"
 
-# define WINDOW_WIDTH 720
-# define WINDOW_HEIGHT 720
+# define WINDOW_WIDTH 1080
+# define WINDOW_HEIGHT 1080
 
 
 #define MIN_HIT_DIST 0.1f
 #define MAX_HIT_DIST 1000.0f // for now
 
+
+#ifndef CAMERA_H // for compatibility - delete later
 typedef struct
 {
 	float	aspect_ratio; //
@@ -65,7 +68,7 @@ typedef struct
 	t_mat4 view;
 	t_mat4 inverse_view;
 } t_camera;
-
+#endif
 
 typedef struct	s_ambient
 {

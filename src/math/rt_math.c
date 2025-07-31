@@ -40,7 +40,7 @@ float length_sq(t_v3 a)
 inline
 float square_root(float a)
 {
-	float result = (float)sqrt(a);
+	float result = sqrtf(a);
 
 	return (result);
 }

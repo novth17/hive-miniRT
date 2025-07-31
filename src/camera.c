@@ -23,21 +23,6 @@ t_v3	pixel00_location(const t_v3 viewport_upper_left, const t_v3 pixel_delta_u, 
 	return (result);
 }
 
-
-// to set defaults
-void base_init_cam(t_camera *cam)
-{
-
-	cam->samples_per_pixel = 1;
-	cam->max_bounce = 0;
-
-	cam->vup = v3(0, 1, 0); // might not need this in camera
-
-	cam->defocus_angle = 0.0f;
-	cam->focus_dist = 1.0;
-
-}
-
 // inline
 // t_v4 v4_mul_v4(t_v4 a, t_v4 b)
 // {
@@ -185,6 +170,24 @@ t_mat4 perspective_fov(float fov, float width, float height, float near, float f
 	return (result);
 }
 
+// to set defaults
+void base_init_cam(t_camera *cam)
+{
+
+	cam->samples_per_pixel = 10;
+	cam->pixel_sample_scale =  1.0f / cam->samples_per_pixel;
+	cam->sqrt_spp = (int32_t)square_root(cam->samples_per_pixel);
+	cam->pixel_sample_scale_strati = 1.0 / (cam->sqrt_spp * cam->sqrt_spp);
+	cam->recip_sqrt_spp = 1.0 / cam->sqrt_spp;
+
+	cam->max_bounce = 0;
+	cam->vup = v3(0, 1, 0); // might not need this in camera
+
+	cam->defocus_angle = 0.0f;
+	cam->focus_dist = 1.0;
+
+}
+
 void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 {
 	const t_v3 w = unit_vector(V3_SUB(cam->lookfrom, cam->lookat));
@@ -194,7 +197,7 @@ void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 	const float defocus_radius = cam->focus_dist * tanf(deg_to_rad(cam->defocus_angle * 0.5));
 
 
-	cam->pixel_sample_scale = 1.0f / cam->samples_per_pixel;
+	// cam->pixel_sample_scale = 1.0f / cam->samples_per_pixel;
 	cam->aspect_ratio = (float)minirt->image->width / minirt->image->height;
 	cam->image_width = minirt->image->width;
 	cam->image_height = (int32_t)(cam->image_width / cam->aspect_ratio);
