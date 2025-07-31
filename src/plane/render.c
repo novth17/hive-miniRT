@@ -51,10 +51,6 @@ float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t co
 	float t;
 	float closest;
 
-<<<<<<< HEAD
-	closest = rec->distance;
-=======
->>>>>>> main
 	i = 0;
 	closest = rec->distance;
 	t = plane_hit(planes[i], ray);
