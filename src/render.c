@@ -211,8 +211,10 @@ t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict sce
 
 	hit_record = (t_hit){};
 	hit_record.distance = MAX_HIT_DIST;
+	check_planes(&hit_record, scene->pls, scene->pl_count, ray);
 	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
 	check_spheres(&hit_record, &point_light_sphere, 1, ray);
+
 	return (hit_record);
 }
 

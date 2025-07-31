@@ -162,6 +162,10 @@ void base_init_cam(t_camera *cam);
 void per_frame(void * param);
 
 
+/* ===================== FOR CHECK HIT ===================== */
+float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t count, const t_ray ray);
+
+
 /* ===================== FOR ERROR ===================== */
 int		check_id_args_count(char **tokens, const char *id, int expected);
 void	exit_error(t_minirt *minirt,  char *msg);

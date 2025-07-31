@@ -36,7 +36,8 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/identifier/object.c \
 				$(SRC_DIR)/math/rt_math.c \
 				$(SRC_DIR)/math/random.c \
-				$(SRC_DIR)/control/hook.c
+				$(SRC_DIR)/control/hook.c \
+				$(SRC_DIR)/plane/render.c \
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 
