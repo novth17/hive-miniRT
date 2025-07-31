@@ -66,13 +66,13 @@ float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t co
 	return (closest);
 }
 
-// int shadow_hit()
-// {
-// 	if (shadow_hit(scene, shadow_ray) == false)
-// 	{
-// 		// Apply light if NOT in shadow
-// 		return point_light_color(scene, rec, l);
-// 	}
+int shadow_hit()
+{
+	if (shadow_hit(scene, shadow_ray) == false)
+	{
+		// Apply light if NOT in shadow
+		return point_light_color(scene, rec, l);
+	}
 
 
 // }
