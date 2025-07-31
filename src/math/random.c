@@ -1,4 +1,5 @@
-# include "mini_rt.h"
+# include "../../inc/rt_math.h"
+
 
 /// @brief gives a random float between 0.0f and 1.0f
 /// @param seed seed for the generation
@@ -57,13 +58,22 @@ t_v3 random_direction(uint32_t *seed)
 }
 
 inline
-t_v3 sample_square(uint32_t *seed)
+t_v2 sample_square(uint32_t *seed)
 {
-	t_v3 result;
+	t_v2 result;
 
 	result.x = random_float(seed) - 0.5f;
 	result.y = random_float(seed) - 0.5f;
-	result.z = 0;
+	return (result);
+}
+
+inline
+t_v2 sample_square_stratified(int i_s, int j_s, float recip_sqrt_spp, uint32_t *seed)
+{
+	t_v2 result;
+
+	result.x = ((i_s + random_float(seed)) * recip_sqrt_spp) - 0.5f;
+	result.y = ((j_s + random_float(seed)) * recip_sqrt_spp) - 0.5f;
 	return (result);
 }
 

@@ -32,6 +32,7 @@ t_v3		f32_div_v3(float a, t_v3 b);
 t_v3		v3_div_f32(t_v3 a, float b);
 
 t_v4		v4(float x, float y, float z, float w);
+t_v4		mat_mul_v4(t_mat4 m, t_v4 v);
 t_v4		linear_to_srgb255(t_v4 c);
 
 uint32_t	rgba_pack(t_v4 unpacked);
@@ -75,7 +76,8 @@ float random_float(uint32_t *seed);
 t_v3 in_unit_sphere(uint32_t *seed);
 t_v3 random_in_unit_disk(uint32_t *seed);
 t_v3 random_direction(uint32_t *seed);
-t_v3 sample_square(uint32_t *seed);
+t_v2 sample_square(uint32_t *seed);
+t_v2 sample_square_stratified(int i_s, int j_s, float recip_sqrt_spp, uint32_t *seed);
 t_v2 random_point_in_circle(uint32_t *state);
 
 #endif

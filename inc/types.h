@@ -86,6 +86,21 @@ typedef union u_vec4
 	float	elements[4];
 }	t_v4;
 
+
+typedef union
+{
+	struct
+	{
+
+		t_v4 x;
+		t_v4 y;
+		t_v4 z;
+		t_v4 w;
+	};
+	float mat[4][4];
+} t_mat4;
+
+
 typedef struct
 {
 	t_v3 origin;
