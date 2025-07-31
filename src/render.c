@@ -215,11 +215,6 @@ t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict sce
 	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
 	check_spheres(&hit_record, &point_light_sphere, 1, ray);
 
-	if (rec.did_hit)
-	{
-		printf("Hit at: %f %f %f\n", rec.position.x, rec.position.y, rec.position.z);
-	}
-
 	return (hit_record);
 }
 
