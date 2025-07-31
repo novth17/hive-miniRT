@@ -53,9 +53,9 @@ float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t co
 
 	i = 0;
 	closest = rec->distance;
-	t = plane_hit(planes[i], ray);
 	while (i < count)
 	{
+		t = plane_hit(planes[i], ray);
 		if (t < closest)
 		{
 			*rec = create_plane_hit_record(ray, planes[i], t);
@@ -66,13 +66,4 @@ float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t co
 	return (closest);
 }
 
-int shadow_hit()
-{
-	if (shadow_hit(scene, shadow_ray) == false)
-	{
-		// Apply light if NOT in shadow
-		return point_light_color(scene, rec, l);
-	}
 
-
-// }
