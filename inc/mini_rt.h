@@ -1,6 +1,7 @@
 #ifndef MINI_RT_H
 #define MINI_RT_H
 
+#include "types.h"
 #define SUCCESS	0
 #define FAIL	1
 
@@ -13,14 +14,17 @@
 # include "error.h"
 
 # include "rt_math.h"
+# include "camera.h"
 
-# define WINDOW_WIDTH 1920
+# define WINDOW_WIDTH 1080
 # define WINDOW_HEIGHT 1080
 
 
-#define MIN_HIT_DIST 0.001f
+#define MIN_HIT_DIST 0.1f
 #define MAX_HIT_DIST 1000.0f // for now
 
+
+#ifndef CAMERA_H // for compatibility - delete later
 typedef struct
 {
 	float	aspect_ratio; //
@@ -34,6 +38,8 @@ typedef struct
 	t_point3	lookfrom; // @QUESTION why this and camera_center??
 	t_point3	lookat;
 	t_v3		vup;
+	t_v3		right;
+
 
  	float defocus_angle;  // Variation angle of rays through each pixel
     float focus_dist;
@@ -57,9 +63,12 @@ typedef struct
 	t_v3 viewport_upper_left;
 	t_v3 pixel00_loc;
 
-
+	t_mat4 projection;
+	t_mat4 inverse_projection;
+	t_mat4 view;
+	t_mat4 inverse_view;
 } t_camera;
-
+#endif
 
 typedef struct	s_ambient
 {
@@ -122,6 +131,7 @@ typedef struct s_mini_rt
 	t_scene			scene;
 	bool			file_has_content;
 
+	bool			write_image_to_file;
 	// t_camera		base_cam;
 }	t_minirt;
 
@@ -156,7 +166,7 @@ void key_hook(struct mlx_key_data data, void * param);
 void scroll_hook(double delta_x, double delta_y, void *param);
 
 /* ===================== FOR DRAW ===================== */
-bool init_camera_for_frame(t_minirt *minirt, t_camera *cam);
+void init_camera_for_frame(t_minirt *minirt, t_camera *cam);
 void base_init_cam(t_camera *cam);
 
 void per_frame(void * param);
