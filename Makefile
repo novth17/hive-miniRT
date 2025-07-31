@@ -3,7 +3,7 @@ NAME		= mini_rt
 CC			= cc
 INCLUDE		:= -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
 
-CFLAGS		= $(INCLUDE) -Wall -Wextra -O3 -flto -march=native #-Werror
+CFLAGS		= $(INCLUDE) -Wall -Wextra -O3 -flto -march=native -g #-Werror
 
 
 LIBFT_DIR := libs/libft
@@ -38,7 +38,8 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/identifier/object.c \
 				$(SRC_DIR)/math/rt_math.c \
 				$(SRC_DIR)/math/random.c \
-				$(SRC_DIR)/control/hook.c
+				$(SRC_DIR)/control/hook.c \
+				$(SRC_DIR)/plane/render.c \
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 

@@ -1,13 +1,8 @@
 #include "mini_rt.h"
 
-static uint32_t	calc_v3_len(t_vec3 vec3)
-{
-	return (square_root(vec3.x * vec3.x + vec3.y * vec3.y + vec3.z * vec3.z));
-}
-
 bool	is_normalized(t_vec3 vec3)
 {
-	if (calc_v3_len(vec3) == 1)
+	if (length(vec3) == 1)
 		return (true);
 	return (false);
 }
