@@ -1,6 +1,6 @@
 #include "mini_rt.h"
 
-static inline
+inline
 float plane_hit(const t_plane pl, const t_ray ray)
 {
 	float denom;
@@ -8,12 +8,12 @@ float plane_hit(const t_plane pl, const t_ray ray)
 
 	denom = dot(pl.axis, ray.direction);
 	if (fabsf(denom) < 1e-6f) // Ray is parallel to plane
-		return (FLT_MAX);
+		return (-1.0f);
 
 	t = dot(pl.axis, v3_sub_v3(pl.point, ray.origin)) / denom;
 
 	if (t < MIN_HIT_DIST || t > MAX_HIT_DIST)
-		return (FLT_MAX);
+		return (-1.0f);
 
 	return (t);
 }
@@ -60,7 +60,7 @@ float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t co
 	while (i < count)
 	{
 		t = plane_hit(planes[i], ray);
-		if (t < closest)
+		if (t > MIN_HIT_DIST && t < closest)
 		{
 			*rec = create_plane_hit_record(ray, planes[i], t);
 			closest = t;

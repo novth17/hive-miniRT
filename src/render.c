@@ -51,14 +51,14 @@ float sphere_hit(const t_sphere sp, const t_ray ray)
 	float root;
 
 	if (discriminant < 0)
-		return (FLT_MAX);
+		return (-1.0f);
 	sqrtd = square_root(discriminant);
 	root = (v.H - sqrtd) / v.A;
 	if (root <= MIN_HIT_DIST || root >= MAX_HIT_DIST)
 	{
 		root = (v.H + sqrtd) / v.A;
 		if (root <= MIN_HIT_DIST || root >= MAX_HIT_DIST)
-			return (FLT_MAX);
+			return (-1.0f);
 	}
 	return (root);
 }
@@ -94,6 +94,8 @@ bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects 
 	uint32_t i;
 	float hit_distance;
 
+	// im probably calculating something wrong
+	// the shadow rays are causing point lights to not work inside room_test.rt
 	i = -1;
 	while (++i < scene->pl_count)
 	{
@@ -184,17 +186,17 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 static inline
 t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict scene)
 {
-	// t_sphere point_light_sphere = {.material.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f}; // debugging
-	// point_light_sphere.material.emitter = 0.0f;
-	// point_light_sphere.material.diffuse = 0.0f;
-	// point_light_sphere.material.specular_probability = 0.0f;
+	t_sphere point_light_sphere = {.material.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f}; // debugging
+	point_light_sphere.material.emitter = 0.0f;
+	point_light_sphere.material.diffuse = 0.0f;
+	point_light_sphere.material.specular_probability = 0.0f;
 	t_hit hit_record;
 
 	hit_record = (t_hit){};
 	hit_record.distance = MAX_HIT_DIST;
 	check_planes(&hit_record, scene->pls, scene->pl_count, ray);
 	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
-	// check_spheres(&hit_record, &point_light_sphere, 1, ray);
+	check_spheres(&hit_record, &point_light_sphere, 1, ray);
 
 	return (hit_record);
 }
