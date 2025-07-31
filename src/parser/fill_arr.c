@@ -42,6 +42,7 @@ int fill_pls_arr(t_minirt *minirt, t_scene *scene)
 			scene->pl_count++;
 		cur = cur->next;
 	}
+	ft_dprintf(2, "PL COUNT: %d\n", scene->pl_count);
 	if (scene->pl_count == 0)
 		return (FAIL);
 	scene->pls = malloc(sizeof(t_plane) * scene->pl_count);
