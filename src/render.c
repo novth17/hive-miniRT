@@ -310,14 +310,14 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 	}
 
 	// not hit = background color
-	// t_v3 unit_direction = unit_vector(ray.direction);
-	// float a = 0.5 * (unit_direction.y + 1.0f);
+	t_v3 unit_direction = unit_vector(ray.direction);
+	float a = 0.5 * (unit_direction.y + 1.0f);
 
-	// t_v3 result;
-	// result = f32_mul_v3(1.0 - a, v3(1.0, 1.0, 1.0));
-	// result = v3_add_v3(result, f32_mul_v3(a, v3(0.5, 0.7, 1.0)));
-	// // incoming_ligth = result; // for now
-	// return (result);
+	t_v3 result;
+	result = f32_mul_v3(1.0 - a, v3(1.0, 1.0, 1.0));
+	result = v3_add_v3(result, f32_mul_v3(a, v3(0.5, 0.7, 1.0)));
+	// incoming_ligth = result; // for now
+	return (result);
 	return (v3(0, 0, 0));
 }
 
