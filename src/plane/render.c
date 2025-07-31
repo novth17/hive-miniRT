@@ -1,5 +1,6 @@
 #include "mini_rt.h"
 
+static inline
 float plane_hit(const t_plane pl, const t_ray ray)
 {
 	float denom;
@@ -26,6 +27,8 @@ If it hits the front: use the normal as-is.
 If it hits the back: flip the normal so it still
 points against the ray direction.
 */
+
+static inline
 t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl, const float t)
 {
 	t_hit	rec;
@@ -45,6 +48,7 @@ t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl, const float t)
 	return (rec);
 }
 
+inline
 float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t count, const t_ray ray)
 {
 	uint32_t i;
@@ -53,10 +57,10 @@ float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t co
 
 	i = 0;
 	closest = rec->distance;
-	t = plane_hit(planes[i], ray);
 	while (i < count)
 	{
-		if (t < closest)
+		t = plane_hit(planes[i], ray);
+		if (t > MIN_HIT_DIST && t < closest)
 		{
 			*rec = create_plane_hit_record(ray, planes[i], t);
 			closest = t;

@@ -183,17 +183,17 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 static inline
 t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict scene)
 {
-	t_sphere point_light_sphere = {.material.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f}; // debugging
-	point_light_sphere.material.emitter = 0.0f;
-	point_light_sphere.material.diffuse = 0.0f;
-	point_light_sphere.material.specular_probability = 0.0f;
+	// t_sphere point_light_sphere = {.material.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f}; // debugging
+	// point_light_sphere.material.emitter = 0.0f;
+	// point_light_sphere.material.diffuse = 0.0f;
+	// point_light_sphere.material.specular_probability = 0.0f;
 	t_hit hit_record;
 
 	hit_record = (t_hit){};
 	hit_record.distance = MAX_HIT_DIST;
 	check_planes(&hit_record, scene->pls, scene->pl_count, ray);
 	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
-	check_spheres(&hit_record, &point_light_sphere, 1, ray);
+	// check_spheres(&hit_record, &point_light_sphere, 1, ray);
 
 	return (hit_record);
 }
