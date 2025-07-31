@@ -34,6 +34,7 @@ t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float r
 	rec.position = at(ray, rec.distance);
 	rec.mat = sp.material;
 	rec.normal = v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius);
+	rec.normal = v3_mul_f32(rec.normal, 1e-4);
 	set_face_normal(&rec, &ray);
 	return (rec);
 }
@@ -172,7 +173,8 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 	t_v3 light_color;
 
 	l = V3_SUB(scene->light.origin, rec->position);
-	shadow_ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4));
+	// shadow_ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4));
+	shadow_ray.origin = rec->position;
 	shadow_ray.direction = l;
 	light_color = v3(0, 0, 0);
 	if (shadow_hit(scene, shadow_ray) == false)
@@ -309,7 +311,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 	if (hit_once)
 	{
 		total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
-		return (total_incoming_light);
+		return (v3_clamp(total_incoming_light));
 	}
 
 	// not hit = background color
@@ -422,7 +424,7 @@ t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_co
 
 			ray = get_ray(cam, cord, (t_cord){x_s, y_s}, &seed);
 			color = trace(ray, scene, cam->max_bounce, &seed);
-			incoming_light = V3_ADD(incoming_light, color);
+			incoming_light = V3_ADD(incoming_light, v3_clamp(color));
 			++x_s;
 		}
 		++y_s;

@@ -40,6 +40,7 @@ t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl, const float t)
 	rec.distance = t;
 	rec.position = at(ray, rec.distance);
 	face_normal = pl.axis;
+	rec.normal = v3_mul_f32(rec.normal, 1e-4);
 	rec.front_face = dot(ray.direction, face_normal) < 0;
 	if (rec.front_face)
 		rec.normal = face_normal;
