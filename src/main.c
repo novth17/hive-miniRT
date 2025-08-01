@@ -43,8 +43,8 @@ static int	run_minirt(t_minirt *minirt, char **argv)
 
 
 	base_init_cam(&minirt->scene.camera);
-	minirt->scene.light_strength_mult = 1;
-	minirt->scene.use_point_light = false;
+	minirt->scene.light_strength_mult = 5;
+	minirt->scene.use_point_light = true;
 
 	mlx_loop(minirt->mlx);
 	mlx_terminate(minirt->mlx);
