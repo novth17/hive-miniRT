@@ -34,7 +34,6 @@ t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl, const float t)
 	t_hit	rec;
 	t_v3	face_normal;
 
-	rec.color = pl.material.color;
 	rec.mat = pl.material;
 	rec.did_hit = true;
 	rec.distance = t;
@@ -45,6 +44,7 @@ t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl, const float t)
 		rec.normal = face_normal;
 	else
 		rec.normal = neg(face_normal);
+	rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f));
 	return (rec);
 }
 

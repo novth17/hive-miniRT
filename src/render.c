@@ -35,6 +35,7 @@ t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float r
 	rec.mat = sp.material;
 	rec.normal = v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius);
 	set_face_normal(&rec, &ray);
+	rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f));
 	return (rec);
 }
 

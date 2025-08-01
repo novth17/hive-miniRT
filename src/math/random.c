@@ -92,7 +92,7 @@ t_v2 random_point_in_circle(uint32_t *state)
 inline
 float random_float_normal_dist(uint32_t *seed)
 {
-	const float theta = 2 * 3.1415926 + random_float(seed);
+	const float theta = 2 * 3.1415926 * random_float(seed);
 	const float rho = square_root(-2 * log(random_float(seed)));
 	return (rho * cosf(theta));
 }
