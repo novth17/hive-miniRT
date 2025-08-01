@@ -44,7 +44,10 @@ t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl, const float t)
 		rec.normal = face_normal;
 	else
 		rec.normal = neg(face_normal);
+	rec.normal = noz(rec.normal);
 	rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f));
+	// these bottom ones are for trying to fix issues with rendering
+	// they probably dont help and should be removed later
 	return (rec);
 }
 
