@@ -31,14 +31,15 @@ static t_hit create_cyl_hit_record(const t_ray ray, const t_cylinder cyl, const 
 	rec.mat = cyl.material;
 	rec.did_hit = true;
 
-	if (fabsf(proj_len) < 1e-4f)
+	float half_height = cyl.height * 0.5f;
+	if (proj_len < -half_height + 1e-4f)
 		rec.normal = neg(cyl.axis); // bottom cap
-	else if (fabsf(proj_len - cyl.height) < 1e-4f)
+	else if (proj_len > half_height - 1e-4f)
 		rec.normal = cyl.axis; // top cap
 	else
 	{
 		axis_projection = v3_mul_f32(cyl.axis, proj_len);
-		side_normal = normalize(v3_sub_v3(vec_to_hit, axis_projection));
+		side_normal = v3_sub_v3(vec_to_hit, axis_projection);
 		rec.normal = side_normal; // perpendicular to axis
 	}
 

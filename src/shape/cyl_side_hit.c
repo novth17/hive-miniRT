@@ -50,26 +50,34 @@ typedef struct s_cyl_math {
  * @return The nearest valid t (distance along the ray) that hits within the cylinder bounds,
  *         or FLT_MAX if no such hit is found.
  */
-static float	check_in_bound(t_ray ray, t_cylinder cyl, t_cyl_math *m)
+static float check_in_bound(t_ray ray, t_cylinder cyl, t_cyl_math *m)
 {
-	if (m->t0 >= 0)
-	{
-		m->hit0 = at(ray, m->t0);
-		m->vec_to_hit0 = v3_sub_v3(m->hit0, m->cap_bottom);
-		m->hit_dist_from_base0 = dot(m->vec_to_hit0, cyl.axis); // Distance from base along axis
-		if (m->hit_dist_from_base0 >= 0 && m->hit_dist_from_base0 <= cyl.height)
-			return (m->t0);
-	}
-	if (m->t1 >= 0)
-	{
-		m->hit1 = at(ray, m->t1);
-		m->vec_to_hit1 = v3_sub_v3(m->hit1, m->cap_bottom);
-		m->hit_dist_from_base1 = dot(m->vec_to_hit1, cyl.axis); // Distance from base along axis
-		if (m->hit_dist_from_base1 >= 0 && m->hit_dist_from_base1 <= cyl.height)
-			return (m->t1);
-	}
-	return FLT_MAX;
+    float t_valid = FLT_MAX;
+
+    if (m->t0 >= 0)
+    {
+        m->hit0 = at(ray, m->t0);
+        m->vec_to_hit0 = v3_sub_v3(m->hit0, m->cap_bottom);
+        m->hit_dist_from_base0 = dot(m->vec_to_hit0, cyl.axis);
+        if (m->hit_dist_from_base0 >= 0 && m->hit_dist_from_base0 <= cyl.height)
+            t_valid = m->t0;
+    }
+
+    if (m->t1 >= 0)
+    {
+        m->hit1 = at(ray, m->t1);
+        m->vec_to_hit1 = v3_sub_v3(m->hit1, m->cap_bottom);
+        m->hit_dist_from_base1 = dot(m->vec_to_hit1, cyl.axis);
+        if (m->hit_dist_from_base1 >= 0 && m->hit_dist_from_base1 <= cyl.height)
+        {
+            if (m->t1 < t_valid)
+                t_valid = m->t1;
+        }
+    }
+
+    return t_valid;
 }
+
 
 /**
  * Solves the quadratic equation for the intersection of a ray with the side of an infinite cylinder,
@@ -137,36 +145,33 @@ static float hit_cyl_cap(t_ray ray, t_vec3 center, t_vec3 normal, float radius)
 
 float cyl_hit(const t_cylinder cyl, const t_ray ray)
 {
-	t_cyl_math m = {};
-	t_vec3 oc;
-	float t_side;
-	float t_min;
+    t_cyl_math m = {};
+    t_vec3 oc;
+    float t_side;
+    float t_min;
 
-	t_vec3 half_height = v3_mul_f32(cyl.axis, cyl.height * 0.5f);
-	m.cap_bottom = v3_sub_v3(cyl.center, half_height);
-	m.cap_top = v3_add_v3(cyl.center, half_height);
+    t_vec3 half_height = v3_mul_f32(cyl.axis, cyl.height * 0.5f);
+    m.cap_bottom = v3_sub_v3(cyl.center, half_height);
+    m.cap_top = v3_add_v3(cyl.center, half_height);
 
+    m.radius = cyl.diameter / 2;
 
+    m.t_cap_bottom = hit_cyl_cap(ray, m.cap_bottom, neg(cyl.axis), m.radius);
+    m.t_cap_top = hit_cyl_cap(ray, m.cap_top, cyl.axis, m.radius);
 
+    oc = v3_sub_v3(ray.origin, cyl.center);
+    t_side = solve_cyl(ray, cyl, oc, &m);
 
+    t_min = t_side;
 
+    if (m.t_cap_bottom < t_min)
+        t_min = m.t_cap_bottom;
+    if (m.t_cap_top < t_min)
+        t_min = m.t_cap_top;
 
-	m.radius = cyl.diameter / 2;
-
-	m.t_cap_bottom = hit_cyl_cap(ray, m.cap_bottom, neg(cyl.axis), m.radius);
-	m.t_cap_top = hit_cyl_cap(ray, m.cap_top, cyl.axis, m.radius);
-
-	oc = v3_sub_v3(ray.origin, cyl.center);
-	t_side = solve_cyl(ray, cyl, oc, &m); // solve the side
-	t_min = t_side;
-	if (m.t_cap_bottom < t_min)
-		t_min = m.t_cap_bottom;
-	if (m.t_cap_top < t_min)
-		t_min = m.t_cap_top;
-
-	if (t_min < FLT_MAX)
-		return (t_min);
-	else
-		return (FLT_MAX);
+    if (t_min < FLT_MAX)
+        return (t_min);
+    else
+        return (FLT_MAX);
 }
 
