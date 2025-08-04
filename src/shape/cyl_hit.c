@@ -27,7 +27,7 @@ static t_hit create_cyl_hit_record(const t_ray ray, const t_cylinder cyl, const 
 
 	rec.position = hit_point;
 	rec.distance = t;
-	rec.color = cyl.material.color;
+	//rec.color = cyl.material.color;
 	rec.mat = cyl.material;
 	rec.did_hit = true;
 

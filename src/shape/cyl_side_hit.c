@@ -50,23 +50,23 @@ typedef struct s_cyl_math {
  * @return The nearest valid t (distance along the ray) that hits within the cylinder bounds,
  *         or FLT_MAX if no such hit is found.
  */
-static float	check_in_bound(t_ray ray, t_cylinder cyl, t_cyl_math m)
+static float	check_in_bound(t_ray ray, t_cylinder cyl, t_cyl_math *m)
 {
-	if (m.t0 >= 0)
+	if (m->t0 >= 0)
 	{
-		m.hit0 = at(ray, m.t0);
-		m.vec_to_hit0 = v3_sub_v3(m.hit0, cyl.center);
-		m.hit_dist_from_base0 = dot(m.vec_to_hit0, cyl.axis);
-		if (m.hit_dist_from_base0 >= 0 && m.hit_dist_from_base0 <= cyl.height)
-			return (m.t0);
+		m->hit0 = at(ray, m->t0);
+		m->vec_to_hit0 = v3_sub_v3(m->hit0, cyl.center);
+		m->hit_dist_from_base0 = dot(m->vec_to_hit0, cyl.axis);
+		if (m->hit_dist_from_base0 >= 0 && m->hit_dist_from_base0 <= cyl.height)
+			return (m->t0);
 	}
-	if (m.t1 >= 0)
+	if (m->t1 >= 0)
 	{
-		m.hit1 = at(ray, m.t1);
-		m.vec_to_hit1 = v3_sub_v3(m.hit1, cyl.center);
-		m.hit_dist_from_base1 = dot(m.vec_to_hit1, cyl.axis);
-		if (m.hit_dist_from_base1 >= 0 && m.hit_dist_from_base1 <= cyl.height)
-			return (m.t1);
+		m->hit1 = at(ray, m->t1);
+		m->vec_to_hit1 = v3_sub_v3(m->hit1, cyl.center);
+		m->hit_dist_from_base1 = dot(m->vec_to_hit1, cyl.axis);
+		if (m->hit_dist_from_base1 >= 0 && m->hit_dist_from_base1 <= cyl.height)
+			return (m->t1);
 	}
 	return FLT_MAX;
 }
@@ -82,25 +82,26 @@ static float	check_in_bound(t_ray ray, t_cylinder cyl, t_cyl_math m)
  * @return Distance t along the ray to the first valid intersection within the cylinder's height,
  *         or FLT_MAX if there is no valid hit.
  */
-static float solve_cyl(t_ray ray, t_cylinder cyl, t_vec3 oc, t_cyl_math m)
+static float solve_cyl(t_ray ray, t_cylinder cyl, t_vec3 oc, t_cyl_math *m)
 {
-	m.d_dot_n = dot(ray.direction, cyl.axis); //dir dot normal
-	m.oc_dot_n = dot(oc, cyl.axis); // oc dot  normal
+	m->d_dot_n = dot(ray.direction, cyl.axis);
+	m->oc_dot_n = dot(oc, cyl.axis);
 
-	m.a = dot(ray.direction, ray.direction) - m.d_dot_n * m.d_dot_n;
-	m.b = 2.0f * (dot(ray.direction, oc) - m.d_dot_n * m.oc_dot_n);
-	m.c = dot(oc, oc) - m.oc_dot_n * m.oc_dot_n - m.radius * m.radius;
+	m->a = dot(ray.direction, ray.direction) - m->d_dot_n * m->d_dot_n;
+	m->b = 2.0f * (dot(ray.direction, oc) - m->d_dot_n * m->oc_dot_n);
+	m->c = dot(oc, oc) - m->oc_dot_n * m->oc_dot_n - m->radius * m->radius;
 
-	m.discriminant = m.b*m.b - 4*m.a*m.c;
-	if (m.discriminant < 0)
-		return (FLT_MAX);
+	m->discriminant = m->b * m->b - 4 * m->a * m->c;
+	if (m->discriminant < 0)
+		return FLT_MAX;
 
-	m.sqrt_d = square_root(m.discriminant);
-	m.t0 = (-m.b - m.sqrt_d) / (2.0f * m.a);
-	m.t1 = (-m.b + m.sqrt_d) / (2.0f * m.a);
+	m->sqrt_d = square_root(m->discriminant);
+	m->t0 = (-m->b - m->sqrt_d) / (2.0f * m->a);
+	m->t1 = (-m->b + m->sqrt_d) / (2.0f * m->a);
 
-	return (check_in_bound(ray, cyl, m));
+	return check_in_bound(ray, cyl, m);
 }
+
 
 /**
  * Hit a ray with a disk cap of a cylinder.
@@ -138,7 +139,7 @@ float cyl_hit(const t_cylinder cyl, const t_ray ray)
 	float t_min;
 
 	oc = v3_sub_v3(ray.origin, cyl.center);
-	t_side = solve_cyl(ray, cyl, oc, m); // solve the side
+	t_side = solve_cyl(ray, cyl, oc, &m); // solve the side
 
 	m.cap_bottom = cyl.center;
 	m.cap_top = v3_add_v3(cyl.center, v3_mul_f32(cyl.axis, cyl.height));

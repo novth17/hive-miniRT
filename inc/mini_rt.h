@@ -174,6 +174,7 @@ void per_frame(void * param);
 float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t count, const t_ray ray);
 float plane_hit(const t_plane pl, const t_ray ray);
 float check_cyl(t_hit *restrict rec, const t_cylinder *cyl, const uint32_t count, const t_ray ray);
+float cyl_hit(const t_cylinder cyl, const t_ray ray);
 
 /* ===================== FOR ERROR ===================== */
 int		check_id_args_count(char **tokens, const char *id, int expected);
