@@ -1,7 +1,5 @@
 #include "mini_rt.h"
 
-#include "mini_rt.h"
-
 static int parse_material(char **tokens, t_scene *scene, t_material *m, int offset);
 
 static t_object *create_objects(t_scene *scene, t_obj_type type)

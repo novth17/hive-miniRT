@@ -1,28 +1,6 @@
 #include "../inc/rt_math.h"
 #include "../inc/mini_rt.h"
 
-static inline
-t_v3	viewport_top_left(const t_camera *cam, const t_v3 w)
-{
-	t_v3	result;
-
-	result = V3_SUB(cam->camera_center, f32_mul_v3(cam->focus_dist, w));
-	result = V3_SUB(result, v3_div_f32(cam->viewport_u, 2.0f));
-	result = V3_SUB(result, v3_div_f32(cam->viewport_v, 2.0f));
-	return (result);
-}
-
-static inline
-t_v3	pixel00_location(const t_v3 viewport_upper_left, const t_v3 pixel_delta_u, const t_v3 pixel_delta_v)
-{
-	t_v3	result;
-
-	result = v3_add_v3(pixel_delta_u, pixel_delta_v);
-	result = f32_mul_v3(0.5, result);
-	result = v3_add_v3(viewport_upper_left, result);
-	return (result);
-}
-
 // inline
 // t_v4 v4_mul_v4(t_v4 a, t_v4 b)
 // {
@@ -123,7 +101,7 @@ t_mat4 inverse(t_mat4 m)
 
 t_mat4 look_at(const t_camera *restrict cam)
 {
-	const t_v3 f = unit_vector(V3_SUB(V3_ADD(cam->lookfrom, cam->lookat), cam->lookfrom));
+	const t_v3 f = cam->lookat;
 	const t_v3 s = unit_vector(cross(f, cam->vup));
 	const t_v3 u = cross(s, f);
 
@@ -170,17 +148,41 @@ t_mat4 perspective_fov(float fov, float width, float height, float near, float f
 	return (result);
 }
 
+static inline
+t_v3	viewport_top_left(const t_camera *cam, const t_v3 w)
+{
+	t_v3	result;
+
+	result = V3_SUB(cam->camera_center, f32_mul_v3(cam->focus_dist, w));
+	result = V3_SUB(result, v3_div_f32(cam->viewport_u, 2.0f));
+	result = V3_SUB(result, v3_div_f32(cam->viewport_v, 2.0f));
+	return (result);
+}
+
+static inline
+t_v3	pixel00_location(const t_v3 viewport_upper_left, const t_v3 pixel_delta_u, const t_v3 pixel_delta_v)
+{
+	t_v3	result;
+
+	result = v3_add_v3(pixel_delta_u, pixel_delta_v);
+	result = f32_mul_v3(0.5, result);
+	result = v3_add_v3(viewport_upper_left, result);
+	return (result);
+}
+
+
+
 // to set defaults
 void base_init_cam(t_camera *cam)
 {
 
-	cam->samples_per_pixel = 2;
+	cam->samples_per_pixel = 1;
 	cam->pixel_sample_scale =  1.0f / cam->samples_per_pixel;
 	cam->sqrt_spp = (int32_t)square_root(cam->samples_per_pixel);
 	cam->pixel_sample_scale_strati = 1.0 / (cam->sqrt_spp * cam->sqrt_spp);
 	cam->recip_sqrt_spp = 1.0 / cam->sqrt_spp;
 
-	cam->max_bounce = 8;
+	cam->max_bounce = 2;
 	cam->vup = v3(0, 1, 0); // might not need this in camera
 
 	cam->defocus_angle = 0.0f;
@@ -190,7 +192,7 @@ void base_init_cam(t_camera *cam)
 
 void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 {
-	const t_v3 w = unit_vector(V3_SUB(cam->lookfrom, cam->lookat));
+	const t_v3 w = neg(cam->lookat);
 	const t_v3 u = unit_vector(cross(cam->vup, w));
 	const t_v3 v = cross(w, u);
 	const float h = tanf(deg_to_rad(cam->fov) * 0.5);
@@ -211,8 +213,8 @@ void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 	cam->viewport_width = cam->viewport_height * ((float)(cam->image_width) / cam->image_height);
 	cam->camera_center = cam->lookfrom;
 
-	cam->viewport_u = f32_mul_v3(cam->viewport_width, u);
-	cam->viewport_v = f32_mul_v3(cam->viewport_height, neg(v));
+	cam->viewport_u = f32_mul_v3(cam->viewport_width, u); // right
+	cam->viewport_v = f32_mul_v3(cam->viewport_height, neg(v)); // up
 
 	cam->pixel_delta_u = v3_div_f32(cam->viewport_u, (float)cam->image_width);
 	cam->pixel_delta_v = v3_div_f32(cam->viewport_v, (float)cam->image_height);
@@ -226,7 +228,7 @@ void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 
 
 	// t_mat4 projection;
-
+	//https://www.songho.ca/opengl/gl_projectionmatrix.html
 	cam->projection = perspective_fov(deg_to_rad(cam->fov), (float)cam->image_width, (float)cam->image_height, MIN_HIT_DIST, MAX_HIT_DIST);
 	cam->inverse_projection = inverse(cam->projection);
 	cam->view = look_at(cam);
