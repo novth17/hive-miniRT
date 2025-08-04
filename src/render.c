@@ -33,8 +33,9 @@ t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float r
 	rec.distance = root;
 	rec.position = at(ray, rec.distance);
 	rec.mat = sp.material;
-	rec.normal = v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius);
+	rec.normal = noz(v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius));
 	set_face_normal(&rec, &ray);
+	rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f)); // this
 	return (rec);
 }
 
@@ -51,14 +52,14 @@ float sphere_hit(const t_sphere sp, const t_ray ray)
 	float root;
 
 	if (discriminant < 0)
-		return (FLT_MAX);
+		return (-1.0f);
 	sqrtd = square_root(discriminant);
 	root = (v.H - sqrtd) / v.A;
 	if (root <= MIN_HIT_DIST || root >= MAX_HIT_DIST)
 	{
 		root = (v.H + sqrtd) / v.A;
 		if (root <= MIN_HIT_DIST || root >= MAX_HIT_DIST)
-			return (FLT_MAX);
+			return (-1.0f);
 	}
 	return (root);
 }
@@ -94,6 +95,8 @@ bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects 
 	uint32_t i;
 	float hit_distance;
 
+	// im probably calculating something wrong
+	// the shadow rays are causing point lights to not work inside room_test.rt
 	i = -1;
 	while (++i < scene->pl_count)
 	{
@@ -147,6 +150,7 @@ float smoothstep(const float edge0, const float edge1, float x)
 static inline
 t_v3 point_light_color(const t_scene *restrict scene, const t_hit *restrict rec, t_v3 light_direction)
 {
+	// look at https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model to make this better
 	// const t_color ambient_light = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
 	const t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
 	const float dist = length(light_direction);
@@ -170,7 +174,8 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 	t_v3 light_color;
 
 	l = V3_SUB(scene->light.origin, rec->position);
-	shadow_ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4));
+	// shadow_ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4));
+	shadow_ray.origin = rec->position;
 	shadow_ray.direction = l;
 	light_color = v3(0, 0, 0);
 	if (shadow_hit(scene, shadow_ray) == false)
@@ -184,7 +189,7 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 static inline
 t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict scene)
 {
-	t_sphere point_light_sphere = {.material.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f}; // debugging
+	t_sphere point_light_sphere = {.material.color = v3(1, 1, 1), .center = scene->light.origin, .radius = 0.05f}; // debugging
 	point_light_sphere.material.emitter = 0.0f;
 	point_light_sphere.material.diffuse = 0.0f;
 	point_light_sphere.material.specular_probability = 0.0f;
@@ -200,34 +205,10 @@ t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict sce
 	return (hit_record);
 }
 
-static inline
-float random_float_normal_dist(uint32_t *seed)
-{
-	const float theta = 2 * M_PI + random_float(seed);
-	const float rho = square_root(-2 * log(random_float(seed)));
-	return (rho * cos(theta));
-}
-
-static inline
-t_v3 random_direction_normal_dist(uint32_t *seed)
-{
-	const float x = random_float_normal_dist(seed);
-	const float y = random_float_normal_dist(seed);
-	const float z = random_float_normal_dist(seed);
-
-	return (normalize(v3(x, y, z)));
-}
-
-t_v3 random_direction_in_hemisphere(const t_v3 normal, uint32_t *rng_seed)
-{
-	const t_v3 dir = random_direction_normal_dist(rng_seed);
-	return (v3_mul_f32(dir, sign(dot(normal, dir))));
-}
-
 // Return true if the vector is close to zero in all dimensions.
 static
 bool near_zero(const t_v3 a) {
-    const float s = 1e-8;
+    const float s = 1e-8f;
     return ((fabsf(a.x) < s) && (fabsf(a.y) < s) && (fabsf(a.z) < s));
 }
 
@@ -239,9 +220,15 @@ bool near_zero(const t_v3 a) {
 static inline
 t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_bounce, uint32_t *seed)
 {
+	// const t_v3 scatter = random_direction_in_hemisphere(rec->normal, seed); // do we need to normalize?
+	// const t_v3 random_bounce = v3_mul_f32(scatter, !near_zero(scatter));
+
+
+	// const t_v3 scatter = random_direction_in_hemisphere(rec->normal, seed);
+	// const t_v3 random_bounce = noz(random_direction_in_hemisphere(rec->normal, seed)); // do we need to normalize?
+
 	const t_v3 scatter = in_unit_sphere(seed);
 	const t_v3 random_bounce = noz(V3_ADD(rec->normal, v3_mul_f32(scatter, !near_zero(scatter))));
-	// const t_v3 random_bounce = noz(random_direction_in_hemisphere(rec->normal, seed)); // do we need to normalize?
 	t_v3 pure_bounce;
 
 	// inner product (or dot product) gives us the angle difference between
@@ -250,15 +237,21 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 	pure_bounce = f32_mul_v3(2.0f*dot(ray.direction, rec->normal), rec->normal);
 	pure_bounce = v3_sub_v3(ray.direction, pure_bounce);
 
-	ray.origin = rec->position;
 	ray.direction = noz(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
+	ray.origin = rec->position;
+	// ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
+
+
+
+
+
+
 	return (ray);
 }
 
 static inline
 t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, uint32_t *seed) // change to all objects or scene;
 {
-	static const t_color specular_color = {.r = 1.0f, .g = 1.0f, .b = 1.0f};
 	t_v3 ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
 	// t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
 	// t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f};
@@ -277,6 +270,8 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 		rec = find_closest_ray_intesection(ray, scene);
 		if (rec.did_hit)
 		{
+			// if we hit something calculate the light contribution of that point into the total light of the ray
+
 			rec.mat.specular_color = rec.mat.color; // here for now
 			hit_once = true;
 			// there is a bug here relating to ambient light and how that affects the color of an object
@@ -308,7 +303,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 	if (hit_once)
 	{
 		total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
-		return (total_incoming_light);
+		return (v3_clamp(total_incoming_light));
 	}
 
 	// not hit = background color
@@ -323,21 +318,8 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 	return (v3(0, 0, 0));
 }
 
-static inline
-t_v3 v4_to_v3(t_v4 a)
-{
-	return (v3(a.x, a.y, a.z));
-}
 
-static inline
-t_v4 quaternion_thingy_dont_know(t_v4 target)
-{
-	t_v3 target_v3 = v4_to_v3(target);
-	target_v3 =  unit_vector(v3_div_f32(target_v3, target.w));
-	target = (t_v4){.xyz = target_v3, .w = 0};
-	return (target);
-}
-
+// for calculating the defocus blur effect
 t_v3 defocus_disk_sample(const t_camera *restrict cam, uint32_t *rng_state)
 {
 	const t_point3 point = random_in_unit_disk(rng_state);
@@ -351,11 +333,7 @@ t_v3 defocus_disk_sample(const t_camera *restrict cam, uint32_t *rng_state)
 static inline
 t_ray get_ray(const t_camera *cam, t_cord cord, t_cord strati, uint32_t *seed)
 {
-#ifdef STRATI
 	const t_v2 offset = sample_square_stratified(strati.x, strati.y, cam->recip_sqrt_spp, seed);
-#else
-	const t_v2 offset = sample_square(seed);
-#endif
 	const t_v3 x_delta = f32_mul_v3(cord.x + offset.x, cam->pixel_delta_u);
 	const t_v3 y_delta = f32_mul_v3(cord.y + offset.y, cam->pixel_delta_v);
 	const t_v3 pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
@@ -368,50 +346,15 @@ t_ray get_ray(const t_camera *cam, t_cord cord, t_cord strati, uint32_t *seed)
 	return (ray);
 }
 
-// static inline
-// t_v3 get_ray_direction(const t_camera *cam, const t_ray ray, t_cord cord, uint32_t *seed)
-// {
-// 	static uint64_t num = 0;
-// 	const t_v2 offset = sample_square_stratified(cord.x, cord.y, cam->recip_sqrt_spp, seed);
-// 	// printf("offset x <%f> offset y <%f>\n", offset.x, offset.y);
-// 	// t_v3 offset = {0, 0, 0};
-// 	const t_v3 x_delta = f32_mul_v3(cord.x + offset.x, cam->pixel_delta_u);
-// 	const t_v3 y_delta = f32_mul_v3(cord.y + offset.y, cam->pixel_delta_v);
-// 	const t_v3 pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
-
-// 	cord.x = (float)(cord.x + offset.x) / (float)cam->image_width;
-// 	cord.y = (float)(cord.y + offset.y) / (float)cam->image_height;
-
-// 	cord.x = cord.x * 2.0f - 1.0f;
-// 	cord.y = cord.y * 2.0f - 1.0f;
-// 	// t_v4 target = mat_mul_v4(cam->inverse_projection, v4(cord.x, cord.y, 1.0f, 1.0f));
-// 	// t_v3 direction = v4_to_v3(mat_mul_v4(cam->inverse_view, quaternion_thingy_dont_know(target)));
-// 	t_v3 direction = V3_SUB(pixel_sample, ray.origin);
-// 	// t_v4 temp = (t_v4){.xyz = direction, 0};
-
-// 	// temp = mat_mul_v4(cam->inverse_projection, temp);
-// 	// temp = mat_mul_v4(cam->inverse_view, temp);
-// 	// direction = v4_to_v3(temp);
-// 	// t_v3 direction = V3_SUB(v4_to_v3(target), ray.origin);
-// 	// if (num++ % 4096 == 0)
-// 	// 	printf("%f %f %f\n", direction.x, direction.y, direction.z);
-// 	return (direction);
-// }
-
-t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_cord cord, uint32_t seed)
+t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_cord original_cord, uint32_t seed)
 {
 	t_ray ray;
 	t_v3 color;
 	t_v3 incoming_light;
-
-	incoming_light = v3(0, 0, 0);
-	// ray.origin = cam->camera_center;
-
-
-#ifdef STRATI
 	int y_s;
 	int x_s;
 
+	incoming_light = v3(0, 0, 0);
 	y_s = 0;
 	while (y_s < cam->sqrt_spp)
 	{
@@ -419,7 +362,7 @@ t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_co
 		while (x_s < cam->sqrt_spp)
 		{
 
-			ray = get_ray(cam, cord, (t_cord){x_s, y_s}, &seed);
+			ray = get_ray(cam, original_cord, (t_cord){x_s, y_s}, &seed);
 			color = trace(ray, scene, cam->max_bounce, &seed);
 			incoming_light = V3_ADD(incoming_light, color);
 			++x_s;
@@ -427,32 +370,8 @@ t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_co
 		++y_s;
 	}
 	color = f32_mul_v3(cam->pixel_sample_scale_strati, incoming_light);
-#else
-	int32_t sample;
-
-	sample = 0;
-	while (sample < cam->samples_per_pixel)
-	{
-		ray = get_ray(cam, cord, cord, &seed);
-		color = trace(ray, scene, cam->max_bounce, &seed);
-		incoming_light = V3_ADD(incoming_light, color);
-		++sample;
-	}
-	color = f32_mul_v3(cam->pixel_sample_scale, incoming_light);
-#endif
 	return (color);
 }
-
-// static inline
-// t_v3 rgb_u8_to_float(const uint8_t r, const uint8_t g, const uint8_t b)
-// {
-// 	t_v3 result;
-
-// 	result.r = (float)r / 255.0f;
-// 	result.g = (float)g / 255.0f;
-// 	result.b = (float)b / 255.0f;
-// 	return (result);
-// }
 
 static inline
 t_v3 rgb_u32_to_float(uint32_t c)

@@ -80,4 +80,8 @@ t_v2 sample_square(uint32_t *seed);
 t_v2 sample_square_stratified(int i_s, int j_s, float recip_sqrt_spp, uint32_t *seed);
 t_v2 random_point_in_circle(uint32_t *state);
 
+float random_float_normal_dist(uint32_t *seed);
+t_v3 random_direction_normal_dist(uint32_t *seed);
+t_v3 random_direction_in_hemisphere(const t_v3 normal, uint32_t *rng_seed);
+
 #endif
