@@ -38,7 +38,7 @@ static t_hit create_cyl_hit_record(const t_ray ray, const t_cylinder cyl, const 
 	else
 	{
 		axis_projection = v3_mul_f32(cyl.axis, proj_len);
-		side_normal = v3_sub_v3(vec_to_hit, axis_projection);
+		side_normal = normalize(v3_sub_v3(vec_to_hit, axis_projection));
 		rec.normal = side_normal; // perpendicular to axis
 	}
 

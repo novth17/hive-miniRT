@@ -55,16 +55,16 @@ static float	check_in_bound(t_ray ray, t_cylinder cyl, t_cyl_math *m)
 	if (m->t0 >= 0)
 	{
 		m->hit0 = at(ray, m->t0);
-		m->vec_to_hit0 = v3_sub_v3(m->hit0, cyl.center);
-		m->hit_dist_from_base0 = dot(m->vec_to_hit0, cyl.axis);
+		m->vec_to_hit0 = v3_sub_v3(m->hit0, m->cap_bottom);
+		m->hit_dist_from_base0 = dot(m->vec_to_hit0, cyl.axis); // Distance from base along axis
 		if (m->hit_dist_from_base0 >= 0 && m->hit_dist_from_base0 <= cyl.height)
 			return (m->t0);
 	}
 	if (m->t1 >= 0)
 	{
 		m->hit1 = at(ray, m->t1);
-		m->vec_to_hit1 = v3_sub_v3(m->hit1, cyl.center);
-		m->hit_dist_from_base1 = dot(m->vec_to_hit1, cyl.axis);
+		m->vec_to_hit1 = v3_sub_v3(m->hit1, m->cap_bottom);
+		m->hit_dist_from_base1 = dot(m->vec_to_hit1, cyl.axis); // Distance from base along axis
 		if (m->hit_dist_from_base1 >= 0 && m->hit_dist_from_base1 <= cyl.height)
 			return (m->t1);
 	}
@@ -94,6 +94,10 @@ static float solve_cyl(t_ray ray, t_cylinder cyl, t_vec3 oc, t_cyl_math *m)
 	m->discriminant = m->b * m->b - 4 * m->a * m->c;
 	if (m->discriminant < 0)
 		return FLT_MAX;
+
+	if (fabs(m->a) < 1e-8f)
+		return FLT_MAX;
+
 
 	m->sqrt_d = square_root(m->discriminant);
 	m->t0 = (-m->b - m->sqrt_d) / (2.0f * m->a);
@@ -138,17 +142,22 @@ float cyl_hit(const t_cylinder cyl, const t_ray ray)
 	float t_side;
 	float t_min;
 
-	oc = v3_sub_v3(ray.origin, cyl.center);
-	t_side = solve_cyl(ray, cyl, oc, &m); // solve the side
+	t_vec3 half_height = v3_mul_f32(cyl.axis, cyl.height * 0.5f);
+	m.cap_bottom = v3_sub_v3(cyl.center, half_height);
+	m.cap_top = v3_add_v3(cyl.center, half_height);
 
-	m.cap_bottom = cyl.center;
-	m.cap_top = v3_add_v3(cyl.center, v3_mul_f32(cyl.axis, cyl.height));
+
+
+
+
 
 	m.radius = cyl.diameter / 2;
 
-	m.t_cap_bottom = hit_cyl_cap(ray, m.cap_bottom, cyl.axis, m.radius);
+	m.t_cap_bottom = hit_cyl_cap(ray, m.cap_bottom, neg(cyl.axis), m.radius);
 	m.t_cap_top = hit_cyl_cap(ray, m.cap_top, cyl.axis, m.radius);
 
+	oc = v3_sub_v3(ray.origin, cyl.center);
+	t_side = solve_cyl(ray, cyl, oc, &m); // solve the side
 	t_min = t_side;
 	if (m.t_cap_bottom < t_min)
 		t_min = m.t_cap_bottom;
