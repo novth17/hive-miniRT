@@ -39,7 +39,10 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/math/rt_math.c \
 				$(SRC_DIR)/math/random.c \
 				$(SRC_DIR)/control/hook.c \
-				$(SRC_DIR)/shape/pl_hit.c
+				$(SRC_DIR)/shape/pl_hit.c \
+				$(SRC_DIR)/shape/cyl_cap_hit.c \
+				$(SRC_DIR)/shape/cyl_side_hit.c  \
+				$(SRC_DIR)/shape/cyl_hit.c
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 
