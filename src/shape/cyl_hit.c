@@ -1,5 +1,13 @@
 #include "mini_rt.h"
 
+typedef struct s_cyl_hit {
+	t_v3		hit_point;
+	t_v3		vec_to_hit;
+	t_v3		axis_projection;
+	t_v3		side_normal;
+	float		proj_len;
+	float		half_height;
+}		t_cyl_hit;
 /**
  * Creates a hit record for a cylinder intersection.
  *
@@ -15,32 +23,27 @@
 static t_hit create_cyl_hit_record(const t_ray ray, const t_cylinder cyl, const float t)
 {
 	t_hit	rec;
-	t_v3		hit_point;
-	t_v3		vec_to_hit;
-	t_v3		axis_projection;
-	t_v3		side_normal;
-	float		proj_len;
+	t_cyl_hit h = {};
 
-	hit_point = at(ray, t);
-	vec_to_hit = v3_sub_v3(hit_point, cyl.center);
-	proj_len = dot(vec_to_hit, cyl.axis);
+	h.hit_point = at(ray, t);
+	h.vec_to_hit = v3_sub_v3(h.hit_point, cyl.center);
+	h.proj_len = dot(h.vec_to_hit, cyl.axis);
 
-	rec.position = hit_point;
+	rec.position = h.hit_point;
 	rec.distance = t;
-	//rec.color = cyl.material.color;
 	rec.mat = cyl.material;
 	rec.did_hit = true;
 
-	float half_height = cyl.height * 0.5f;
-	if (proj_len < -half_height + 1e-4f)
+	h.half_height = cyl.height * 0.5f;
+	if (h.proj_len < -h.half_height + CYL_CAP_EPSILON)
 		rec.normal = neg(cyl.axis); // bottom cap
-	else if (proj_len > half_height - 1e-4f)
+	else if (h.proj_len > h.half_height - CYL_CAP_EPSILON)
 		rec.normal = cyl.axis; // top cap
 	else
 	{
-		axis_projection = v3_mul_f32(cyl.axis, proj_len);
-		side_normal = v3_sub_v3(vec_to_hit, axis_projection);
-		rec.normal = side_normal; // perpendicular to axis
+		h.axis_projection = v3_mul_f32(cyl.axis, h.proj_len);
+		h.side_normal = v3_sub_v3(h.vec_to_hit, h.axis_projection);
+		rec.normal = h.side_normal; // perpendicular to axis
 	}
 
 	// Flip normal if ray is inside the surface
