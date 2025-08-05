@@ -103,7 +103,7 @@ static float solve_cyl(t_ray ray, t_cylinder cyl, t_vec3 oc, t_cyl_math *m)
 	if (m->discriminant < 0)
 		return FLT_MAX;
 
-	if (fabs(m->a) < 1e-8f)
+	if (fabs(m->a) < QUADRATIC_A_EPSILON)
 		return FLT_MAX;
 
 
@@ -129,7 +129,7 @@ static float solve_cyl(t_ray ray, t_cylinder cyl, t_vec3 oc, t_cyl_math *m)
 static float hit_cyl_cap(t_ray ray, t_vec3 center, t_vec3 normal, float radius)
 {
 	float denom = dot(ray.direction, normal);
-	if (fabs(denom) < 1e-6)
+	if (fabs(denom) < RAY_PARALLEL_EPSILON)
 		return FLT_MAX; // ray is parallel to cap
 
 	float t = dot(v3_sub_v3(center, ray.origin), normal) / denom;
