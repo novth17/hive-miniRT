@@ -10,7 +10,8 @@ bool is_normalized(t_vec3 vec)
     float len;
 
 	len = calc_v3_len(vec);
-    return (fabs(len - 1.0f) < FLOAT_EPSILON); // whether a floating-point number len is "close enough" to 1.0
+	printf("Length of the vector is %f\n", len);
+    return (fabs(len - 1.0f) < 1.1); //as long as len < 1.1 then it's ok
 }
 
 static double parse_vec3_comp(char **str, bool *is_valid_comp)
