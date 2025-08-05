@@ -1,13 +1,15 @@
 #include "mini_rt.h"
 
-static float	calc_v3_len(t_vec3 vec3)
+static double	calc_v3_len(t_vec3 vec3)
 {
 	return (square_root(vec3.x * vec3.x + vec3.y * vec3.y + vec3.z * vec3.z));
 }
 
-bool is_normalized(t_vec3 vec3)
+bool is_normalized(t_vec3 vec)
 {
-    float len = calc_v3_len(vec3);
+    float len;
+
+	len = calc_v3_len(vec);
     return (fabs(len - 1.0f) < FLOAT_EPSILON);
 }
 
