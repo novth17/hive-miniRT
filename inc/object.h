@@ -4,14 +4,13 @@
 #include "types.h"
 
 #define SP_ARG_MIN 4
-#define SP_ARG_MAX 8
+#define SP_ARG_MAX 7
 
 #define PL_ARG_MIN 4
-#define PL_ARG_MAX 8
+#define PL_ARG_MAX 7
 
 #define CYL_ARG_MIN 6
-#define CYL_ARG_MAX 10
-
+#define CYL_ARG_MAX 9
 
 #define FLOAT_EPSILON 1e-6f
 #define SHADOW_BIAS 1e-4f
