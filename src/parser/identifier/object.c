@@ -126,6 +126,15 @@ static int parse_material(char **tokens, t_scene *scene, t_material *m, int offs
 		m->emitter = parse_float(tokens[offset + 3], &scene->is_valid);
 		if (!scene->is_valid)
 			return print_error("Material: emitter: " ERROR_FLOAT, tokens[offset + 3]);
+
+
+		// optional: "checker"
+		// if (tokens[offset + 4] && ft_strncmp(tokens[offset + 4], "checker", 7) == 0)
+		// {
+		// 	m->checkerboard = true;
+		// 	m->checker_color = (t_color){0.0f, 0.0f, 0.0f}; // default: black
+		// 	m->pattern_scale = 1.0f; // default size
+		// }
 	}
 	return (SUCCESS);
 }
