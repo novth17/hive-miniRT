@@ -48,6 +48,7 @@ t_color parse_color(char *str, bool *is_valid)
 		*is_valid = false;
 		return ((t_color){});
 	}
+
 	return color;
 }
 
