@@ -12,7 +12,7 @@
 #define CYL_ARG_MIN 6
 #define CYL_ARG_MAX 9
 
-#define FLOAT_EPSILON 1e-6f
+#define FLOAT_EPSILON 1e-4f
 #define SHADOW_BIAS 1e-4f
 #define CYL_CAP_EPSILON 1e-4f
 #define RAY_PARALLEL_EPSILON 1e-6f
