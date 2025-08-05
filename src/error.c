@@ -50,7 +50,7 @@ int check_obj_args_count(char **tokens, const char *id, int min, int max)
 	if (ft_count_2d(tokens) != min &&  ft_count_2d(tokens) != max)
 	{
 		ft_dprintf(2, RED"%s: Number of obj arguments must be "
-					"either %d (mandatory) or %d (bonus)!\n"RESET, id, min, max);
+				"either %d (mandatory) or %d (bonus)!\n"RESET, id, min, max);
 		print_usage(tokens);
 		return (FAIL);
 	}
