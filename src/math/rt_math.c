@@ -471,6 +471,66 @@ uint32_t rgb_pack4x8(t_v3 unpacked)
 }
 
 
+inline
+float exact_srgb_to_linear(float srgb)
+{
+    float l;
+
+    if (srgb < 0.0f)
+    {
+	    srgb = 0.0f;
+    }
+    if (srgb > 1.0f)
+    {
+	    srgb = 1.0f;
+    }
+    l = srgb * 0.0773993808;
+    if (srgb > 0.04045)
+    {
+	    l = pow(srgb * 0.9478672986 + 0.0521327014, 2.4);
+    }
+    return (l);
+}
+
+
+
+inline
+float exact_linear_to_srgb(float l)
+{
+    float s;
+
+    if (l < 0.0f)
+    {
+	    l = 0.0f;
+    }
+    if (l > 1.0f)
+    {
+	    l = 1.0f;
+    }
+    s = l * 12.92;
+    if (l > 0.0031308)
+    {
+	    s = 1.055F*pow(l, 1.0f/2.4f) - 0.055f;
+    }
+    return (s);
+}
+
+uint32_t exact_pack(t_v3 unpacked)
+{
+    const t_v3 srgb = {
+			.r = exact_linear_to_srgb(unpacked.r),
+			.g = exact_linear_to_srgb(unpacked.g),
+            .b = exact_linear_to_srgb(unpacked.b)};
+	uint32_t result;
+
+
+	result = ((uint32_t)(0xFF) << 24)					|
+			((uint32_t)((srgb.b * 255.0f)) << 16)	|
+			((uint32_t)((srgb.g * 255.0f)) << 8)	|
+			((uint32_t)((srgb.r * 255.0f)) << 0);
+	return (result);
+}
+
 #if 0
 inline
 t_v4 mat_mul_v4(t_mat4 m, t_v4 v)
