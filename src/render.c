@@ -265,6 +265,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 	i = 0;
 	total_incoming_light = v3(0, 0, 0);
 	bool hit_once = false;
+    bool prev_bounce_specular = false;
 	while (i <= max_bounce)
 	{
 		rec = find_closest_ray_intesection(ray, scene);
@@ -282,12 +283,19 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), ray_color));
 			}
 			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
-			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
+			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));  
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
-			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
+//			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			// color = V3_ADD(ambient, color);
 			// color = v3_mul_v3(rec.color, color);
-
+            t_color temp_ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));			
+            float p = fmax(temp_ray_color.r, fmax(temp_ray_color.g, temp_ray_color.b));
+            
+		    if (i > 0 && !prev_bounce_specular && random_float(seed) >= p) {
+			    break;
+		    }
+            ray_color = temp_ray_color;
+            prev_bounce_specular = is_specular_bounce;
 			ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
 			// ray.direction = rec.normal;
 			++i;
@@ -387,7 +395,7 @@ t_v3 rgb_u32_to_float(uint32_t c)
 static inline
 t_v3 accumulate(const t_v3 old_color, const t_v3 new_color)
 {
-	const float weight = 1.0 / ((g_accummulated_frames) + 1); // @TODO screw around with the weight
+	const float weight = 1.0 / (g_accummulated_frames + 1); // @TODO screw around with the weight
 	t_v3 accumulated_average;
 
 	accumulated_average.r = old_color.r * (1 - weight) + new_color.r * weight;

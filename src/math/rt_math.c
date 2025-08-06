@@ -464,9 +464,9 @@ uint32_t rgb_pack4x8(t_v3 unpacked)
 
 
 	result = ((uint32_t)(0xFF) << 24)					|
-			((uint32_t)((unpacked.b) * 255.0f) << 16)	|
-			((uint32_t)((unpacked.g) * 255.0f) << 8)	|
-			((uint32_t)((unpacked.r) * 255.0f) << 0);
+			((uint32_t)((unpacked.b * 255.0f) + 0.5f) << 16)	|
+			((uint32_t)((unpacked.g * 255.0f) + 0.5f) << 8)	|
+			((uint32_t)((unpacked.r * 255.0f) + 0.5f) << 0);
 	return (result);
 }
 
