@@ -176,7 +176,7 @@ t_v3	pixel00_location(const t_v3 viewport_upper_left, const t_v3 pixel_delta_u, 
 void base_init_cam(t_camera *cam)
 {
 
-	cam->samples_per_pixel = 4;
+	cam->samples_per_pixel = 1;
 	cam->pixel_sample_scale =  1.0f / cam->samples_per_pixel;
 	cam->sqrt_spp = (int32_t)square_root(cam->samples_per_pixel);
 	cam->pixel_sample_scale_strati = 1.0 / (cam->sqrt_spp * cam->sqrt_spp);
