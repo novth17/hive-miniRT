@@ -11,7 +11,7 @@ bool is_normalized(t_vec3 vec)
 
 	len = calc_v3_len(vec);
 	printf("Length of the vector is %f\n", len);
-    return (fabs(len - 1.0f) < 1.1); //as long as len < 1.1 then it's ok
+    return (fabs(len - 1.0f) < 1e-1f);
 }
 
 static double parse_vec3_comp(char **str, bool *is_valid_comp)
