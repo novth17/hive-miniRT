@@ -90,7 +90,7 @@ float check_spheres(t_hit *restrict rec, const t_sphere *spheres, const uint32_t
 }
 
 static inline
-bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects or scene;
+bool shadow_hit(const t_scene *scene, const t_ray ray, const float light_distance)
 {
 	uint32_t i;
 	float hit_distance;
@@ -101,7 +101,7 @@ bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects 
 	while (++i < scene->pl_count)
 	{
 		hit_distance = plane_hit(scene->pls[i], ray);
-		if (hit_distance > MIN_HIT_DIST && hit_distance < MAX_HIT_DIST)
+		if (hit_distance > MIN_HIT_DIST && hit_distance < light_distance)
 			return (true);
 	}
 
@@ -109,7 +109,7 @@ bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects 
 	while (++i < scene->spheres_count)
 	{
 		hit_distance = sphere_hit(scene->spheres[i], ray);
-		if(hit_distance > MIN_HIT_DIST && hit_distance < MAX_HIT_DIST)// sphere_hit(&temp_rec, scene->spheres[i], ray))
+		if(hit_distance > MIN_HIT_DIST && hit_distance < light_distance)// sphere_hit(&temp_rec, scene->spheres[i], ray))
 			return (true);
 	}
 	// i = -1;
@@ -169,18 +169,17 @@ t_v3 point_light_color(const t_scene *restrict scene, const t_hit *restrict rec,
 static inline
 t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 {
-	t_v3 l;
+	const t_v3 light_vector = V3_SUB(scene->light.origin, rec->position);
+	const float light_distance = length(light_vector);
 	t_ray shadow_ray;
 	t_v3 light_color;
 
-	l = V3_SUB(scene->light.origin, rec->position);
-	// shadow_ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4));
 	shadow_ray.origin = rec->position;
-	shadow_ray.direction = l;
+	shadow_ray.direction = f32_mul_v3(1.0f / light_distance, light_vector);
 	light_color = v3(0, 0, 0);
-	if (shadow_hit(scene, shadow_ray) == false)
+	if (shadow_hit(scene, shadow_ray, light_distance) == false)
 	{
-		light_color = point_light_color(scene, rec, l);
+		light_color = point_light_color(scene, rec, light_vector);
 	}
 	return (light_color);
 }
@@ -197,10 +196,10 @@ t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict sce
 
 	hit_record = (t_hit){};
 	hit_record.distance = MAX_HIT_DIST;
-	check_cyl(&hit_record, scene->cyls, scene->cyls_count, ray);
 	check_planes(&hit_record, scene->pls, scene->pl_count, ray);
 	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
 	check_spheres(&hit_record, &point_light_sphere, 1, ray);
+	check_cyl(&hit_record, scene->cyls, scene->cyls_count, ray);
 
 	return (hit_record);
 }
@@ -291,7 +290,8 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
             t_color temp_ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
             float p = fmax(temp_ray_color.r, fmax(temp_ray_color.g, temp_ray_color.b));
 
-		    if (i > 0 && !prev_bounce_specular && random_float(seed) >= p) {
+		    if (i > 0 && !prev_bounce_specular && random_float(seed) >= p)
+			{
 			    break;
 		    }
             ray_color = temp_ray_color;

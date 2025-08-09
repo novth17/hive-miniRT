@@ -43,8 +43,6 @@ float		lerp(float a, float t, float b);
 t_v4		v4_lerp(t_v4 a, float t, t_v4 b);
 t_v3		v3_lerp(t_v3 a, float t, t_v3 b);
 
-// these are the same operation
-float		inner(t_v3 a, t_v3 b);
 float		dot(t_v3 a, t_v3 b);
 
 t_v3		cross(t_v3 a, t_v3 b);

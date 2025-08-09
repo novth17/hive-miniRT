@@ -31,7 +31,7 @@ float length_sq(t_v3 a)
 {
 	float result;
 
-	result = inner(a, a);
+	result = dot(a, a);
 	return (result);
 }
 
@@ -342,16 +342,6 @@ float lerp(float a, float t, float b)
 	float result;
 
 	result = (1.0f - t)*a + t*b;
-	return (result);
-}
-
-
-inline
-float inner(t_v3 a, t_v3 b)
-{
-	float result;
-
-	result = a.x*b.x + a.y*b.y + a.z*b.z;
 	return (result);
 }
 
