@@ -192,7 +192,7 @@ void base_init_cam(t_camera *cam)
 
 void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 {
-	const t_v3 w = neg(cam->lookat);
+	const t_v3 w = cam->lookat;
 	const t_v3 u = unit_vector(cross(cam->vup, w));
 	const t_v3 v = cross(w, u);
 	const float h = tanf(deg_to_rad(cam->fov) * 0.5);

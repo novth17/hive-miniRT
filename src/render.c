@@ -156,7 +156,7 @@ t_v3 point_light_color(const t_scene *restrict scene, const t_hit *restrict rec,
 	color = f32_mul_v3(1.0f / (dist * dist), color);
 	// color = V3_ADD(ambient_light, color);
 	// color = v3_mul_v3(rec->color, color);
-	return (color);
+	return (v3_clamp(color));
 }
 
 static inline
@@ -181,17 +181,17 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 static inline
 t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict scene)
 {
-	t_sphere point_light_sphere = {.material.color = v3(1, 1, 1), .center = scene->light.origin, .radius = 0.05f}; // debugging
-	point_light_sphere.material.emitter = 0.0f;
-	point_light_sphere.material.diffuse = 0.0f;
-	point_light_sphere.material.specular_probability = 0.0f;
+	// t_sphere point_light_sphere = {.material.color = v3(1, 1, 1), .center = scene->light.origin, .radius = 0.05f}; // debugging
+	// point_light_sphere.material.emitter = 0.0f;
+	// point_light_sphere.material.diffuse = 0.0f;
+	// point_light_sphere.material.specular_probability = 0.0f;
 	t_hit hit_record;
 
 	hit_record = (t_hit){};
 	hit_record.distance = MAX_HIT_DIST;
 	check_planes(&hit_record, scene->pls, scene->pl_count, ray);
 	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
-	check_spheres(&hit_record, &point_light_sphere, 1, ray);
+	// check_spheres(&hit_record, &point_light_sphere, 1, ray);
 	check_cyl(&hit_record, scene->cyls, scene->cyls_count, ray);
 
 	return (hit_record);
@@ -230,8 +230,8 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 	pure_bounce = v3_sub_v3(ray.direction, pure_bounce);
 
 	ray.direction = noz(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
-	ray.origin = rec->position;
-	// ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
+	// ray.origin = rec->position;
+	ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
 
 
 
