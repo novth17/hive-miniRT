@@ -86,7 +86,7 @@ float check_spheres(t_hit *restrict rec, const t_sphere *spheres, const uint32_t
 		}
 		++i;
 	}
-	return (hit_distance);
+	return (current_hit_distance);
 }
 
 static inline
@@ -283,14 +283,14 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), ray_color));
 			}
 			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
-			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));  
+			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
 //			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			// color = V3_ADD(ambient, color);
 			// color = v3_mul_v3(rec.color, color);
-            t_color temp_ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));			
+            t_color temp_ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
             float p = fmax(temp_ray_color.r, fmax(temp_ray_color.g, temp_ray_color.b));
-            
+
 		    if (i > 0 && !prev_bounce_specular && random_float(seed) >= p) {
 			    break;
 		    }

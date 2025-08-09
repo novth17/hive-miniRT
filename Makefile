@@ -61,7 +61,7 @@ $(LIBFT):
 	@$(MAKE) --no-print-directory -C $(LIBFT_DIR)
 
 $(NAME): $(MLX42) $(LIBFT) $(OBJS)
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(MLX42) -ldl libglfw3.a -pthread -lm -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(MLX42) -ldl -lglfw -pthread -lm -o $(NAME)
 	@echo "\033[0;32mminiRT built with MLX42 successfully ✅\033[0m"
 
 clean:
