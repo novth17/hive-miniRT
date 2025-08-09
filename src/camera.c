@@ -182,7 +182,7 @@ void base_init_cam(t_camera *cam)
 	cam->pixel_sample_scale_strati = 1.0 / (cam->sqrt_spp * cam->sqrt_spp);
 	cam->recip_sqrt_spp = 1.0 / cam->sqrt_spp;
 
-	cam->max_bounce = 2;
+	cam->max_bounce = 4;
 	cam->vup = v3(0, 1, 0); // might not need this in camera
 
 	cam->defocus_angle = 0.0f;
@@ -192,7 +192,7 @@ void base_init_cam(t_camera *cam)
 
 void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
 {
-	const t_v3 w = neg(cam->lookat);
+	const t_v3 w = cam->lookat;
 	const t_v3 u = unit_vector(cross(cam->vup, w));
 	const t_v3 v = cross(w, u);
 	const float h = tanf(deg_to_rad(cam->fov) * 0.5);

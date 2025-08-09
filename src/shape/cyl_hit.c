@@ -50,7 +50,6 @@ static t_hit create_cyl_hit_record(const t_ray ray, const t_cylinder cyl, const 
 	rec.front_face = dot(ray.direction, rec.normal) < 0;
 	if (!rec.front_face)
 		rec.normal = neg(rec.normal);
-
 	return rec;
 }
 

@@ -86,11 +86,11 @@ float check_spheres(t_hit *restrict rec, const t_sphere *spheres, const uint32_t
 		}
 		++i;
 	}
-	return (hit_distance);
+	return (current_hit_distance);
 }
 
 static inline
-bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects or scene;
+bool shadow_hit(const t_scene *scene, const t_ray ray, const float light_distance)
 {
 	uint32_t i;
 	float hit_distance;
@@ -101,7 +101,7 @@ bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects 
 	while (++i < scene->pl_count)
 	{
 		hit_distance = plane_hit(scene->pls[i], ray);
-		if (hit_distance > MIN_HIT_DIST && hit_distance < MAX_HIT_DIST)
+		if (hit_distance > MIN_HIT_DIST && hit_distance < light_distance)
 			return (true);
 	}
 
@@ -109,7 +109,7 @@ bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects 
 	while (++i < scene->spheres_count)
 	{
 		hit_distance = sphere_hit(scene->spheres[i], ray);
-		if(hit_distance > MIN_HIT_DIST && hit_distance < MAX_HIT_DIST)// sphere_hit(&temp_rec, scene->spheres[i], ray))
+		if(hit_distance > MIN_HIT_DIST && hit_distance < light_distance)// sphere_hit(&temp_rec, scene->spheres[i], ray))
 			return (true);
 	}
 	i = -1;
@@ -156,24 +156,23 @@ t_v3 point_light_color(const t_scene *restrict scene, const t_hit *restrict rec,
 	color = f32_mul_v3(1.0f / (dist * dist), color);
 	// color = V3_ADD(ambient_light, color);
 	// color = v3_mul_v3(rec->color, color);
-	return (color);
+	return (v3_clamp(color));
 }
 
 static inline
 t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 {
-	t_v3 l;
+	const t_v3 light_vector = V3_SUB(scene->light.origin, rec->position);
+	const float light_distance = length(light_vector);
 	t_ray shadow_ray;
 	t_v3 light_color;
 
-	l = V3_SUB(scene->light.origin, rec->position);
-	// shadow_ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4));
 	shadow_ray.origin = rec->position;
-	shadow_ray.direction = l;
+	shadow_ray.direction = f32_mul_v3(1.0f / light_distance, light_vector);
 	light_color = v3(0, 0, 0);
-	if (shadow_hit(scene, shadow_ray) == false)
+	if (shadow_hit(scene, shadow_ray, light_distance) == false)
 	{
-		light_color = point_light_color(scene, rec, l);
+		light_color = point_light_color(scene, rec, light_vector);
 	}
 	return (light_color);
 }
@@ -182,18 +181,18 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 static inline
 t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict scene)
 {
-	t_sphere point_light_sphere = {.material.color = v3(1, 1, 1), .center = scene->light.origin, .radius = 0.05f}; // debugging
-	point_light_sphere.material.emitter = 0.0f;
-	point_light_sphere.material.diffuse = 0.0f;
-	point_light_sphere.material.specular_probability = 0.0f;
+	// t_sphere point_light_sphere = {.material.color = v3(1, 1, 1), .center = scene->light.origin, .radius = 0.05f}; // debugging
+	// point_light_sphere.material.emitter = 0.0f;
+	// point_light_sphere.material.diffuse = 0.0f;
+	// point_light_sphere.material.specular_probability = 0.0f;
 	t_hit hit_record;
 
 	hit_record = (t_hit){};
 	hit_record.distance = MAX_HIT_DIST;
-	check_cyl(&hit_record, scene->cyls, scene->cyls_count, ray);
 	check_planes(&hit_record, scene->pls, scene->pl_count, ray);
 	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
-	check_spheres(&hit_record, &point_light_sphere, 1, ray);
+	// check_spheres(&hit_record, &point_light_sphere, 1, ray);
+	check_cyl(&hit_record, scene->cyls, scene->cyls_count, ray);
 
 	return (hit_record);
 }
@@ -231,8 +230,8 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 	pure_bounce = v3_sub_v3(ray.direction, pure_bounce);
 
 	ray.direction = noz(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
-	ray.origin = rec->position;
-	// ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
+	// ray.origin = rec->position;
+	ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
 
 
 
@@ -258,6 +257,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 	i = 0;
 	total_incoming_light = v3(0, 0, 0);
 	bool hit_once = false;
+    bool prev_bounce_specular = false;
 	while (i <= max_bounce)
 	{
 		rec = find_closest_ray_intesection(ray, scene);
@@ -277,10 +277,18 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
 			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
-			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
+//			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			// color = V3_ADD(ambient, color);
 			// color = v3_mul_v3(rec.color, color);
+            t_color temp_ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
+            float p = fmax(temp_ray_color.r, fmax(temp_ray_color.g, temp_ray_color.b));
 
+		    if (i > 0 && !prev_bounce_specular && random_float(seed) >= p)
+			{
+			    break;
+		    }
+            ray_color = temp_ray_color;
+            prev_bounce_specular = is_specular_bounce;
 			ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
 			// ray.direction = rec.normal;
 			++i;
@@ -380,7 +388,7 @@ t_v3 rgb_u32_to_float(uint32_t c)
 static inline
 t_v3 accumulate(const t_v3 old_color, const t_v3 new_color)
 {
-	const float weight = 1.0 / ((g_accummulated_frames) + 1); // @TODO screw around with the weight
+	const float weight = 1.0 / (g_accummulated_frames + 1); // @TODO screw around with the weight
 	t_v3 accumulated_average;
 
 	accumulated_average.r = old_color.r * (1 - weight) + new_color.r * weight;
@@ -407,6 +415,7 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 			// color = get_ray_direction(&cam, x, y, x + y * cam.image_height);
 			// if (g_accummulated_frames != 0)
 			color = accumulate(rgb_u32_to_float(*out), color);
+//            *out++ = exact_pack(color);
 			*out++ = rgb_pack4x8(v3_clamp(color)); // maybe dont need clamp or do it in color correction
 			++x;
 		}
