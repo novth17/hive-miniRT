@@ -7,7 +7,7 @@ float plane_hit(const t_plane pl, const t_ray ray)
 	float t;
 
 	denom = dot(pl.axis, ray.direction);
-	if (fabsf(denom) < 1e-6f) // Ray is parallel to plane
+	if (fabsf(denom) < RAY_PARALLEL_EPSILON)
 		return (-1.0f);
 
 	t = dot(pl.axis, v3_sub_v3(pl.point, ray.origin)) / denom;
@@ -45,7 +45,7 @@ t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl, const float t)
 	else
 		rec.normal = neg(face_normal);
 	rec.normal = noz(rec.normal);
-	rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f));
+	rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, SHADOW_BIAS));
 	// these bottom ones are for trying to fix issues with rendering
 	// they probably dont help and should be removed later
 	return (rec);

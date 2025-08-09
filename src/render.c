@@ -112,22 +112,15 @@ bool shadow_hit(const t_scene *scene, const t_ray ray) // change to all objects 
 		if(hit_distance > MIN_HIT_DIST && hit_distance < MAX_HIT_DIST)// sphere_hit(&temp_rec, scene->spheres[i], ray))
 			return (true);
 	}
-	// i = -1;
-	// while (++i < scene->cyls_count)
-	// {
-	// 	if (plane_shadow_hit(scene->cyls[i], ray))
-	// 	{
-	// 		return (true);
-	// 	}
-	// }
+	i = -1;
+	while (++i < scene->cyls_count)
+	{
+		hit_distance = cyl_hit(scene->cyls[i], ray);
+		if(hit_distance > MIN_HIT_DIST && hit_distance < MAX_HIT_DIST)// sphere_hit(&temp_rec, scene->spheres[i], ray))
+			return (true);
+	}
 	return (false);
 }
-
-
-
-
-
-
 
 static inline
 float smoothstep(const float edge0, const float edge1, float x)

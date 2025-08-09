@@ -1,15 +1,17 @@
 #include "mini_rt.h"
 
-static uint32_t	calc_v3_len(t_vec3 vec3)
+static double	calc_v3_len(t_vec3 vec3)
 {
 	return (square_root(vec3.x * vec3.x + vec3.y * vec3.y + vec3.z * vec3.z));
 }
 
-bool	is_normalized(t_vec3 vec3)
+bool is_normalized(t_vec3 vec)
 {
-	if (calc_v3_len(vec3) == 1)
-		return (true);
-	return (false);
+    float len;
+
+	len = calc_v3_len(vec);
+	printf("Length of the vector is %f\n", len);
+    return (fabs(len - 1.0f) < 1e-1f);
 }
 
 static double parse_vec3_comp(char **str, bool *is_valid_comp)

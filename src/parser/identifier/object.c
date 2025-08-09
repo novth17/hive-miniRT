@@ -23,7 +23,7 @@ int parse_sphere(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	if (check_obj_args_count(tokens, "Sphere", 4, 7) == FAIL)
+	if (check_obj_args_count(tokens, "Sphere", SP_ARG_MIN, SP_ARG_MAX) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, SPHERE);
 	if (!object)
@@ -46,7 +46,7 @@ int parse_plane(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	if (check_obj_args_count(tokens, "Plane", 4, 7) == FAIL)
+	if (check_obj_args_count(tokens, "Plane", PL_ARG_MIN, PL_ARG_MAX) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, PLANE);
 	if (!object)
@@ -73,7 +73,7 @@ int parse_cyl(char **tokens, t_scene *scene)
 {
 	t_object *object;
 
-	if (check_obj_args_count(tokens, "Cylinder", 6, 9) == FAIL)
+	if (check_obj_args_count(tokens, "Cylinder", CYL_ARG_MIN, CYL_ARG_MAX) == FAIL)
 		return (FAIL);
 	object = create_objects(scene, CYLINDER);
 	if (!object)
@@ -107,25 +107,34 @@ static int parse_material(char **tokens, t_scene *scene, t_material *m, int offs
 	m->color = parse_color(tokens[offset], &scene->is_valid);
 	if (!scene->is_valid)
 		return print_error("Material: " ERROR_COLOR, tokens[offset]);
+
+	m->diffuse = 0.0f;
+	m->specular_probability = 0.0f;
+	m->emitter = 0.0f;
+	//m->has_checker = false;
+
 	if (tokens[offset + 1] && tokens[offset + 2] && tokens[offset + 3])
 	{
 		m->diffuse = parse_float(tokens[offset + 1], &scene->is_valid);
 		if (!scene->is_valid)
-			return print_error("Material: diffuse: "ERROR_FLOAT, tokens[offset + 1]);
+			return print_error("Material: diffuse: " ERROR_FLOAT, tokens[offset + 1]);
 
 		m->specular_probability = parse_float(tokens[offset + 2], &scene->is_valid);
 		if (!scene->is_valid)
-			return print_error("Material: specular: "ERROR_FLOAT, tokens[offset + 2]);
+			return print_error("Material: specular: " ERROR_FLOAT, tokens[offset + 2]);
 
 		m->emitter = parse_float(tokens[offset + 3], &scene->is_valid);
 		if (!scene->is_valid)
-			return print_error("Material: emitter: "ERROR_FLOAT, tokens[offset + 3]);
-	}
-	else
-	{
-		m->diffuse = 0.0f;
-		m->specular_probability = 0.0f;
-		m->emitter = 0.0f;
+			return print_error("Material: emitter: " ERROR_FLOAT, tokens[offset + 3]);
+
+
+		// optional: "checker"
+		// if (tokens[offset + 4] && ft_strncmp(tokens[offset + 4], "checker", 7) == 0)
+		// {
+		// 	m->checkerboard = true;
+		// 	m->checker_color = (t_color){0.0f, 0.0f, 0.0f}; // default: black
+		// 	m->pattern_scale = 1.0f; // default size
+		// }
 	}
 	return (SUCCESS);
 }

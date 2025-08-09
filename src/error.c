@@ -47,12 +47,20 @@ int check_id_args_count(char **tokens, const char *id, int expected)
 
 int check_obj_args_count(char **tokens, const char *id, int min, int max)
 {
-	if (ft_count_2d(tokens) != min &&  ft_count_2d(tokens) != max)
+	int count = ft_count_2d(tokens);
+
+	if (count == max + 1 && ft_strcmp(tokens[max], "checker") == 0)
+		return (SUCCESS);
+
+	if (count < min || count > max)
 	{
-		ft_dprintf(2, RED"%s: Number of obj arguments must be "
-					"either %d (mandatory) or %d (bonus)!\n"RESET, id, min, max);
+		ft_dprintf(2, RED"%s: Number of obj arguments must be between %d and %d, or %d with 'checker'!\n"RESET,
+			id, min, max, max + 1);
 		print_usage(tokens);
 		return (FAIL);
 	}
 	return (SUCCESS);
 }
+
+
+
