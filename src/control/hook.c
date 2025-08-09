@@ -59,10 +59,12 @@ void key_hook(struct mlx_key_data data, void * param)
 	t_minirt *minirt;
 	t_v3 right_direction;
 	t_v3 forward_direction;
+    t_v3 up_direction;
 
 	minirt = (t_minirt *)param;
 	right_direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.right);
 	forward_direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.lookat);
+	up_direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.vup);
 	// printf("keyhookend at %f\n", minirt->mlx->delta_time);
 	// if (mlx_is_mouse_down(minirt->mlx, MLX_MOUSE_BUTTON_RIGHT))
 	if (data.action != MLX_RELEASE)
@@ -84,6 +86,14 @@ void key_hook(struct mlx_key_data data, void * param)
 		else if (data.key == MLX_KEY_A)
 		{
 			minirt->scene.camera.lookfrom = V3_SUB(minirt->scene.camera.lookfrom, right_direction);
+		}
+		if (data.key == MLX_KEY_E)
+		{
+			minirt->scene.camera.lookfrom = V3_ADD(minirt->scene.camera.lookfrom, up_direction);
+		}
+		else if (data.key == MLX_KEY_Q)
+		{
+			minirt->scene.camera.lookfrom = V3_SUB(minirt->scene.camera.lookfrom, up_direction);
 		}
 		if (data.key == MLX_KEY_P)
 		{
