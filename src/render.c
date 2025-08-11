@@ -123,24 +123,6 @@ bool shadow_hit(const t_scene *scene, const t_ray ray, const float light_distanc
 }
 
 static inline
-float smoothstep(const float edge0, const float edge1, float x)
-{
-	x = clamp((x - edge0) / (edge1 - edge0), edge0, edge1);
-	return (x * x * (3.0f - 2.0f * x));
-}
-
-// static inline
-// t_v3 v3_smoothstep(const t_v3 value)
-// {
-// 	t_v3 result;
-
-// 	result.x = smoothstep(value.x, 0.0f, 1.0f);
-// 	result.y = smoothstep(value.x, 0.0f, 1.0f);
-// 	result.z = smoothstep(value.x, 0.0f, 1.0f);
-// 	return (result);
-// }
-
-static inline
 t_v3 point_light_color(const t_scene *restrict scene, const t_hit *restrict rec, t_v3 light_direction)
 {
 	// look at https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model to make this better
@@ -364,7 +346,7 @@ t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_co
 		{
 
 			ray = get_ray(cam, original_cord, (t_cord){x_s, y_s}, &seed);
-			color = tracam->defocus_anglece(ray, scene, cam->max_bounce, &seed);
+			color = trace(ray, scene, cam->max_bounce, &seed);
 			incoming_light = V3_ADD(incoming_light, color);
 			++x_s;
 		}
