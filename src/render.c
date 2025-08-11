@@ -364,7 +364,7 @@ t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_co
 		{
 
 			ray = get_ray(cam, original_cord, (t_cord){x_s, y_s}, &seed);
-			color = trace(ray, scene, cam->max_bounce, &seed);
+			color = tracam->defocus_anglece(ray, scene, cam->max_bounce, &seed);
 			incoming_light = V3_ADD(incoming_light, color);
 			++x_s;
 		}

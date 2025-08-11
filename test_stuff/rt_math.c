@@ -369,8 +369,8 @@ t_v3 normalize(t_v3 a)
 
 	t_v3 result = {
 		.x = a.x * (1.0f / len),
-		.y = a.z * (1.0f / len),
-		.z = a.y * (1.0f / len),
+		.y = a.y * (1.0f / len),
+		.z = a.z * (1.0f / len),
 
 	};
 	return (result);
