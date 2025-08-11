@@ -37,6 +37,10 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/identifier/element.c \
 				$(SRC_DIR)/parser/identifier/object.c \
 				$(SRC_DIR)/math/rt_math.c \
+				$(SRC_DIR)/math/vec3_1.c \
+				$(SRC_DIR)/math/vec3_2.c \
+				$(SRC_DIR)/math/normalize.c \
+				$(SRC_DIR)/math/interpolate.c \
 				$(SRC_DIR)/math/random.c \
 				$(SRC_DIR)/control/hook.c \
 				$(SRC_DIR)/shape/pl_hit.c \

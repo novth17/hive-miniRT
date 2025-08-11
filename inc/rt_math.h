@@ -16,20 +16,37 @@ t_v2		v2(float x, float y);
 t_v2		v2s(int32_t x, int32_t y);
 t_v2		v2u(uint32_t x, uint32_t y);
 
+
+// vec3_1.c
+/////////////////////////////
 t_v3		v3(float x, float y, float z); // create a vec3
+t_v3		neg(t_v3 a); // negate a vec3
 t_v3		v3_add_v3(t_v3 a, t_v3 b); // vec3 a + vec3 b
 # define V3_ADD v3_add_v3
 
 t_v3		v3_add_f32(t_v3 a, float b); // vec3 a + float b
 t_v3		v3_sub_v3(t_v3 a, t_v3 b); // vec3 a - vec3 b
 # define V3_SUB v3_sub_v3
+/////////////////////////////
 
+// vec3_2.c
+/////////////////////////////
 t_v3		v3_mul_v3(t_v3 a, t_v3 b); // vec3 a * vec3 b
 t_v3		v3_mul_f32(t_v3 a, float b);
 t_v3		f32_mul_v3(float a, t_v3 b); // float a * vec3 b;
 
 t_v3		f32_div_v3(float a, t_v3 b);
 t_v3		v3_div_f32(t_v3 a, float b);
+/////////////////////////////
+
+// normalize.c
+/////////////////////////////
+t_v3		unit_vector(t_v3 a);
+t_v3		normalize(t_v3 a);
+t_v3		noz(t_v3 a);
+/////////////////////////////
+
+
 
 t_v4		v4(float x, float y, float z, float w);
 
@@ -40,8 +57,10 @@ t_v4		rgba_unpack(uint32_t packed);
 uint32_t	rgba_pack4x8(t_v4 unpacked);
 
 float		lerp(float a, float t, float b);
-t_v4		v4_lerp(t_v4 a, float t, t_v4 b);
 t_v3		v3_lerp(t_v3 a, float t, t_v3 b);
+float		smoothstep(const float edge0, const float edge1, float x);
+
+t_v4		v4_lerp(t_v4 a, float t, t_v4 b);
 
 float		dot(t_v3 a, t_v3 b);
 
@@ -52,12 +71,8 @@ float		square(float a);
 float		length_sq(t_v3 a);
 float		length(t_v3 a);
 
-t_v3		unit_vector(t_v3 a);
-t_v3		normalize(t_v3 a);
-t_v3		noz(t_v3 a);
-
 float		sign(float value);
-t_v3		neg(t_v3 a);
+
 
 t_v3		hadamard(t_v3 a, t_v3 b); // hadamard attennuation
 
