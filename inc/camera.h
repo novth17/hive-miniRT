@@ -4,7 +4,7 @@
 #include "rt_math.h"
 #include <stdint.h>
 
-typedef struct
+typedef struct s_camera
 {
 	float	aspect_ratio; //
 	int32_t image_width;
@@ -18,7 +18,7 @@ typedef struct
 	float	recip_sqrt_spp;
 
 
-	int32_t max_bounce; // for mandatory 1 or 2 i guess;
+	int32_t max_bounce; // for mandatory probably 0
 
 	float		fov;
 	t_point3	lookfrom; // @QUESTION why this and camera_center??
@@ -49,10 +49,6 @@ typedef struct
 	t_v3 viewport_upper_left;
 	t_v3 pixel00_loc;
 
-	t_mat4 projection;
-	t_mat4 inverse_projection;
-	t_mat4 view;
-	t_mat4 inverse_view;
 } t_camera;
 
 #endif

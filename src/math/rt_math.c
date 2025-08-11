@@ -381,7 +381,7 @@ t_v3 unit_vector(t_v3 a)
 	t_v3 result;
 
 	result = v3_div_f32(a, length(a));
-	return result;
+	return (result);
 }
 
 inline
@@ -389,12 +389,10 @@ t_v3 normalize(t_v3 a)
 {
 	const float len = length(a);
 
-	t_v3 result = {
-		.x = a.x * (1.0f / len),
-		.y = a.y * (1.0f / len),
-		.z = a.z * (1.0f / len),
-
-	};
+	t_v3 result;
+	result.x = a.x * (1.0f / len);
+	result.y = a.y * (1.0f / len);
+	result.z = a.z * (1.0f / len);
 	return (result);
 }
 
@@ -403,13 +401,15 @@ t_v3 noz(t_v3 a)
 {
 	t_v3 result;
 	const float lensq = length_sq(a);
+	float len;
 
 	result = (t_v3){};
 	if (lensq > square(0.0001f))
 	{
-		result.x = a.x * (1.0f / square_root(lensq));
-		result.y = a.y * (1.0f / square_root(lensq));
-		result.z = a.z * (1.0f / square_root(lensq));
+		len = square_root(lensq);
+		result.x = a.x * (1.0f / len);
+		result.y = a.y * (1.0f / len);
+		result.z = a.z * (1.0f / len);
 	}
 	return (result);
 }
@@ -520,29 +520,3 @@ uint32_t exact_pack(t_v3 unpacked)
 			((uint32_t)((srgb.r * 255.0f)) << 0);
 	return (result);
 }
-
-#if 0
-inline
-t_v4 mat_mul_v4(t_mat4 m, t_v4 v)
-{
-	t_v4 result;
-
-	result.x = v.x * m.mat[0][0] + v.y * m.mat[0][1] + v.z * m.mat[0][2] + v.w * m.mat[0][3];
-	result.y = v.x * m.mat[1][0] + v.y * m.mat[1][1] + v.z * m.mat[1][2] + v.w * m.mat[1][3];
-	result.z = v.x * m.mat[2][0] + v.y * m.mat[2][1] + v.z * m.mat[2][2] + v.w * m.mat[2][3];
-	result.w = v.x * m.mat[3][0] + v.y * m.mat[3][1] + v.z * m.mat[3][2] + v.w * m.mat[3][3];
-	return (result);
-}
-#else
-inline
-t_v4 mat_mul_v4(t_mat4 m, t_v4 v)
-{
-	t_v4 result;
-
-	result.x = v.x * m.mat[0][0] + v.y * m.mat[1][0] + v.z * m.mat[2][0] + v.w * m.mat[3][0];
-	result.y = v.x * m.mat[0][1] + v.y * m.mat[1][1] + v.z * m.mat[2][1] + v.w * m.mat[3][1];
-	result.z = v.x * m.mat[0][2] + v.y * m.mat[1][2] + v.z * m.mat[2][2] + v.w * m.mat[3][2];
-	result.w = v.x * m.mat[0][3] + v.y * m.mat[1][3] + v.z * m.mat[2][3] + v.w * m.mat[3][3];
-	return (result);
-}
-#endif
