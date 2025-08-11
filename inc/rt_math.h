@@ -12,10 +12,10 @@
 # define F32MAX	FLT_MAX
 # define F32MIN	FLT_MIN
 
+// vec2.c
+/////////////////////////////
 t_v2		v2(float x, float y);
-t_v2		v2s(int32_t x, int32_t y);
-t_v2		v2u(uint32_t x, uint32_t y);
-
+/////////////////////////////
 
 // vec3_1.c
 /////////////////////////////
@@ -56,11 +56,14 @@ uint32_t	rgba_pack(t_v4 unpacked);
 t_v4		rgba_unpack(uint32_t packed);
 uint32_t	rgba_pack4x8(t_v4 unpacked);
 
+// interpolate.c
+/////////////////////////////
 float		lerp(float a, float t, float b);
 t_v3		v3_lerp(t_v3 a, float t, t_v3 b);
 float		smoothstep(const float edge0, const float edge1, float x);
 
-t_v4		v4_lerp(t_v4 a, float t, t_v4 b);
+t_v4		v4_lerp(t_v4 a, float t, t_v4 b); // not in use currently
+/////////////////////////////
 
 float		dot(t_v3 a, t_v3 b);
 

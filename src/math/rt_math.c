@@ -45,26 +45,6 @@ float square_root(float a)
 	return (result);
 }
 
-
-
-inline
-t_v2 v2s(int32_t x, int32_t y)
-{
-	return ((t_v2){.x = (float)x, .y = (float)y});
-}
-
-inline
-t_v2 v2u(uint32_t x, uint32_t y)
-{
-	return ((t_v2){.x = (float)x, .y = (float)y});
-}
-
-inline
-t_v2 v2(float x, float y)
-{
-	return ((t_v2){.x = x, .y = y});
-}
-
 inline
 t_v4 v4(float x, float y, float z, float w)
 {
@@ -82,19 +62,7 @@ float sign(float value)
 		return (0.0f);
 }
 
-
 // maybe this relates to hue somehow
-static inline
-float saturate(float f)
-{
-	if (f < 0.0f)
-		return (0.0f);
-	else if (f > 1.0f)
-		return (1.0f);
-	else
-		return (f);
-	// return ((f < 0.0f) ? 0.0f : (f > 1.0f) ? 1.0f : f);
-}
 
 // static inline
 // float saturate_branchless(float f)
@@ -112,7 +80,7 @@ float saturate(float f)
 static inline
 uint32_t float_to_u32_sat(float f)
 {
-	return ((saturate(f)) * 255.0f + 0.5f); // + 0.5f ?
+	return ((clamp(f, 0.f, 1.f)) * 255.0f + 0.5f); // + 0.5f ?
 }
 
 

@@ -14,7 +14,7 @@ float random_float(uint32_t *seed)
 	return ((float)result / (float)UINT32_MAX);
 }
 
-// wrong and not currently used
+// wrong and not currently used // might have been wrong because normalize was wrong
 t_v3 in_unit_sphere(uint32_t *seed)
 {
 	t_v3 result;
