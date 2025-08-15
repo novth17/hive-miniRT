@@ -1,4 +1,4 @@
-NAME		= mini_rt
+NAME		= miniRT
 
 CC			= cc
 INCLUDE		:= -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
