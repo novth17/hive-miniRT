@@ -211,9 +211,10 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 	pure_bounce = f32_mul_v3(2.0f*dot(ray.direction, rec->normal), rec->normal);
 	pure_bounce = v3_sub_v3(ray.direction, pure_bounce);
 
+	ray.origin = V3_SUB(rec->position, v3_mul_f32(ray.direction, 0.18f)); // look to see if this value is good or not
 	ray.direction = noz(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
 	// ray.origin = rec->position;
-	ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
+	// ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
 
 
 
