@@ -45,24 +45,27 @@ int parse_camera(char **tokens, t_scene *scene)
 
 int parse_light(char **tokens, t_scene *scene)
 {
-	if (check_id_args_count(tokens, "Light", 4) == FAIL)
+	if (check_obj_args_count(tokens, "Light", 3, 4) == FAIL)
 		return (FAIL);
-
 	scene->light.origin = parse_vec3(tokens[1], &scene->is_valid);
 	if (!scene->is_valid)
 		return print_error("Light: "ERROR_COORD, tokens[1]);
-
 	scene->light.bright_ratio = parse_float(tokens[2], &scene->is_valid);
 	if (!scene->is_valid)
 		return print_error("Light: ratio: "ERROR_FLOAT, tokens[2]);
-
 	if (scene->light.bright_ratio < 0.0 || scene->light.bright_ratio > 1.0)
 		return print_error("Light: ratio: "ERROR_IN_RANGE, tokens[2]);
-
-	scene->light.color = parse_color(tokens[3], &scene->is_valid);
-	if (!scene->is_valid)
-		return print_error("Light: "ERROR_COLOR, tokens[3]);
-
+	if (tokens[3])
+	{
+		scene->light.color = parse_color(tokens[3], &scene->is_valid);
+		if (!scene->is_valid)
+			return print_error("Light: "ERROR_COLOR, tokens[3]);
+	}
+	else
+	{
+		scene->light.color = (t_color){{1.0,1.0,1.0}};
+	}
 	return (SUCCESS);
 }
+
 
