@@ -123,16 +123,15 @@ bool shadow_hit(const t_scene *scene, const t_ray ray, const float light_distanc
 }
 
 static inline
-t_v3 point_light_color(const t_scene *restrict scene, const t_hit *restrict rec, t_v3 light_direction)
+t_v3 point_light_color(const t_scene *restrict scene, const t_hit *restrict rec, t_v3 light_direction, float dist)
 {
 	// look at https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model to make this better
 	// const t_color ambient_light = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
 	const t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
-	const float dist = length(light_direction);
 	float light_angle;
 	t_v3 color;
 
-	light_direction = f32_mul_v3(1.0f / dist, light_direction);
+	// light_direction = f32_mul_v3(1.0f / dist, light_direction);
 	light_angle = smoothstep(dot(rec->normal, light_direction), 0.0f, 2.0f);
 	color = f32_mul_v3(light_angle, point_light_color);
 	color = f32_mul_v3(1.0f / (dist * dist), color);
@@ -147,16 +146,14 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 	const t_v3 light_vector = V3_SUB(scene->light.origin, rec->position);
 	const float light_distance = length(light_vector);
 	t_ray shadow_ray;
-	t_v3 light_color;
 
 	shadow_ray.origin = rec->position;
 	shadow_ray.direction = f32_mul_v3(1.0f / light_distance, light_vector);
-	light_color = v3(0, 0, 0);
 	if (shadow_hit(scene, shadow_ray, light_distance) == false)
 	{
-		light_color = point_light_color(scene, rec, light_vector);
+		return(point_light_color(scene, rec, shadow_ray.direction, light_distance));
 	}
-	return (light_color);
+	return (v3(0, 0, 0));
 }
 
 
@@ -211,10 +208,10 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 	pure_bounce = f32_mul_v3(2.0f*dot(ray.direction, rec->normal), rec->normal);
 	pure_bounce = v3_sub_v3(ray.direction, pure_bounce);
 
-	ray.origin = V3_SUB(rec->position, v3_mul_f32(ray.direction, 0.18f)); // look to see if this value is good or not
-	ray.direction = noz(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
+	ray.origin = V3_SUB(rec->position, v3_mul_f32(ray.direction, 1e-4f)); // look to see if this value is good or not
 	// ray.origin = rec->position;
 	// ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
+	ray.direction = noz(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
 
 
 
@@ -236,10 +233,14 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const float max_bounce, ui
 
 	t_hit rec;
 	t_color ray_color;
+	t_color prev_color;
 	ray_color = v3(1, 1, 1);
-	i = 0;
+	prev_color = ray_color;
+	i = 0.0f;
 	total_incoming_light = v3(0, 0, 0);
 	bool hit_once = false;
+	bool prev_specular = true;
+	// int j = 0;
 	while (i <= max_bounce)
 	{
 		rec = find_closest_ray_intesection(ray, scene);
@@ -253,7 +254,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const float max_bounce, ui
 			// it seems to cause the object to take on the color of the ambient light even if it should not
 			// might not be a bug technically just related to the fact that the specular bounce is always the same
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
-            ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
+			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			if (scene->use_point_light)
 			{
 				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), ray_color));
@@ -263,20 +264,28 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const float max_bounce, ui
 //			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			// color = V3_ADD(ambient, color);
 			// color = v3_mul_v3(rec.color, color);
-			if (is_specular_bounce)
+			// if (is_specular_bounce)
+			// {
+			// 	ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
+			// 	i += 1.0f;
+			// 	// printf("%s\t%f\n", "specular", i);
+			// 	// j++;
+			// 	continue ;
+			// }
+			if (i >= 1.f && !prev_specular)
 			{
-				ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
-				i += 0.05f;
-				continue ;
+				float p = fmax(ray_color.r, fmax(ray_color.g, ray_color.b));
+				if (random_float(seed) >= p)
+				{
+					ray_color = prev_color;
+					break;
+				}
 			}
-            float p = fmax(ray_color.r, fmax(ray_color.g, ray_color.b));
-		    if (i > 0 && random_float(seed) >= p)
-			{
-			    break;
-		    }
+			prev_specular = is_specular_bounce;
+			prev_color = ray_color;
 			ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
-			// ray.direction = rec.normal;
 			i += 1.0f;
+			// j++;
 		}
 		else
 		{
@@ -285,6 +294,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const float max_bounce, ui
 			break ;
 		}
 	}
+	// printf("bounces %i\n", j);
 	if (hit_once)
 	{
 		total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
@@ -418,6 +428,7 @@ void per_frame(void * param)
 
 	minirt = (t_minirt *)param;
 	mlx = minirt->mlx;
+	g_recalculate_cam = minirt->recalculate_cam;
 	if (minirt->write_image_to_file == true)
 	{
 		pixels_to_image_file(minirt->image);
@@ -432,6 +443,7 @@ void per_frame(void * param)
 	{
 		init_camera_for_frame(minirt, &minirt->scene.camera);
 		g_recalculate_cam = false;
+		minirt->recalculate_cam = false;
 		g_accummulated_frames = 0;
 		frame_cam = minirt->scene.camera;
 	}

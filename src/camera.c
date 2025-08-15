@@ -38,7 +38,7 @@ void base_init_cam(t_camera *cam)
 	cam->pixel_sample_scale_strati = 1.0 / (cam->sqrt_spp * cam->sqrt_spp);
 	cam->recip_sqrt_spp = 1.0 / cam->sqrt_spp;
 
-	cam->max_bounce = 1;
+	cam->max_bounce = 8;
 	cam->vup = v3(0, 1, 0); // might not need this in camera
 
 	cam->defocus_angle = 0.0f;

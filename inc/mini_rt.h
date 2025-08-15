@@ -20,7 +20,7 @@
 # define WINDOW_HEIGHT 1080
 
 
-#define MIN_HIT_DIST 0.001f
+#define MIN_HIT_DIST 0.00001f
 #define MAX_HIT_DIST FLT_MAX // for now
 
 typedef struct	s_ambient
@@ -85,6 +85,8 @@ typedef struct s_mini_rt
 
 	bool			write_image_to_file;
 	// t_camera		base_cam;
+
+	bool			recalculate_cam;
 }	t_minirt;
 
 
