@@ -36,14 +36,15 @@ uint32_t g_accummulated_frames = 0;
 
 
 
-static int	run_minirt(t_minirt *minirt, char **argv)
+static
+int	run_minirt(t_minirt *minirt, char **argv)
 {
 	if (init_minirt(minirt, argv) == FAIL)
 		return (FAIL);
 
 
 	base_init_cam(&minirt->scene.camera);
-	minirt->scene.light_strength_mult = 1;
+	minirt->scene.light_strength_mult = 3;
 	minirt->scene.use_point_light = true;
 
 	mlx_loop(minirt->mlx);

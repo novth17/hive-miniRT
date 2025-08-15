@@ -4,7 +4,7 @@
 #include "../inc/image_to_file.h"
 
 
-extern bool g_recalculate_cam;
+extern  bool g_recalculate_cam;
 extern uint32_t g_accummulated_frames;
 
 #if 1
@@ -225,12 +225,12 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 }
 
 static inline
-t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, uint32_t *seed) // change to all objects or scene;
+t_v3 trace(t_ray ray, const t_scene * restrict scene, const float max_bounce, uint32_t *seed) // change to all objects or scene;
 {
 	t_v3 ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
 	// t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
 	// t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f};
-	int32_t i;
+	float i;
 	t_color total_incoming_light;
 
 
@@ -240,7 +240,6 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 	i = 0;
 	total_incoming_light = v3(0, 0, 0);
 	bool hit_once = false;
-    bool prev_bounce_specular = false;
 	while (i <= max_bounce)
 	{
 		rec = find_closest_ray_intesection(ray, scene);
@@ -254,27 +253,30 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 			// it seems to cause the object to take on the color of the ambient light even if it should not
 			// might not be a bug technically just related to the fact that the specular bounce is always the same
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
-            t_color temp_ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
+            ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			if (scene->use_point_light)
 			{
-				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), temp_ray_color));
+				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), ray_color));
 			}
 			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
-			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, temp_ray_color));
+			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
 //			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			// color = V3_ADD(ambient, color);
 			// color = v3_mul_v3(rec.color, color);
-            float p = fmax(temp_ray_color.r, fmax(temp_ray_color.g, temp_ray_color.b));
-
-		    if (i > 0 && !prev_bounce_specular && random_float(seed) >= p)
+			if (is_specular_bounce)
+			{
+				ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
+				i += 0.05f;
+				continue ;
+			}
+            float p = fmax(ray_color.r, fmax(ray_color.g, ray_color.b));
+		    if (i > 0 && random_float(seed) >= p)
 			{
 			    break;
 		    }
-            ray_color = temp_ray_color;
-            prev_bounce_specular = is_specular_bounce;
 			ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
 			// ray.direction = rec.normal;
-			++i;
+			i += 1.0f;
 		}
 		else
 		{
