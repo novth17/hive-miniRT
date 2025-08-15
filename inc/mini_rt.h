@@ -20,7 +20,7 @@
 # define WINDOW_HEIGHT 1080
 
 
-#define MIN_HIT_DIST 0.1f
+#define MIN_HIT_DIST 0.001f
 #define MAX_HIT_DIST FLT_MAX // for now
 
 typedef struct	s_ambient

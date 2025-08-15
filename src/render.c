@@ -253,17 +253,17 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 			// there is a bug here relating to ambient light and how that affects the color of an object
 			// it seems to cause the object to take on the color of the ambient light even if it should not
 			// might not be a bug technically just related to the fact that the specular bounce is always the same
+			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
+            t_color temp_ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			if (scene->use_point_light)
 			{
-				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), ray_color));
+				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), temp_ray_color));
 			}
 			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
-			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
-			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
+			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, temp_ray_color));
 //			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			// color = V3_ADD(ambient, color);
 			// color = v3_mul_v3(rec.color, color);
-            t_color temp_ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
             float p = fmax(temp_ray_color.r, fmax(temp_ray_color.g, temp_ray_color.b));
 
 		    if (i > 0 && !prev_bounce_specular && random_float(seed) >= p)
@@ -278,7 +278,6 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 		}
 		else
 		{
-			// total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
 			// color = V3_ADD(ambient, color);
 			// color = v3_mul_v3(rec.color, color);
 			break ;
@@ -287,6 +286,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const int32_t max_bounce, 
 	if (hit_once)
 	{
 		total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
+		// total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
 		return (v3_clamp(total_incoming_light));
 	}
 
