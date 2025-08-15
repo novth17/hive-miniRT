@@ -392,6 +392,8 @@ t_v3 accumulate(const t_v3 old_color, const t_v3 new_color)
 	return (accumulated_average);
 }
 
+t_v3 exact_unpack(uint32_t packed);
+
 void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restrict out)
 {
 	t_v3 color;
@@ -407,11 +409,14 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 		{
 			rng_seed = (y * cam->image_width + x) + g_accummulated_frames * 792858;
 			color = sample_pixel(scene, cam, (t_cord){x, y}, rng_seed);
-			// color = get_ray_direction(&cam, x, y, x + y * cam.image_height);
-			// if (g_accummulated_frames != 0)
-			color = accumulate(rgb_u32_to_float(*out), color);
-//            *out++ = exact_pack(color);
-			*out++ = rgb_pack4x8(v3_clamp(color)); // maybe dont need clamp or do it in color correction
+
+			color = accumulate(exact_unpack(*out), color);
+			*out++ = exact_pack(color);
+
+			// color = accumulate(rgb_u32_to_float(*out), color);
+			// *out++ = rgb_pack4x8(v3_clamp(color)); // maybe dont need clamp or do it in color correction
+
+
 			++x;
 		}
 		++y;
@@ -434,7 +439,7 @@ void per_frame(void * param)
 		pixels_to_image_file(minirt->image);
 		minirt->write_image_to_file = false;
 	}
-	if (minirt->image->width != (uint)mlx->width || minirt->image->height !=  (uint)mlx->height)
+	if (minirt->image->width != (uint)mlx->width || minirt->image->height != (uint)mlx->height)
 	{
 		mlx_resize_image(minirt->image, mlx->width, mlx->height);
 		g_recalculate_cam = true;

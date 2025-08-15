@@ -297,9 +297,32 @@ uint32_t exact_pack(t_v3 unpacked)
 	uint32_t result;
 
 
-	result = ((uint32_t)(0xFF) << 24)					|
-			((uint32_t)((srgb.b * 255.0f)) << 16)	|
-			((uint32_t)((srgb.g * 255.0f)) << 8)	|
-			((uint32_t)((srgb.r * 255.0f)) << 0);
+	result = ((uint32_t)(0xFF) << 24)				|
+			((uint32_t)((srgb.b * 255.0f) + 0.5f) << 16)	|
+			((uint32_t)((srgb.g * 255.0f) + 0.5f) << 8)	|
+			((uint32_t)((srgb.r * 255.0f) + 0.5f) << 0);
+	return (result);
+}
+
+static inline
+t_v3 rgb_u32_to_float(uint32_t c)
+{
+	t_v3 result;
+
+	result.b = (float)((c >> 16) & 0xFF) / 255.0f;
+	result.g = (float)((c >> 8) & 0xFF) / 255.0f;
+	result.r = (float)((c >> 0) & 0xFF) / 255.0f;
+	return (result);
+}
+
+t_v3 exact_unpack(uint32_t packed)
+{
+    const t_v3 unpacked = rgb_u32_to_float(packed);
+
+	t_v3 result;
+
+	result.r = exact_srgb_to_linear(unpacked.r);
+	result.g = exact_srgb_to_linear(unpacked.g);
+	result.b = exact_srgb_to_linear(unpacked.b);
 	return (result);
 }

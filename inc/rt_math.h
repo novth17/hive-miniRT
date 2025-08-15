@@ -84,6 +84,7 @@ float		clamp(const float f, const float min, const float max);
 
 t_v3		v3_clamp(const t_v3 a);
 uint32_t	rgb_pack4x8(t_v3 unpacked);
+uint32_t	exact_pack(t_v3 unpacked);
 
 
 
@@ -99,5 +100,8 @@ t_v2 random_point_in_circle(uint32_t *state);
 float random_float_normal_dist(uint32_t *seed);
 t_v3 random_direction_normal_dist(uint32_t *seed);
 t_v3 random_direction_in_hemisphere(const t_v3 normal, uint32_t *rng_seed);
+
+
+
 
 #endif

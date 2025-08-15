@@ -9,7 +9,7 @@ void scroll_hook(double delta_x, double delta_y, void *param)
 
 	minirt = (t_minirt *)param;
 	if (delta_y != 0.0)
-		g_recalculate_cam = true;
+		minirt->recalculate_cam = true;
 	if (mlx_is_key_down(minirt->mlx, MLX_KEY_LEFT_SHIFT))
 	{
 		if (delta_y > 0)
@@ -54,7 +54,7 @@ static void	esc_key_func(mlx_key_data_t keydata, t_minirt *minirt)
 }
 
 static inline
-bool is_valid_key(keys_t key)
+bool should_recalculate(keys_t key)
 {
 	if (key == MLX_KEY_W)
 		return (true);
@@ -67,8 +67,6 @@ bool is_valid_key(keys_t key)
 	if (key == MLX_KEY_E)
 		return (true);
 	if (key == MLX_KEY_Q)
-		return (true);
-	if (key == MLX_KEY_P)
 		return (true);
 	if (key == MLX_KEY_EQUAL)
 		return (true);
@@ -91,9 +89,9 @@ void key_hook(struct mlx_key_data data, void * param)
 	up_direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.vup);
 	// printf("keyhookend at %f\n", minirt->mlx->delta_time);
 	// if (mlx_is_mouse_down(minirt->mlx, MLX_MOUSE_BUTTON_RIGHT))
-	if (data.action != MLX_RELEASE && is_valid_key(data.key))
+	if (data.action != MLX_RELEASE)
 	{
-		minirt->recalculate_cam = true;
+		minirt->recalculate_cam = should_recalculate(data.key);
 		// direction = f32_mul_v3(minirt->mlx->delta_time * speed, minirt->scene.camera.lookat);
 		if (data.key == MLX_KEY_W)
 		{
@@ -129,7 +127,7 @@ void key_hook(struct mlx_key_data data, void * param)
 		}
 		else if (data.key == MLX_KEY_MINUS)
 		{
-			if (minirt->scene.camera.max_bounce - 1 > 0)
+			if (minirt->scene.camera.max_bounce - 1 >= 0)
 				minirt->scene.camera.max_bounce -= 1;
 		}
 	}
