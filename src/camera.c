@@ -39,8 +39,8 @@ void base_init_cam(t_camera *cam)
 	cam->samples_per_pixel = 1;
 	cam->pixel_sample_scale = 1.0f / cam->samples_per_pixel;
 	cam->sqrt_spp = (int32_t)square_root(cam->samples_per_pixel);
-	cam->pixel_sample_scale_strati = 1.0 / (cam->sqrt_spp * cam->sqrt_spp);
-	cam->recip_sqrt_spp = 1.0 / cam->sqrt_spp;
+	cam->pixel_sample_scale_strati = 1.0f / (cam->sqrt_spp * cam->sqrt_spp);
+	cam->recip_sqrt_spp = 1.0f / cam->sqrt_spp;
 
 	cam->max_bounce = 4;
 	cam->vup = v3(0, 1, 0); // might not need this in camera
@@ -76,6 +76,6 @@ void init_camera_for_frame(t_minirt *minirt, t_camera *cam)
     cam->defocus_disk_v = v3_mul_f32(v, defocus_radius);
 	cam->pixel_sample_scale = 1.0f / cam->samples_per_pixel;
 	cam->sqrt_spp = (int32_t)square_root(cam->samples_per_pixel);
-	cam->pixel_sample_scale_strati = 1.0 / (cam->sqrt_spp * cam->sqrt_spp);
-	cam->recip_sqrt_spp = 1.0 / cam->sqrt_spp;
+	cam->pixel_sample_scale_strati = 1.0f / (cam->sqrt_spp * cam->sqrt_spp);
+	cam->recip_sqrt_spp = 1.0f / cam->sqrt_spp;
 }

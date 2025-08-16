@@ -239,7 +239,6 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 	total_incoming_light = v3(0, 0, 0);
 	bool hit_once = false;
 	bool prev_specular = true;
-	// int j = 0;
 	while (i <= max_bounce)
 	{
 		rec = find_closest_ray_intesection(ray, scene);
@@ -259,7 +258,7 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
 			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
 
-			if (i >= 1.f && !prev_specular)
+			if (i > 0 && !prev_specular)
 			{
 				float p = fmax(ray_color.r, fmax(ray_color.g, ray_color.b));
 				if (random_float(seed) >= p)
@@ -272,7 +271,6 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 			prev_color = ray_color;
 			ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
 			++i;
-			// j++;
 		}
 		else
 		{

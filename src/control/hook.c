@@ -120,16 +120,15 @@ void check_other_keys(keys_t key, t_minirt *minirt, t_camera *cam)
 {
 	if (key == MLX_KEY_P)
 		minirt->write_image_to_file = true;
-	if (key == MLX_KEY_EQUAL)
-		cam->max_bounce += 1;
-	else if (key == MLX_KEY_MINUS)
-		if (cam->max_bounce - 1 >= 0)
-			cam->max_bounce -= 1;
 	if (key == MLX_KEY_PAGE_UP)
+		cam->max_bounce += 1;
+	else if (key == MLX_KEY_PAGE_DOWN)
+		cam->max_bounce -= 1;
+	if (key == MLX_KEY_EQUAL)
 	{
 		cam->samples_per_pixel += 1;
 	}
-	else if (key == MLX_KEY_PAGE_DOWN)
+	else if (key == MLX_KEY_MINUS)
 		cam->samples_per_pixel -= 1;
 	if (key == MLX_KEY_L)
 		minirt->scene.use_point_light = !minirt->scene.use_point_light;

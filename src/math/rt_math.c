@@ -284,8 +284,11 @@ float exact_srgb_to_linear(float srgb)
     {
 	    srgb = 1.0f;
     }
-    l = srgb * 0.0773993808;
-    if (srgb > 0.04045)
+    if (srgb < 0.04045)
+	{
+		l = srgb * 0.0773993808;
+	}
+	else
     {
 	    l = pow(srgb * 0.9478672986 + 0.0521327014, 2.4);
     }
@@ -309,10 +312,13 @@ float exact_linear_to_srgb(float l)
     {
 	    l = 1.0f;
     }
-    s = l * 12.92;
-    if (l > 0.0031308)
+    if (l < 0.0031308)
+	{
+		s = l * 12.92;
+	}
+	else
     {
-	    s = 1.055F*pow(l, 1.0f/2.4f) - 0.055f;
+	    s = 1.055F * pow(l, 1.0f / 2.4f) - 0.055f;
     }
     return (s);
 }
@@ -337,10 +343,14 @@ uint32_t	exact_pack(t_v4 unpacked)
         .b = exact_linear_to_srgb(unpacked.b),
 		.a = exact_linear_to_srgb(unpacked.a),
 	};
-	const uint32_t a = (uint32_t)(256 * clamp(srgb.a, 0, 0.999f));
-	const uint32_t b = (uint32_t)(256 * clamp(srgb.b, 0, 0.999f));
-	const uint32_t g = (uint32_t)(256 * clamp(srgb.g, 0, 0.999f));
-	const uint32_t r = (uint32_t)(256 * clamp(srgb.r, 0, 0.999f));
+	// const uint32_t a = (uint32_t)((255.0f * srgb.a) + 0.5f);
+	// const uint32_t b = (uint32_t)((255.0f * srgb.b) + 0.5f);
+	// const uint32_t g = (uint32_t)((255.0f * srgb.g) + 0.5f);
+	// const uint32_t r = (uint32_t)((255.0f * srgb.r) + 0.5f);
+	const uint32_t a = (uint32_t)(roundf(255.0f * srgb.a));
+	const uint32_t b = (uint32_t)(roundf(255.0f * srgb.b));
+	const uint32_t g = (uint32_t)(roundf(255.0f * srgb.g));
+	const uint32_t r = (uint32_t)(roundf(255.0f * srgb.r));
 
 	return (a << 24 | b << 16 | g << 8 | r << 0);
 }

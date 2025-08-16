@@ -17,7 +17,7 @@ int	run_minirt(t_minirt *minirt, char **argv)
 
 
 	base_init_cam(&minirt->scene.camera);
-	minirt->scene.light_strength_mult = 3;
+	minirt->scene.light_strength_mult = 10;
 	minirt->scene.use_point_light = true;
 
 	mlx_loop(minirt->mlx);
