@@ -4,8 +4,7 @@
 #include "../inc/image_to_file.h"
 
 
-extern  bool g_recalculate_cam;
-extern uint32_t g_accummulated_frames;
+static uint32_t g_accummulated_frames = 0;
 
 #if 1
 	#define STRATI
@@ -199,7 +198,7 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 	// const t_v3 random_bounce = noz(random_direction_in_hemisphere(rec->normal, seed)); // do we need to normalize?
 
 	const t_v3 scatter = in_unit_sphere(seed);
-	const t_v3 random_bounce = noz(V3_ADD(rec->normal, v3_mul_f32(scatter, !near_zero(scatter))));
+	const t_v3 random_bounce = normalize(V3_ADD(rec->normal, v3_mul_f32(scatter, !near_zero(scatter))));
 	t_v3 pure_bounce;
 
 	// inner product (or dot product) gives us the angle difference between
@@ -208,8 +207,8 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 	pure_bounce = f32_mul_v3(2.0f*dot(ray.direction, rec->normal), rec->normal);
 	pure_bounce = v3_sub_v3(ray.direction, pure_bounce);
 
-	ray.origin = V3_SUB(rec->position, v3_mul_f32(ray.direction, 1e-4f)); // look to see if this value is good or not
-	// ray.origin = rec->position;
+	// ray.origin = V3_SUB(rec->position, v3_mul_f32(ray.direction, 1e-4f)); // look to see if this value is good or not
+	ray.origin = rec->position;
 	// ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
 	ray.direction = noz(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
 
@@ -222,12 +221,12 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 }
 
 static inline
-t_v3 trace(t_ray ray, const t_scene * restrict scene, const float max_bounce, uint32_t *seed) // change to all objects or scene;
+t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce, uint32_t *seed) // change to all objects or scene;
 {
 	t_v3 ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
 	// t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
 	// t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f};
-	float i;
+	uint32_t i;
 	t_color total_incoming_light;
 
 
@@ -236,7 +235,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const float max_bounce, ui
 	t_color prev_color;
 	ray_color = v3(1, 1, 1);
 	prev_color = ray_color;
-	i = 0.0f;
+	i = 0;
 	total_incoming_light = v3(0, 0, 0);
 	bool hit_once = false;
 	bool prev_specular = true;
@@ -250,9 +249,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const float max_bounce, ui
 
 			rec.mat.specular_color = rec.mat.color; // here for now
 			hit_once = true;
-			// there is a bug here relating to ambient light and how that affects the color of an object
-			// it seems to cause the object to take on the color of the ambient light even if it should not
-			// might not be a bug technically just related to the fact that the specular bounce is always the same
+
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
 			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			if (scene->use_point_light)
@@ -261,17 +258,7 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const float max_bounce, ui
 			}
 			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
 			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
-//			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
-			// color = V3_ADD(ambient, color);
-			// color = v3_mul_v3(rec.color, color);
-			// if (is_specular_bounce)
-			// {
-			// 	ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
-			// 	i += 1.0f;
-			// 	// printf("%s\t%f\n", "specular", i);
-			// 	// j++;
-			// 	continue ;
-			// }
+
 			if (i >= 1.f && !prev_specular)
 			{
 				float p = fmax(ray_color.r, fmax(ray_color.g, ray_color.b));
@@ -284,34 +271,22 @@ t_v3 trace(t_ray ray, const t_scene * restrict scene, const float max_bounce, ui
 			prev_specular = is_specular_bounce;
 			prev_color = ray_color;
 			ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
-			i += 1.0f;
+			++i;
 			// j++;
 		}
 		else
 		{
-			// color = V3_ADD(ambient, color);
-			// color = v3_mul_v3(rec.color, color);
+
 			break ;
 		}
 	}
-	// printf("bounces %i\n", j);
 	if (hit_once)
 	{
 		total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
-		// total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
-		return (v3_clamp(total_incoming_light));
+		return ((t_v4){.rgb = v3_clamp(total_incoming_light), .a = 1.0f});
 	}
 
-	// not hit = background color
-	t_v3 unit_direction = unit_vector(ray.direction);
-	float a = 0.5 * (unit_direction.y + 1.0f);
-
-	t_v3 result;
-	result = f32_mul_v3(1.0 - a, v3(1.0, 1.0, 1.0));
-	result = v3_add_v3(result, f32_mul_v3(a, v3(0.5, 0.7, 1.0)));
-	// incoming_ligth = result; // for now
-	return (result);
-	return (v3(0, 0, 0));
+	return (v4(0, 0, 0, 0));
 }
 
 
@@ -336,21 +311,21 @@ t_ray get_ray(const t_camera *cam, t_cord cord, t_cord strati, uint32_t *seed)
 	t_ray ray;
 
 	ray.origin = cam->camera_center;
-	if (cam->defocus_angle > 0)
+	if (cam->defocus_angle > 0.0f)
 		ray.origin = defocus_disk_sample(cam, seed);
-	ray.direction = V3_SUB(pixel_sample, ray.origin);
+	ray.direction = normalize(V3_SUB(pixel_sample, ray.origin));
 	return (ray);
 }
 
-t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_cord original_cord, uint32_t seed)
+t_v4 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_cord original_cord, uint32_t seed)
 {
 	t_ray ray;
-	t_v3 color;
-	t_v3 incoming_light;
+	t_v4 color;
+	t_v4 incoming_light;
 	int y_s;
 	int x_s;
 
-	incoming_light = v3(0, 0, 0);
+	incoming_light = v4(0, 0, 0, 0);
 	y_s = 0;
 	while (y_s < cam->sqrt_spp)
 	{
@@ -360,12 +335,12 @@ t_v3 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_co
 
 			ray = get_ray(cam, original_cord, (t_cord){x_s, y_s}, &seed);
 			color = trace(ray, scene, cam->max_bounce, &seed);
-			incoming_light = V3_ADD(incoming_light, color);
+			incoming_light = v4_add(incoming_light, color);
 			++x_s;
 		}
 		++y_s;
 	}
-	color = f32_mul_v3(cam->pixel_sample_scale_strati, incoming_light);
+	color = v4_mul_f32(incoming_light, cam->pixel_sample_scale_strati);
 	return (color);
 }
 
@@ -381,22 +356,21 @@ t_v3 rgb_u32_to_float(uint32_t c)
 }
 
 static inline
-t_v3 accumulate(const t_v3 old_color, const t_v3 new_color)
+t_v4 accumulate(const t_v4 old_color, const t_v4 new_color)
 {
 	const float weight = 1.0 / (g_accummulated_frames + 1); // @TODO screw around with the weight
-	t_v3 accumulated_average;
+	t_v4 accumulated_average;
 
 	accumulated_average.r = old_color.r * (1 - weight) + new_color.r * weight;
 	accumulated_average.g = old_color.g * (1 - weight) + new_color.g * weight;
 	accumulated_average.b = old_color.b * (1 - weight) + new_color.b * weight;
+	accumulated_average.a = old_color.a * (1 - weight) + new_color.a * weight;
 	return (accumulated_average);
 }
 
-t_v3 exact_unpack(uint32_t packed);
-
 void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restrict out)
 {
-	t_v3 color;
+	t_v4 color;
 	int32_t x;
 	int32_t y;
 	uint32_t rng_seed;
@@ -424,6 +398,42 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 	// return (0);
 }
 
+static
+void set_title(t_minirt *minirt)
+{
+	static char title_buf[100] = "MiniRay --";
+	int status;
+	t_string title;
+
+	title.buf = title_buf;
+	title.size = sizeof(title_buf);
+	title.len = sizeof("MiniRay --") - 1;
+	status = 0;
+	status = cat_cstring_to_string(&title, " frame time: ");
+	status = cat_uint_to_str(&title, round(minirt->mlx->delta_time * 1000));
+	status = cat_cstring_to_string(&title, " SPP: ");
+	status = cat_uint_to_str(&title, minirt->scene.camera.samples_per_pixel);
+	status = cat_cstring_to_string(&title, " max bounces: ");
+	status = cat_uint_to_str(&title, minirt->scene.camera.max_bounce);
+	if (status == FAIL)
+	{
+		ft_dprintf(2, "Failed to create title\n"
+			"buf_size <%zu> len <%zu> data <%s>", title.size, title.len, title.buf);
+		mlx_set_window_title(minirt->mlx, "MiniRay -- Info not available");
+		return ;
+	}
+	mlx_set_window_title(minirt->mlx, title.buf);
+}
+
+static
+void recalculate_camera(t_minirt *minirt, t_camera *frame_cam)
+{
+	init_camera_for_frame(minirt, &minirt->scene.camera);
+	*frame_cam = minirt->scene.camera;
+	minirt->recalculate_cam = false;
+	g_accummulated_frames = 0;
+}
+
 
 void per_frame(void * param)
 {
@@ -433,7 +443,7 @@ void per_frame(void * param)
 
 	minirt = (t_minirt *)param;
 	mlx = minirt->mlx;
-	g_recalculate_cam = minirt->recalculate_cam;
+	set_title(minirt);
 	if (minirt->write_image_to_file == true)
 	{
 		pixels_to_image_file(minirt->image);
@@ -441,18 +451,17 @@ void per_frame(void * param)
 	}
 	if (minirt->image->width != (uint)mlx->width || minirt->image->height != (uint)mlx->height)
 	{
-		mlx_resize_image(minirt->image, mlx->width, mlx->height);
-		g_recalculate_cam = true;
+		if (mlx_resize_image(minirt->image, mlx->width, mlx->height) == false)
+			ft_putstr_fd("miniRT: Failed to resize image\n", 2);
+		if (mlx_resize_image(minirt->background, mlx->width, mlx->height) == false)
+			ft_putstr_fd("miniRT: Failed to resize background\n", 2);
+		recalculate_camera(minirt, &frame_cam);
+		draw_background(minirt);
 	}
-	if (g_recalculate_cam == true)
+	if (minirt->recalculate_cam == true)
 	{
-		init_camera_for_frame(minirt, &minirt->scene.camera);
-		g_recalculate_cam = false;
-		minirt->recalculate_cam = false;
-		g_accummulated_frames = 0;
-		frame_cam = minirt->scene.camera;
+		recalculate_camera(minirt, &frame_cam);
 	}
 	render(&minirt->scene, &frame_cam, (uint32_t *)minirt->image->pixels);
 	++g_accummulated_frames;
-	printf("delta: %f\n", minirt->mlx->delta_time);
 }

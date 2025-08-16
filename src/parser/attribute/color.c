@@ -25,7 +25,7 @@ static float parse_rgb_comp(char **str, bool *is_valid_comp)
 		return (0);
 	}
 	*str += i;
-	return ((float)num / 255);
+	return (exact_linear_to_srgb((float)num / 255.0f));
 }
 
 t_color parse_color(char *str, bool *is_valid)

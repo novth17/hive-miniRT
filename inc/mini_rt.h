@@ -79,15 +79,26 @@ typedef struct s_mini_rt
 {
 	mlx_t			*mlx;
 	mlx_image_t		*image;
+	mlx_image_t		*background;
 
 	t_scene			scene;
 	bool			file_has_content;
 
 	bool			write_image_to_file;
-	// t_camera		base_cam;
-
 	bool			recalculate_cam;
 }	t_minirt;
+
+typedef struct s_string
+{
+	char *buf;
+	size_t len;
+	size_t size;
+}	t_string;
+
+/* ===================== Helpers for string type ===================== */
+// string.c
+bool cat_cstring_to_string(t_string *dest, char *cstr);
+bool cat_uint_to_str(t_string *dest, size_t num);
 
 
 /* ===================== INPUT PARSING & INIT ===================== */
@@ -140,5 +151,11 @@ int		check_obj_args_count(char **tokens, const char *id, int min, int max);
 /* ===================== FOR DELETE ===================== */
 
 void	delete_minirt(t_minirt *minirt);
+
+
+/* ===================== FOR BACKGROUND ===================== */
+int		init_background(t_minirt *minirt);
+void	draw_background(t_minirt *mrt);
+
 
 # endif

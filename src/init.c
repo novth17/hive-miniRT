@@ -1,5 +1,6 @@
 # include "mini_rt.h"
 
+
 static int	setup_mlx(t_minirt *minirt)
 {
 	minirt->mlx = mlx_init(WINDOW_WIDTH, WINDOW_HEIGHT, "MiniRay", true);
@@ -21,8 +22,8 @@ static int	setup_mlx(t_minirt *minirt)
 		ft_putstr_fd(mlx_strerror(mlx_errno), 2);
 		return (FAIL);
 	}
-	mlx_set_setting(MLX_STRETCH_IMAGE, false);
-		// mlx_resize_hook(minirt->mlx, &on_resize, minirt);
+	init_background(minirt);
+
 	mlx_key_hook(minirt->mlx, &key_hook, minirt);
 	mlx_scroll_hook(minirt->mlx, &scroll_hook, minirt);
 	mlx_loop_hook(minirt->mlx, &per_frame, minirt);

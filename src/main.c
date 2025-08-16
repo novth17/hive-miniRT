@@ -3,37 +3,10 @@
 #include "../test_stuff/MLX42.h"
 #include "../inc/object.h"
 
-bool g_recalculate_cam = true;
-uint32_t g_accummulated_frames = 0;
-
 
 #include <float.h>
 #include <stdint.h>
 #include <math.h>
-
-// static
-// float ExactLinearTosRGB(float L)
-// {
-// 	float S;
-
-// 	if (L < 0.0f)
-// 	{
-// 		L = 0.0f;
-// 	}
-
-// 	if (L > 1.0f)
-// 	{
-// 		L = 1.0f;
-// 	}
-
-// 	S = L * 12.92;
-// 	if (L > 0.0031308)
-// 	{
-// 		S = 1.055F*pow(L, 1.0f/2.4f) - 0.055f;
-// 	}
-// 	return (S);
-// }
-
 
 
 static
