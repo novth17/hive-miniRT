@@ -30,6 +30,8 @@ int parse_sphere(char **tokens, t_scene *scene)
 	if (!scene->is_valid)
 		return (print_error("Sphere: center: " ERROR_COORD, tokens[1]));
 	object->sphere.radius = parse_float(tokens[2], &scene->is_valid) / 2;
+	if (object->sphere.radius < 0)
+		return (print_error("Sphere: diameter: Can't be negative", tokens[2]));
 	if (!scene->is_valid)
 		return (print_error("Sphere: diameter: " ERROR_FLOAT, tokens[2]));
 	if (parse_material(tokens, scene, &object->sphere.material, 3))
@@ -80,9 +82,13 @@ static int parse_cyl_elem(char **tokens, t_scene *scene, t_object *object)
 	if (!is_normalized(object->cyl.axis))
 		return (print_error("Cylinder: axis: " ERROR_NORM, tokens[2]));
 	object->cyl.diameter = parse_float(tokens[3], &scene->is_valid);
+	if (object->cyl.diameter < 0)
+		return (print_error("Cylinder: diameter: Can't be negative", tokens[3]));
 	if (!scene->is_valid)
 		return (print_error("Cylinder: diameter: " ERROR_FLOAT, tokens[3]));
 	object->cyl.height = parse_float(tokens[4], &scene->is_valid);
+	if (object->cyl.height < 0)
+		return (print_error("Cylinder: height: Can't be negative", tokens[4]));
 	if (!scene->is_valid)
 		return (print_error("Cylinder: height: " ERROR_FLOAT, tokens[4]));
 	return (SUCCESS);
