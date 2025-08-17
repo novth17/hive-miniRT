@@ -303,7 +303,10 @@ float exact_linear_to_srgb(float l)
     float s;
 
 	if (l != l)
+	{
 		l = 1.0f;
+		printf("panic!!!");
+	}
     if (l < 0.0f)
     {
 	    l = 0.0f;
@@ -376,6 +379,101 @@ t_v4 exact_unpack(uint32_t packed)
 	result.r = exact_srgb_to_linear(unpacked.r);
 	result.g = exact_srgb_to_linear(unpacked.g);
 	result.b = exact_srgb_to_linear(unpacked.b);
+	result.a = unpacked.a;
+	return (result);
+}
+
+
+
+inline
+float gamma2_srgb_to_linear(float srgb)
+{
+    float l;
+
+	if (srgb != srgb)
+		srgb = 0.0f;
+    if (srgb < 0.0f)
+    {
+	    srgb = 0.0f;
+    }
+    if (srgb > 1.0f)
+    {
+	    srgb = 1.0f;
+    }
+    if (srgb < 0.04045)
+	{
+		l = srgb * 0.0773993808;
+	}
+	else
+    {
+    	srgb = srgb * 0.9478672986 + 0.0521327014;
+	    l = srgb * srgb;
+    }
+    return (l);
+}
+
+
+// convert linear color to srgb color space
+inline
+float gamma2_linear_to_srgb(float l)
+{
+    float s;
+
+	if (l != l)
+	{
+		l = 1.0f;
+		printf("panic!!!");
+	}
+    if (l < 0.0f)
+    {
+	    l = 0.0f;
+    }
+    if (l > 1.0f)
+    {
+	    l = 1.0f;
+    }
+    if (l < 0.0031308)
+	{
+		s = l * 12.92;
+	}
+	else
+    {
+	    s = 1.055F * square_root(l) - 0.055f;
+    }
+    return (s);
+}
+
+inline
+uint32_t	gamma2_pack(t_v4 unpacked)
+{
+    const t_v4	srgb =
+	{
+		.g = gamma2_linear_to_srgb(unpacked.g),
+		.r = gamma2_linear_to_srgb(unpacked.r),
+        .b = gamma2_linear_to_srgb(unpacked.b),
+		.a = unpacked.a,
+	};
+	// const uint32_t a = (uint32_t)((255.0f * srgb.a) + 0.5f);
+	// const uint32_t b = (uint32_t)((255.0f * srgb.b) + 0.5f);
+	// const uint32_t g = (uint32_t)((255.0f * srgb.g) + 0.5f);
+	// const uint32_t r = (uint32_t)((255.0f * srgb.r) + 0.5f);
+	const uint32_t a = (uint32_t)(roundf(255.0f * srgb.a));
+	const uint32_t b = (uint32_t)(roundf(255.0f * srgb.b));
+	const uint32_t g = (uint32_t)(roundf(255.0f * srgb.g));
+	const uint32_t r = (uint32_t)(roundf(255.0f * srgb.r));
+
+	return (a << 24 | b << 16 | g << 8 | r << 0);
+}
+
+inline
+t_v4 gamma2_unpack(uint32_t packed)
+{
+    const t_v4 unpacked = rgb_u32_to_v4(packed);
+	t_v4 result;
+
+	result.r = gamma2_srgb_to_linear(unpacked.r);
+	result.g = gamma2_srgb_to_linear(unpacked.g);
+	result.b = gamma2_srgb_to_linear(unpacked.b);
 	result.a = unpacked.a;
 	return (result);
 }

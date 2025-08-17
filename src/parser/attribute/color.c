@@ -51,4 +51,3 @@ t_color parse_color(char *str, bool *is_valid)
 
 	return color;
 }
-

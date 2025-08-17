@@ -93,6 +93,13 @@ t_v4		exact_unpack(uint32_t packed);
 float		exact_linear_to_srgb(float l);
 float		exact_srgb_to_linear(float srgb);
 
+t_v4		rgb_u32_to_v4(uint32_t c);
+t_v4 		gamma2_unpack(uint32_t packed);
+uint32_t	gamma2_pack(t_v4 unpacked);
+float 		gamma2_linear_to_srgb(float l);
+float		gamma2_srgb_to_linear(float srgb);
+
+
 
 
 //random
