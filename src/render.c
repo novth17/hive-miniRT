@@ -1,4 +1,5 @@
 # include "../inc/mini_rt.h"
+#include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include "../inc/image_to_file.h"
@@ -210,7 +211,7 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 	// ray.origin = V3_SUB(rec->position, v3_mul_f32(ray.direction, 1e-4f)); // look to see if this value is good or not
 	ray.origin = rec->position;
 	// ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
-	ray.direction = noz(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
+	ray.direction = normalize(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
 
 
 
@@ -250,13 +251,13 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 			rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f));
 			// rec.position = V3_SUB(rec.position, v3_mul_f32(ray.direction, 1e-4f));
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
+			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
+			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
 			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			if (scene->use_point_light)
 			{
 				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), ray_color));
 			}
-			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
-			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
 
 			if (i > 0 && !prev_specular)
 			{
@@ -386,8 +387,12 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 			color = accumulate(exact_unpack(*out), color);
 			*out++ = exact_pack(color);
 
-			// color = accumulate(rgb_u32_to_float(*out), color);
-			// *out++ = rgb_pack4x8(v3_clamp(color)); // maybe dont need clamp or do it in color correction
+			// color = accumulate(gamma2_unpack(*out), color);
+			// *out++ = gamma2_pack(color);
+
+
+			// color = accumulate(rgb_u32_to_v4(*out), color);
+			// *out++ = rgb_pack4x8(v3_clamp(color.rgb)); // maybe dont need clamp or do it in color correction
 
 
 			++x;
@@ -400,7 +405,7 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 static
 void set_title(t_minirt *minirt)
 {
-	static char title_buf[100] = "MiniRay --";
+	static char title_buf[100] = "gamma2 MiniRay --";
 	int status;
 	t_string title;
 
