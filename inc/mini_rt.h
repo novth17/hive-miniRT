@@ -109,7 +109,6 @@ int		parse_ambient(char **tokens, t_scene *scene);
 int		parse_camera(char **tokens, t_scene *scene);
 int		parse_light(char **tokens, t_scene *scene);
 
-
 int		parse_sphere(char **tokens, t_scene *scene);
 int		parse_plane(char **tokens, t_scene *scene);
 int		parse_cyl(char **tokens, t_scene *scene);
@@ -121,6 +120,7 @@ t_vec3	parse_vec3(char *str, bool *is_valid);
 bool	is_in_range_vec3(t_vec3 vector);
 bool	check_comma_and_move(char **str, bool *is_valid);
 bool	is_normalized(t_vec3 vec3);
+int parse_material(char **t, t_scene *scene, t_material *m, int o);
 
 /* ===================== FILL ARRAY ===================== */
 int fill_obj_arr(t_minirt *minirt, t_scene *scene);

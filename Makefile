@@ -38,6 +38,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/attribute/vector.c \
 				$(SRC_DIR)/parser/identifier/element.c \
 				$(SRC_DIR)/parser/identifier/object.c \
+				$(SRC_DIR)/parser/identifier/material.c \
 				$(SRC_DIR)/math/rt_math.c \
 				$(SRC_DIR)/math/vec2.c \
 				$(SRC_DIR)/math/vec3_1.c \

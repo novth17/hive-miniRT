@@ -4,13 +4,13 @@
 #include "types.h"
 
 #define SP_ARG_MIN 4
-#define SP_ARG_MAX 7
+#define SP_ARG_MAX 8
 
 #define PL_ARG_MIN 4
-#define PL_ARG_MAX 7
+#define PL_ARG_MAX 8
 
 #define CYL_ARG_MIN 6
-#define CYL_ARG_MAX 9
+#define CYL_ARG_MAX 10
 
 #define FLOAT_EPSILON 1e-4f
 #define SHADOW_BIAS 1e-4f
@@ -29,16 +29,10 @@ typedef enum e_obj_type
 typedef struct s_material
 {
 	t_color	color;
-	t_color specular_color;
 	float	specular_probability;
 	float	diffuse;
 	float	emitter;
-
-
-	bool	has_checker;
-	t_color	checker_color;
-	float	checker_scale;
-
+	t_color specular_color;
 } t_material;
 
 typedef struct s_sphere
