@@ -38,7 +38,7 @@ uint32_t	*convert_mlx_image_to_output_image(mlx_image_t *image, uint32_t output_
 	pixels = malloc(output_pixel_size);
 	if (pixels == NULL)
 	{
-		print_error("Failed to allocate for output image", NULL);
+		print_error("miniRT: Failed to allocate for output image", NULL);
 		return (NULL);
 	}
 	y = 0;
@@ -84,7 +84,7 @@ char	*create_file_name(uint32_t num)
 	static char				name_buf[OUTPUT_FILENAME_BUFFER_SIZE] = OUTPUT_FILENAME;
 	uint8_t					i;
 
-	i = num_len(num);
+	i = num_length(num);
 	name_buf[filename_length + i] = '\0';
 	while (i--)
 	{
@@ -96,23 +96,27 @@ char	*create_file_name(uint32_t num)
 
 void	pixels_to_image_file(mlx_image_t *image)
 {
-	uint32_t	num;
-	char		*filename;
-	int			fd;
+	static uint32_t	num = 1;
+	char			*filename;
+	int				fd;
+	int				tries;
 
-	num = 1;
+	tries = 0;
 	fd = -1;
-	while (fd == -1)
+	while (fd == -1 && tries < 1000)
 	{
 		filename = create_file_name(num);
 		ft_strlcat(filename, OUTPUT_FILE_EXTENSION, OUTPUT_FILENAME_BUFFER_SIZE);
 		fd = open(filename, O_CREAT | O_EXCL | O_TRUNC | O_RDWR, 0644);
 		if (fd == -1 && errno != EEXIST)
 		{
-			print_error("Failed to create image file", NULL);
+			print_error("Failed to create image file", strerror(errno));
 			return ;
 		}
+		++tries;
 		++num;
 	}
+	if (fd == -1)
+		print_error("Failed to create image file after 1000 tries", NULL);
 	write_image(image, fd);
 }

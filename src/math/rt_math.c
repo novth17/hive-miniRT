@@ -46,9 +46,33 @@ float square_root(float a)
 }
 
 inline
-t_v4 v4(float x, float y, float z, float w)
+t_v4	v4(float x, float y, float z, float w)
 {
 	return ((t_v4){.x = x, .y = y, .z = z, .w = w});
+}
+
+inline
+t_v4	v4_mul_f32(t_v4 a, float b)
+{
+	t_v4	result;
+
+	result.x = a.x * b;
+	result.y = a.y * b;
+	result.z = a.z * b;
+	result.w = a.w * b;
+	return (result);
+}
+
+inline
+t_v4	v4_add(t_v4 a, t_v4 b)
+{
+	t_v4	result;
+
+	result.x = a.x + b.x;
+	result.y = a.y + b.y;
+	result.z = a.z + b.z;
+	result.w = a.w + b.w;
+	return (result);
 }
 
 inline
@@ -244,11 +268,14 @@ uint32_t rgb_pack4x8(t_v3 unpacked)
 }
 
 
+// convert srgb color to linear color space
 inline
 float exact_srgb_to_linear(float srgb)
 {
     float l;
 
+	if (srgb != srgb)
+		srgb = 0.0f;
     if (srgb < 0.0f)
     {
 	    srgb = 0.0f;
@@ -257,21 +284,26 @@ float exact_srgb_to_linear(float srgb)
     {
 	    srgb = 1.0f;
     }
-    l = srgb * 0.0773993808;
-    if (srgb > 0.04045)
+    if (srgb < 0.04045)
+	{
+		l = srgb * 0.0773993808;
+	}
+	else
     {
-	    l = pow(srgb * 0.9478672986 + 0.0521327014, 2.4);
+	    l = powf(srgb * 0.9478672986 + 0.0521327014, 2.4);
     }
     return (l);
 }
 
 
-
+// convert linear color to srgb color space
 inline
 float exact_linear_to_srgb(float l)
 {
     float s;
 
+	if (l != l)
+		l = 1.0f;
     if (l < 0.0f)
     {
 	    l = 0.0f;
@@ -280,26 +312,70 @@ float exact_linear_to_srgb(float l)
     {
 	    l = 1.0f;
     }
-    s = l * 12.92;
-    if (l > 0.0031308)
+    if (l < 0.0031308)
+	{
+		s = l * 12.92;
+	}
+	else
     {
-	    s = 1.055F*pow(l, 1.0f/2.4f) - 0.055f;
+	    s = 1.055F * powf(l, 1.0f / 2.4f) - 0.055f;
     }
     return (s);
 }
 
-uint32_t exact_pack(t_v3 unpacked)
+t_v3	exact_v3_srgb_to_linear(t_v3 srgb)
 {
-    const t_v3 srgb = {
-			.r = exact_linear_to_srgb(unpacked.r),
-			.g = exact_linear_to_srgb(unpacked.g),
-            .b = exact_linear_to_srgb(unpacked.b)};
-	uint32_t result;
+	t_v3	linear;
 
+	linear.r = exact_srgb_to_linear(srgb.r);
+	linear.g = exact_srgb_to_linear(srgb.g);
+	linear.b = exact_srgb_to_linear(srgb.b);
+	return (linear);
+}
 
-	result = ((uint32_t)(0xFF) << 24)					|
-			((uint32_t)((srgb.b * 255.0f)) << 16)	|
-			((uint32_t)((srgb.g * 255.0f)) << 8)	|
-			((uint32_t)((srgb.r * 255.0f)) << 0);
+inline
+uint32_t	exact_pack(t_v4 unpacked)
+{
+    const t_v4	srgb =
+	{
+		.r = exact_linear_to_srgb(unpacked.r),
+		.g = exact_linear_to_srgb(unpacked.g),
+        .b = exact_linear_to_srgb(unpacked.b),
+		.a = unpacked.a,
+	};
+	// const uint32_t a = (uint32_t)((255.0f * srgb.a) + 0.5f);
+	// const uint32_t b = (uint32_t)((255.0f * srgb.b) + 0.5f);
+	// const uint32_t g = (uint32_t)((255.0f * srgb.g) + 0.5f);
+	// const uint32_t r = (uint32_t)((255.0f * srgb.r) + 0.5f);
+	const uint32_t a = (uint32_t)(roundf(255.0f * srgb.a));
+	const uint32_t b = (uint32_t)(roundf(255.0f * srgb.b));
+	const uint32_t g = (uint32_t)(roundf(255.0f * srgb.g));
+	const uint32_t r = (uint32_t)(roundf(255.0f * srgb.r));
+
+	return (a << 24 | b << 16 | g << 8 | r << 0);
+}
+
+inline
+t_v4	rgb_u32_to_v4(uint32_t c)
+{
+	t_v4	result;
+
+	result.a = (float)((c >> 24) & 0xFF) / 255.0f;
+	result.b = (float)((c >> 16) & 0xFF) / 255.0f;
+	result.g = (float)((c >> 8) & 0xFF) / 255.0f;
+	result.r = (float)((c >> 0) & 0xFF) / 255.0f;
+	return (result);
+}
+
+inline
+t_v4 exact_unpack(uint32_t packed)
+{
+    const t_v4 unpacked = rgb_u32_to_v4(packed);
+	t_v4 result;
+
+	result.r = exact_srgb_to_linear(unpacked.r);
+	result.g = exact_srgb_to_linear(unpacked.g);
+	result.b = exact_srgb_to_linear(unpacked.b);
+	result.a = unpacked.a;
 	return (result);
 }
