@@ -11,7 +11,7 @@ uint32_t reorder_color(uint32_t color)
 	return ((a << 24) | (r << 16) | (g << 8) | (b << 0));
 }
 
-uint8_t	num_len(uint32_t num)
+uint8_t	num_length(uint32_t num)
 {
 	uint8_t	i;
 

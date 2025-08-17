@@ -2,6 +2,7 @@
 # define IMAGE_TO_FILE_H
 
 # include <stdint.h>
+# include <string.h>
 # include "MLX42.h"
 
 # define OUTPUT_FILENAME "minirt_img"
@@ -39,7 +40,7 @@ void	pixels_to_image_file(mlx_image_t *image);
 
 // utils
 uint32_t	reorder_color(uint32_t color);
-uint8_t	num_len(uint32_t num);
+uint8_t		num_length(uint32_t num);
 
 
 #endif

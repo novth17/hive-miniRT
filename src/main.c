@@ -3,48 +3,25 @@
 #include "../test_stuff/MLX42.h"
 #include "../inc/object.h"
 
-bool g_recalculate_cam = true;
-uint32_t g_accummulated_frames = 0;
-
 
 #include <float.h>
 #include <stdint.h>
 #include <math.h>
 
-// static
-// float ExactLinearTosRGB(float L)
-// {
-// 	float S;
 
-// 	if (L < 0.0f)
-// 	{
-// 		L = 0.0f;
-// 	}
-
-// 	if (L > 1.0f)
-// 	{
-// 		L = 1.0f;
-// 	}
-
-// 	S = L * 12.92;
-// 	if (L > 0.0031308)
-// 	{
-// 		S = 1.055F*pow(L, 1.0f/2.4f) - 0.055f;
-// 	}
-// 	return (S);
-// }
-
-
-
-static int	run_minirt(t_minirt *minirt, char **argv)
+static
+int	run_minirt(t_minirt *minirt, char **argv)
 {
 	if (init_minirt(minirt, argv) == FAIL)
 		return (FAIL);
 
-
+	// light strength multiplier to affect distance not color
 	base_init_cam(&minirt->scene.camera);
-	minirt->scene.light_strength_mult = 10;
+	init_camera_for_frame(minirt, &minirt->scene.camera);
+	draw_background(minirt);
+	minirt->scene.light_dist_mult = 1.0f;
 	minirt->scene.use_point_light = true;
+	minirt->recalculate_cam = 1;
 
 	mlx_loop(minirt->mlx);
 	mlx_terminate(minirt->mlx);

@@ -53,7 +53,7 @@ dkms.conf
 
 # debug information files
 *.dwo
-mini_rt
+miniRT
 .vscode
 obj/
 libs/MLX42

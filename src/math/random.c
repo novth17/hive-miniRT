@@ -14,7 +14,7 @@ float random_float(uint32_t *seed)
 	return ((float)result / (float)UINT32_MAX);
 }
 
-// wrong and not currently used // might have been wrong because normalize was wrong
+
 t_v3 in_unit_sphere(uint32_t *seed)
 {
 	t_v3 result;
@@ -22,7 +22,7 @@ t_v3 in_unit_sphere(uint32_t *seed)
 	result.x = random_float(seed) * 2.0f - 1.0f;
 	result.y = random_float(seed) * 2.0f - 1.0f;
 	result.z = random_float(seed) * 2.0f - 1.0f;
-	result = normalize(result);
+	result = unit_vector(result);
 	return (result);
 }
 
@@ -44,7 +44,7 @@ t_v3 random_in_unit_disk(uint32_t *seed)
 			return (p);
 		++i;
 	}
-	return (v3(-0.2, 0.3, 0));
+	return (v3(0, 0, 0));
 }
 
 inline
