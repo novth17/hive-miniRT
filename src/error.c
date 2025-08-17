@@ -5,17 +5,17 @@ static void print_usage(char **tokens)
 	if (ft_strcmp(tokens[0], "cy") == 0)
 	{
 		ft_dprintf(2,GREEN"Usage: cy <center:x,y,z> <axis:x,y,z> <diameter> "
-					"<height> <R,G,B> [<diffuse> <specular> <emitter>]\n"RESET);
+			"<height> <R,G,B> [<diffuse> <specular> <emitter>]\n"RESET);
 	}
 	else if (ft_strcmp(tokens[0], "sp") == 0)
 	{
 		ft_dprintf(2, GREEN"Usage: sp <center:x,y,z> <diameter> <R,G,B> "
-					"[<diffuse> <specular> <emitter>]\n"RESET);
+			"[<diffuse> <specular> <emitter>]\n"RESET);
 	}
 	else if (ft_strcmp(tokens[0], "pl") == 0)
 	{
 		ft_dprintf(2, GREEN"Usage: pl <point:x,y,z> <normal:x,y,z> <R,G,B> "
-					"[<diffuse> <specular> <emitter>]\n"RESET);
+			"[<diffuse> <specular> <emitter> <specular color> ]\n"RESET);
 	}
 }
 
@@ -51,8 +51,8 @@ int check_obj_args_count(char **tokens, const char *id, int min, int max)
 
 	if (count < min || count > max)
 	{
-		ft_dprintf(2, RED"%s: Number of obj arguments must be between %d and %d!\n"RESET,
-			id, min, max, max + 1);
+		ft_dprintf(2, RED"%s: Number of obj arguments must be between %d"
+			" and %d!\n"RESET, id, min, max);
 		print_usage(tokens);
 		return (FAIL);
 	}

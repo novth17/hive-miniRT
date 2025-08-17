@@ -57,9 +57,10 @@ int	init_minirt(t_minirt *minirt, char **argv)
 		);
 		if (1)
 		{
-			printf("DEBUG: sphere[%u]: diffuse=%.2f, emitter=%.2f, probability=%.2f\n",
+			printf("DEBUG: sphere[%u]: diffuse=%.2f, probability=%.2f , emitter=%.2f, spec_color=(%2f, %2f, %2f)\n",
 				i,
-				s->material.diffuse, s->material.specular_probability, s->material.emitter
+				s->material.diffuse, s->material.specular_probability, s->material.emitter,
+				s->material.specular_color.r,  s->material.specular_color.g, s->material.specular_color.b
 			);
 		}
 	}
@@ -75,9 +76,10 @@ int	init_minirt(t_minirt *minirt, char **argv)
 		);
 		if (1)
 		{
-			printf("DEBUG: pl[%u]: diffuse=%.2f, emitter=%.2f, probability=%.2f\n",
+			printf("DEBUG: pl[%u]: diffuse=%.2f, probability=%.2f , emitter=%.2f, spec_color=(%2f, %2f, %2f)\n",
 				i,
-				pl->material.diffuse, pl->material.specular_probability, pl->material.emitter
+				pl->material.diffuse, pl->material.specular_probability, pl->material.emitter,
+				pl->material.specular_color.r,  pl->material.specular_color.g, pl->material.specular_color.b
 			);
 		}
 	}
@@ -94,9 +96,9 @@ int	init_minirt(t_minirt *minirt, char **argv)
 		);
 		if (1)
 		{
-			printf("DEBUG: cy[%u]: diffuse=%.2f, emitter=%.2f, probability=%.2f \n",
+			printf("DEBUG: cy[%u]: diffuse=%.2f, probability=%.2f , emitter=%.2f, spec_color=(%2f, %2f, %2f)\n",
 				i,
-				cy->material.diffuse, cy->material.specular_probability, cy->material.emitter
+				cy->material.diffuse, cy->material.specular_probability, cy->material.emitter, cy->material.specular_color.r,  cy->material.specular_color.g, cy->material.specular_color.b
 			);
 		}
 	}
