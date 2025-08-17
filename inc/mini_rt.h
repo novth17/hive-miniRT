@@ -103,6 +103,8 @@ bool cat_uint_to_str(t_string *dest, size_t num);
 
 /* ===================== INPUT PARSING & INIT ===================== */
 int		validate_input(int argc, char *filename);
+void	print_guide(void);
+
 int		init_minirt(t_minirt *minirt, char **argv);
 int		parse_file(t_minirt *minirt, char *filename);
 int		parse_ambient(char **tokens, t_scene *scene);
@@ -120,7 +122,7 @@ t_vec3	parse_vec3(char *str, bool *is_valid);
 bool	is_in_range_vec3(t_vec3 vector);
 bool	check_comma_and_move(char **str, bool *is_valid);
 bool	is_normalized(t_vec3 vec3);
-int parse_material(char **t, t_scene *scene, t_material *m, int o);
+int		parse_material(char **t, t_scene *scene, t_material *m, int o);
 
 /* ===================== FILL ARRAY ===================== */
 int fill_obj_arr(t_minirt *minirt, t_scene *scene);
