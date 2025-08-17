@@ -123,7 +123,7 @@ static float solve_cyl(t_ray ray, t_cylinder cyl, t_vec3 oc, t_cyl_math *m)
  * @param normal  Normal of the cap (same as cylinder axis or negated).
  * @param radius  Radius of the cap (cylinder.diameter / 2).
  *
- * @return Distance t along the ray to the intersection with the cap,
+ * @return Distance t along the ray to the interswection with the cap,
  *         or FLT_MAX if the ray misses or hits outside the cap.
  */
 static float hit_cyl_cap(t_ray ray, t_vec3 center, t_vec3 normal, float radius)

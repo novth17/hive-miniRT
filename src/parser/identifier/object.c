@@ -1,7 +1,5 @@
 #include "mini_rt.h"
 
-static int parse_material(char **tokens, t_scene *scene, t_material *m, int offset);
-
 static t_object *create_objects(t_scene *scene, t_obj_type type)
 {
 	t_object *obj;
@@ -69,15 +67,8 @@ int parse_plane(char **tokens, t_scene *scene)
 	return (SUCCESS);
 }
 
-int parse_cyl(char **tokens, t_scene *scene)
+static int parse_cyl_elem(char **tokens, t_scene *scene, t_object *object)
 {
-	t_object *object;
-
-	if (check_obj_args_count(tokens, "Cylinder", CYL_ARG_MIN, CYL_ARG_MAX) == FAIL)
-		return (FAIL);
-	object = create_objects(scene, CYLINDER);
-	if (!object)
-		return (FAIL);
 	object->cyl.center = parse_vec3(tokens[1], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Cylinder: center: " ERROR_COORD, tokens[1]));
@@ -94,47 +85,27 @@ int parse_cyl(char **tokens, t_scene *scene)
 	object->cyl.height = parse_float(tokens[4], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Cylinder: height: " ERROR_FLOAT, tokens[4]));
+	return (SUCCESS);
+}
+
+int parse_cyl(char **tokens, t_scene *scene)
+{
+	t_object *object;
+
+	if (check_obj_args_count(tokens, "Cylinder", CYL_ARG_MIN, CYL_ARG_MAX))
+		return (FAIL);
+	object = create_objects(scene, CYLINDER);
+	if (!object)
+		return (FAIL);
+	if (parse_cyl_elem(tokens, scene, object))
+	{
+		ft_dprintf(2, RED "Error from Cylinder element\n" RESET);
+		return (FAIL);
+	}
 	if (parse_material(tokens, scene, &object->cyl.material, 5))
 	{
 		ft_dprintf(2, RED "Error from Cylinder\n" RESET);
 		return (FAIL);
-	}
-	return (SUCCESS);
-}
-
-static int parse_material(char **tokens, t_scene *scene, t_material *m, int offset)
-{
-	m->color = parse_color(tokens[offset], &scene->is_valid);
-	if (!scene->is_valid)
-		return print_error("Material: " ERROR_COLOR, tokens[offset]);
-
-	m->diffuse = 0.0f;
-	m->specular_probability = 0.0f;
-	m->emitter = 0.0f;
-	//m->has_checker = false;
-
-	if (tokens[offset + 1] && tokens[offset + 2] && tokens[offset + 3])
-	{
-		m->diffuse = parse_float(tokens[offset + 1], &scene->is_valid);
-		if (!scene->is_valid)
-			return print_error("Material: diffuse: " ERROR_FLOAT, tokens[offset + 1]);
-
-		m->specular_probability = parse_float(tokens[offset + 2], &scene->is_valid);
-		if (!scene->is_valid)
-			return print_error("Material: specular: " ERROR_FLOAT, tokens[offset + 2]);
-
-		m->emitter = parse_float(tokens[offset + 3], &scene->is_valid);
-		if (!scene->is_valid)
-			return print_error("Material: emitter: " ERROR_FLOAT, tokens[offset + 3]);
-
-
-		// optional: "checker"
-		// if (tokens[offset + 4] && ft_strncmp(tokens[offset + 4], "checker", 7) == 0)
-		// {
-		// 	m->checkerboard = true;
-		// 	m->checker_color = (t_color){0.0f, 0.0f, 0.0f}; // default: black
-		// 	m->pattern_scale = 1.0f; // default size
-		// }
 	}
 	return (SUCCESS);
 }
