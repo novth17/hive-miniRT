@@ -53,6 +53,7 @@ void draw_background(t_minirt *mrt)
 int init_background(t_minirt *minirt)
 {
 	int32_t instance;
+
 	minirt->background = mlx_new_image(minirt->mlx, WINDOW_WIDTH, WINDOW_HEIGHT);
 	if (!minirt->background)
 	{

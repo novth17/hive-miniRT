@@ -1,4 +1,6 @@
 #include "../../inc/mini_rt.h"
+#include <stdbool.h>
+#include <sys/types.h>
 
 static
 void set_in_bounds(t_camera *cam)
@@ -65,6 +67,16 @@ static void	esc_key_func(mlx_key_data_t keydata, t_minirt *minirt)
 	}
 }
 
+static
+bool should_recalculate2(key_t key)
+{
+	if (key == MLX_KEY_UP)
+		return (true);
+	if (key == MLX_KEY_DOWN)
+		return (true);
+	return (false);
+}
+
 static inline
 bool should_recalculate(keys_t key)
 {
@@ -90,7 +102,7 @@ bool should_recalculate(keys_t key)
 		return (true);
 	if (key == MLX_KEY_L)
 		return (true);
-	return (false);
+	return (should_recalculate2(key));
 }
 
 
@@ -132,6 +144,16 @@ void check_other_keys(keys_t key, t_minirt *minirt, t_camera *cam)
 		cam->samples_per_pixel -= 1;
 	if (key == MLX_KEY_L)
 		minirt->scene.use_point_light = !minirt->scene.use_point_light;
+	if (key == MLX_KEY_UP)
+	{
+		minirt->scene.light_dist_mult += 0.5f;
+	}
+	if (key == MLX_KEY_DOWN)
+	{
+		minirt->scene.light_dist_mult -= 0.5f;
+		if (minirt->scene.light_dist_mult < 1.0f)
+			minirt->scene.light_dist_mult = 1.0f;
+	}
 }
 
 

@@ -34,7 +34,6 @@ t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float r
 	rec.mat = sp.material;
 	rec.normal = noz(v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius));
 	set_face_normal(&rec, &ray);
-	rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f)); // this
 	return (rec);
 }
 
@@ -126,10 +125,11 @@ t_v3 point_light_color(const t_scene *restrict scene, const t_hit *restrict rec,
 {
 	// look at https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model to make this better
 	// const t_color ambient_light = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
-	const t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
+	const t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio, scene->light.color);
 	float light_angle;
 	t_v3 color;
 
+	dist = dist / scene->light_dist_mult;
 	// light_direction = f32_mul_v3(1.0f / dist, light_direction);
 	light_angle = smoothstep(dot(rec->normal, light_direction), 0.0f, 2.0f);
 	color = f32_mul_v3(light_angle, point_light_color);
@@ -248,7 +248,8 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 
 			rec.mat.specular_color = rec.mat.color; // here for now
 			hit_once = true;
-
+			rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f));
+			// rec.position = V3_SUB(rec.position, v3_mul_f32(ray.direction, 1e-4f));
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
 			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
 			if (scene->use_point_light)
@@ -303,6 +304,7 @@ static inline
 t_ray get_ray(const t_camera *cam, t_cord cord, t_cord strati, uint32_t *seed)
 {
 	const t_v2 offset = sample_square_stratified(strati.x, strati.y, cam->recip_sqrt_spp, seed);
+	// const t_v2 offset = {};
 	const t_v3 x_delta = f32_mul_v3(cord.x + offset.x, cam->pixel_delta_u);
 	const t_v3 y_delta = f32_mul_v3(cord.y + offset.y, cam->pixel_delta_v);
 	const t_v3 pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
@@ -416,7 +418,7 @@ void set_title(t_minirt *minirt)
 	if (status == FAIL)
 	{
 		ft_dprintf(2, "Failed to create title\n"
-			"buf_size <%zu> len <%zu> data <%s>", title.size, title.len, title.buf);
+			"buf_size <%u> len <%u> data <%s>\n", title.size, title.len, title.buf);
 		mlx_set_window_title(minirt->mlx, "MiniRay -- Info not available");
 		return ;
 	}

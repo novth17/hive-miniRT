@@ -290,7 +290,7 @@ float exact_srgb_to_linear(float srgb)
 	}
 	else
     {
-	    l = pow(srgb * 0.9478672986 + 0.0521327014, 2.4);
+	    l = powf(srgb * 0.9478672986 + 0.0521327014, 2.4);
     }
     return (l);
 }
@@ -303,7 +303,7 @@ float exact_linear_to_srgb(float l)
     float s;
 
 	if (l != l)
-		l = 0.0f;
+		l = 1.0f;
     if (l < 0.0f)
     {
 	    l = 0.0f;
@@ -318,7 +318,7 @@ float exact_linear_to_srgb(float l)
 	}
 	else
     {
-	    s = 1.055F * pow(l, 1.0f / 2.4f) - 0.055f;
+	    s = 1.055F * powf(l, 1.0f / 2.4f) - 0.055f;
     }
     return (s);
 }
@@ -341,7 +341,7 @@ uint32_t	exact_pack(t_v4 unpacked)
 		.r = exact_linear_to_srgb(unpacked.r),
 		.g = exact_linear_to_srgb(unpacked.g),
         .b = exact_linear_to_srgb(unpacked.b),
-		.a = exact_linear_to_srgb(unpacked.a),
+		.a = unpacked.a,
 	};
 	// const uint32_t a = (uint32_t)((255.0f * srgb.a) + 0.5f);
 	// const uint32_t b = (uint32_t)((255.0f * srgb.b) + 0.5f);
@@ -376,6 +376,6 @@ t_v4 exact_unpack(uint32_t packed)
 	result.r = exact_srgb_to_linear(unpacked.r);
 	result.g = exact_srgb_to_linear(unpacked.g);
 	result.b = exact_srgb_to_linear(unpacked.b);
-	result.a = exact_srgb_to_linear(unpacked.a);
+	result.a = unpacked.a;
 	return (result);
 }

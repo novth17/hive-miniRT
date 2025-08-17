@@ -20,7 +20,7 @@
 # define WINDOW_HEIGHT 1080
 
 
-#define MIN_HIT_DIST 0.00001f
+#define MIN_HIT_DIST 0.0001f
 #define MAX_HIT_DIST FLT_MAX // for now
 
 typedef struct	s_ambient
@@ -43,7 +43,7 @@ typedef struct s_scene
 	t_ambient	ambient;
 	t_camera	camera;
 	t_light		light;
-	float		light_strength_mult;
+	float		light_dist_mult;
 	bool		use_point_light;
 
 	uint32_t	spheres_count;
