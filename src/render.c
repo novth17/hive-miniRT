@@ -246,7 +246,6 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 		{
 			// if we hit something calculate the light contribution of that point into the total light of the ray
 
-			rec.mat.specular_color = rec.mat.color; // here for now
 			hit_once = true;
 			rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f));
 			// rec.position = V3_SUB(rec.position, v3_mul_f32(ray.direction, 1e-4f));
@@ -344,16 +343,16 @@ t_v4 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_co
 	return (color);
 }
 
-static inline
-t_v3 rgb_u32_to_float(uint32_t c)
-{
-	t_v3 result;
+// static inline
+// t_v3 rgb_u32_to_float(uint32_t c)
+// {
+// 	t_v3 result;
 
-	result.b = (float)((c >> 16) & 0xFF) / 255.0f;
-	result.g = (float)((c >> 8) & 0xFF) / 255.0f;
-	result.r = (float)((c >> 0) & 0xFF) / 255.0f;
-	return (result);
-}
+// 	result.b = (float)((c >> 16) & 0xFF) / 255.0f;
+// 	result.g = (float)((c >> 8) & 0xFF) / 255.0f;
+// 	result.r = (float)((c >> 0) & 0xFF) / 255.0f;
+// 	return (result);
+// }
 
 static inline
 t_v4 accumulate(const t_v4 old_color, const t_v4 new_color)
