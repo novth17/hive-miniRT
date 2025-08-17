@@ -5,6 +5,7 @@
 static int	parse_line(char *line, t_minirt *minirt);
 static void	normalize_whitespace(char *line);
 static int	parse_elements(char **tokens, t_minirt *minirt);
+static void check_fd(t_minirt *minirt, int fd);
 
 int	parse_file(t_minirt *minirt, char *filename)
 {
@@ -13,8 +14,7 @@ int	parse_file(t_minirt *minirt, char *filename)
 
 	line = NULL;
 	fd = open(filename, O_RDONLY);
-	if (fd < 0)
-		exit_error(minirt, ERROR_NOT_EXIST);
+	check_fd(minirt, fd);
 	while ((line = get_next_line(fd)))
 	{
 		if (!is_only_whitespace(line))
@@ -33,6 +33,15 @@ int	parse_file(t_minirt *minirt, char *filename)
 	if (!minirt->file_has_content)
 		exit_error(minirt, ERROR_EMPTY);
 	return (SUCCESS);
+}
+
+static void check_fd(t_minirt *minirt, int fd)
+{
+	if (fd < 0)
+	{
+		print_guide();
+		exit_error(minirt, ERROR_NOT_EXIST);
+	}
 }
 
 static int	parse_line(char *line, t_minirt *minirt)

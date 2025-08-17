@@ -29,6 +29,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/image_to_file.c \
 				$(SRC_DIR)/image_to_file_utils.c \
 				$(SRC_DIR)/string.c \
+				$(SRC_DIR)/guide.c \
 				$(SRC_DIR)/background.c \
 				$(SRC_DIR)/parser/parse.c \
 				$(SRC_DIR)/parser/validate.c \

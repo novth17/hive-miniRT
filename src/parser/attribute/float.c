@@ -5,13 +5,21 @@ static int	is_valid_float(const char *str);
 
 double parse_float(const char *str, bool *is_valid)
 {
+	double value;
+
 	if (!is_valid_float(str))
 	{
 		*is_valid = false;
 		return 0.0;
 	}
+	value = ft_atof(str);
+	if (value < -2147483648.0 || value > 2147483647.0)
+	{
+		*is_valid = false;
+		return 0.0;
+	}
 	*is_valid = true;
-	return (ft_atof(str));
+	return (value);
 }
 
 static int	is_valid_float(const char *str)
