@@ -30,7 +30,7 @@ int	parse_file(t_minirt *minirt, char *filename)
 		free(line);
 	}
 	close(fd);
-	if (!minirt->file_has_content)
+	if (!minirt->file_has_content || !minirt->has_camera)
 		exit_error(minirt, ERROR_EMPTY);
 	return (SUCCESS);
 }
@@ -82,7 +82,10 @@ static int	parse_elements(char **tokens, t_minirt *minirt)
 	if (ft_strcmp(tokens[0], "A") == 0)
 		return parse_ambient(tokens, &minirt->scene);
 	else if (ft_strcmp(tokens[0], "C") == 0)
+	{
+		minirt->has_camera = true;
 		return parse_camera(tokens, &minirt->scene);
+	}
 	else if (ft_strcmp(tokens[0], "L") == 0)
 		return parse_light(tokens, &minirt->scene);
 	else if (ft_strcmp(tokens[0], "sp") == 0)
