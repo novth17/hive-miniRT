@@ -1,20 +1,16 @@
 #include "mini_rt.h"
 
-inline
-float plane_hit(const t_plane pl, const t_ray ray)
+inline float	plane_hit(const t_plane pl, const t_ray ray)
 {
-	float denom;
-	float t;
+	float	denom;
+	float	t;
 
 	denom = dot(pl.axis, ray.direction);
 	if (fabsf(denom) < RAY_PARALLEL_EPSILON)
 		return (-1.0f);
-
 	t = dot(pl.axis, v3_sub_v3(pl.point, ray.origin)) / denom;
-
 	if (t < MIN_HIT_DIST || t > MAX_HIT_DIST)
 		return (-1.0f);
-
 	return (t);
 }
 
@@ -27,9 +23,8 @@ If it hits the front: use the normal as-is.
 If it hits the back: flip the normal so it still
 points against the ray direction.
 */
-
-static inline
-t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl, const float t)
+static inline t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl,
+		const float t)
 {
 	t_hit	rec;
 	t_v3	face_normal;
@@ -47,12 +42,12 @@ t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl, const float t)
 	return (rec);
 }
 
-inline
-float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t count, const t_ray ray)
+inline float	check_planes(t_hit *restrict rec, const t_plane *planes,
+		const uint32_t count, const t_ray ray)
 {
-	uint32_t i;
-	float t;
-	float closest;
+	uint32_t	i;
+	float		t;
+	float		closest;
 
 	i = 0;
 	closest = rec->distance;
