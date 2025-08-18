@@ -387,6 +387,41 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 			color = accumulate(exact_unpack(*out), color);
 			*out++ = exact_pack(color);
 
+
+			// lerp(color.r)
+
+			// uint32_t rgba = exact_pack(color);
+			// int num = roundf(random_float(&rng_seed) * 4.0f);
+			// uint32_t r = (rgba >> 0) & 0xff;
+			// uint32_t g = (rgba >> 8) & 0xff;
+			// uint32_t b = (rgba >> 16) & 0xff;
+			// uint32_t a = (rgba >> 24) & 0xff;
+			// switch (num)
+			// {
+			// 	case 1: r += random_float(&rng_seed) * 4.0f; break;
+			// 	case 2: g += random_float(&rng_seed) * 4.0f; break;
+			// 	case 3: b += random_float(&rng_seed) * 4.0f; break;
+			// }
+
+			// *out++ = (a << 24 | b << 16 | g << 8 | r << 0);
+			// t_color luminance;
+		 // 	luminance.r = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+			// luminance.g = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+			// luminance.b = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+			// t_color threshold;
+
+			// threshold = (t_v3){};
+			// if (luminance.r >= 0.5f)
+			// 	threshold.r = 1.0f;
+			// if (luminance.g >= 0.5f)
+			// 	threshold.g = 1.0f;
+			// if (luminance.b >= 0.5f)
+			// 	threshold.b = 1.0f;
+
+			// *out++ = exact_pack((t_v4){.rgb = threshold, .a = color.a});
+			// *out++ = exact_pack((t_v4){.rgb = luminance, .a = color.a});
+
+
 			// color = accumulate(gamma2_unpack(*out), color);
 			// *out++ = gamma2_pack(color);
 
@@ -405,7 +440,7 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 static
 void set_title(t_minirt *minirt)
 {
-	static char title_buf[100] = "gamma2 MiniRay --";
+	static char title_buf[100] = "MiniRay --";
 	int status;
 	t_string title;
 

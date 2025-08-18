@@ -1,5 +1,6 @@
 #include "../../inc/rt_math.h"
 
+
 // @TODO delete probably
 // inline
 // float Pow(float a, float b)
@@ -304,8 +305,7 @@ float exact_linear_to_srgb(float l)
 
 	if (l != l)
 	{
-		l = 1.0f;
-		printf("panic!!!");
+		l = 0.0f;
 	}
     if (l < 0.0f)
     {
@@ -421,8 +421,7 @@ float gamma2_linear_to_srgb(float l)
 
 	if (l != l)
 	{
-		l = 1.0f;
-		printf("panic!!!");
+		l = 0.0f;
 	}
     if (l < 0.0f)
     {
