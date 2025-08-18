@@ -1,11 +1,10 @@
-# include "mini_rt.h"
+#include "mini_rt.h"
 
-//valgrind --leak-check=full --show-leak-kinds=all  --suppressions=mlx42.supp ./mini_rt test_scene.rt
+//valgrind --leak-check=full --show-leak-kinds=all  --suppressions=mlx42.supp
+//./mini_rt test_scene.rt
 
 static int	parse_line(char *line, t_minirt *minirt);
-static void	normalize_whitespace(char *line);
 static int	parse_elements(char **tokens, t_minirt *minirt);
-static void check_fd(t_minirt *minirt, int fd);
 
 int	parse_file(t_minirt *minirt, char *filename)
 {
@@ -15,7 +14,7 @@ int	parse_file(t_minirt *minirt, char *filename)
 	line = NULL;
 	fd = open(filename, O_RDONLY);
 	check_fd(minirt, fd);
-	while ((line = get_next_line(fd)))
+	while (set_next_line(&line, fd))
 	{
 		if (!is_only_whitespace(line))
 		{
@@ -35,19 +34,10 @@ int	parse_file(t_minirt *minirt, char *filename)
 	return (SUCCESS);
 }
 
-static void check_fd(t_minirt *minirt, int fd)
-{
-	if (fd < 0)
-	{
-		print_guide();
-		exit_error(minirt, ERROR_NOT_EXIST);
-	}
-}
-
 static int	parse_line(char *line, t_minirt *minirt)
 {
-	char **tokens;
-	int status;
+	char	**tokens;
+	int		status;
 
 	status = SUCCESS;
 	ft_dprintf(1, "\nDEBUG!: line: %s", line);
@@ -56,45 +46,32 @@ static int	parse_line(char *line, t_minirt *minirt)
 	if (!tokens || !tokens[0])
 	{
 		ft_free_2d(tokens);
-		return(print_error(ERROR_MALLOC, NULL));
+		return (print_error(ERROR_MALLOC, NULL));
 	}
-
 	for (int i = 0; tokens[i] != NULL; ++i)
 		ft_dprintf(1, "DEBUG!: tokens[%i]: <%s>\n", i, tokens[i]);
-
 	status = parse_elements(tokens, minirt);
 	ft_free_2d(tokens);
 	return (status);
 }
 
-static void normalize_whitespace(char *line)
-{
-	while (*line)
-	{
-		if (ft_isspace(*line))
-			*line = ' ';
-		line++;
-	}
-}
-
 static int	parse_elements(char **tokens, t_minirt *minirt)
 {
 	if (ft_strcmp(tokens[0], "A") == 0)
-		return parse_ambient(tokens, &minirt->scene);
+		return (parse_ambient(tokens, &minirt->scene));
 	else if (ft_strcmp(tokens[0], "C") == 0)
 	{
 		minirt->has_camera = true;
-		return parse_camera(tokens, &minirt->scene);
+		return (parse_camera(tokens, &minirt->scene));
 	}
 	else if (ft_strcmp(tokens[0], "L") == 0)
-		return parse_light(tokens, &minirt->scene);
+		return (parse_light(tokens, &minirt->scene));
 	else if (ft_strcmp(tokens[0], "sp") == 0)
-		return parse_sphere(tokens, &minirt->scene);
+		return (parse_sphere(tokens, &minirt->scene));
 	else if (ft_strcmp(tokens[0], "pl") == 0)
-		return parse_plane(tokens, &minirt->scene);
+		return (parse_plane(tokens, &minirt->scene));
 	else if (ft_strcmp(tokens[0], "cy") == 0)
-		return parse_cyl(tokens, &minirt->scene);
+		return (parse_cyl(tokens, &minirt->scene));
 	print_error(UNK_ELEMENT, tokens[0]);
 	return (FAIL);
 }
-

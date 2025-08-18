@@ -1,8 +1,8 @@
 #include "mini_rt.h"
 
-static int parse_mat_args1(char **t, t_scene *scene, int o, t_material *m)
+static int	parse_mat_args1(char **t, t_scene *scene, int o, t_material *m)
 {
-	const int count = ft_count_2d(t) - o;
+	const int	count = ft_count_2d(t) - o;
 
 	if (count > 1)
 	{
@@ -19,9 +19,9 @@ static int parse_mat_args1(char **t, t_scene *scene, int o, t_material *m)
 	return (SUCCESS);
 }
 
-static int parse_mat_args2(char **t, t_scene *scene, int o, t_material *m)
+static int	parse_mat_args2(char **t, t_scene *scene, int o, t_material *m)
 {
-	const int count = ft_count_2d(t) - o;
+	const int	count = ft_count_2d(t) - o;
 
 	if (count > 3)
 	{
@@ -38,7 +38,7 @@ static int parse_mat_args2(char **t, t_scene *scene, int o, t_material *m)
 	return (SUCCESS);
 }
 
-int parse_material(char **t, t_scene *scene, t_material *m, int o)
+int	parse_material(char **t, t_scene *scene, t_material *m, int o)
 {
 	m->color = parse_color(t[o], &scene->is_valid);
 	if (!scene->is_valid)
@@ -47,9 +47,7 @@ int parse_material(char **t, t_scene *scene, t_material *m, int o)
 	m->specular_probability = 0.0f;
 	m->emitter = 0.0f;
 	m->specular_color = (t_v3){{1.0, 1.0, 1.0}};
-
 	if (parse_mat_args1(t, scene, o, m) || parse_mat_args2(t, scene, o, m))
 		return (FAIL);
 	return (SUCCESS);
 }
-

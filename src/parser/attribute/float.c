@@ -1,32 +1,33 @@
-# include "mini_rt.h"
+#include "mini_rt.h"
 
 static int	check_decimal_places(const char *str);
-static int	is_valid_float(const char *str);
+static int	is_valid_float(const char *str, int i, int dot_count);
 
-double parse_float(const char *str, bool *is_valid)
+double	parse_float(const char *str, bool *is_valid)
 {
-	double value;
+	double	value;
+	int		i;
+	int		dot_count;
 
-	if (!is_valid_float(str))
+	i = 0;
+	dot_count = 0;
+	if (!is_valid_float(str, i, dot_count))
 	{
 		*is_valid = false;
-		return 0.0;
+		return (0.0);
 	}
 	value = ft_atof(str);
 	if (value < -2147483648.0 || value > 2147483647.0)
 	{
 		*is_valid = false;
-		return 0.0;
+		return (0.0);
 	}
 	*is_valid = true;
 	return (value);
 }
 
-static int	is_valid_float(const char *str)
+static int	is_valid_float(const char *str, int i, int dot_count)
 {
-	int i = 0;
-	int dot_count = 0;
-
 	if (!str || !*str)
 		return (0);
 	if (str[i] == '-' || str[i] == '+')
@@ -52,7 +53,7 @@ static int	is_valid_float(const char *str)
 
 static int	check_decimal_places(const char *str)
 {
-	int		decimal_places;
+	int	decimal_places;
 
 	decimal_places = 0;
 	while (*str && *str != '.')
