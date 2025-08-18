@@ -16,7 +16,7 @@ static void print_usage(char **tokens)
 	else if (ft_strcmp(tokens[0], "pl") == 0)
 	{
 		ft_dprintf(1, GREEN"Usage: pl <point:x,y,z> <normal:x,y,z> <R,G,B> "
-			"[<diffuse> <specular> <emitter> <specular color> ]\n"RESET);
+			"[<diffuse> <specular> <emitter> <specular color>]\n"RESET);
 	}
 }
 

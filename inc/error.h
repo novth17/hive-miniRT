@@ -13,7 +13,7 @@
 #define ERROR_IN_RANGE 	RED "Component must be in range [-1,1]" RESET
 #define ERROR_FOV		RED "FOV: not in range [0,180]" RESET
 #define ERROR_NORM		RED "Not a normalized vector" RESET
-#define ERROR_EMPTY		RED "File is empty" RESET
+#define ERROR_EMPTY		RED "File is empty or no camera detected!" RESET
 #define	ERROR_NOT_EXIST	RED "No such file exists" RESET
 #define ERROR_MALLOC	RED "Malloc failed" RESET
 #define	UNK_ELEMENT		RED "Unknown element of element id:" RESET

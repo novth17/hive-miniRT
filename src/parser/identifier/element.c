@@ -31,7 +31,7 @@ int parse_camera(char **tokens, t_scene *scene)
 
 	if (!is_in_range_vec3(scene->camera.lookat))
 		return (print_error("Camera: ratio: "ERROR_IN_RANGE, NULL));
-	if(!is_normalized(scene->camera.lookat))
+	if(!is_normalized(&scene->camera.lookat))
 		return (print_error("Camera: ratio: "ERROR_NORM, NULL));
 
 	scene->camera.fov = parse_float(tokens[3], &scene->is_valid);

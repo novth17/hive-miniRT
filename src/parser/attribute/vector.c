@@ -5,13 +5,15 @@ static double	calc_v3_len(t_vec3 vec3)
 	return (square_root(vec3.x * vec3.x + vec3.y * vec3.y + vec3.z * vec3.z));
 }
 
-bool is_normalized(t_vec3 vec)
+bool is_normalized(t_vec3 *vec)
 {
     float len;
 
-	len = calc_v3_len(vec);
-	printf("Length of the vector is %f\n", len);
-    return (fabs(len - 1.0f) < 1e-1f);
+	len = calc_v3_len(*vec);
+	printf("DEBUG: Length of the vector is %f\n", len);
+	*vec = normalize(*vec);
+	printf("DEBUG: Length of the vector is %f\n", length(*vec));
+    return (fabsf(len - 1.0f) < 1e-1f);
 }
 
 static double parse_vec3_comp(char **str, bool *is_valid_comp)

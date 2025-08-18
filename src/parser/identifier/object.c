@@ -59,7 +59,7 @@ int parse_plane(char **tokens, t_scene *scene)
 		return (print_error("Plane: axis: " ERROR_COORD, tokens[2]));
 	if (!is_in_range_vec3(object->pl.axis))
 		return (print_error("Plane: axis: " ERROR_IN_RANGE, tokens[2]));
-	if (!is_normalized(object->pl.axis))
+	if (!is_normalized(&object->pl.axis))
 		return (print_error("Plane: axis: " ERROR_NORM, tokens[2]));
 	if (parse_material(tokens, scene, &object->pl.material, 3))
 	{
@@ -79,7 +79,7 @@ static int parse_cyl_elem(char **tokens, t_scene *scene, t_object *object)
 		return (print_error("Cylinder: axis: " ERROR_COORD, tokens[2]));
 	if (!is_in_range_vec3(object->cyl.axis))
 		return (print_error("Cylinder: axis: " ERROR_IN_RANGE, tokens[2]));
-	if (!is_normalized(object->cyl.axis))
+	if (!is_normalized(&object->cyl.axis))
 		return (print_error("Cylinder: axis: " ERROR_NORM, tokens[2]));
 	object->cyl.diameter = parse_float(tokens[3], &scene->is_valid);
 	if (object->cyl.diameter < 0)
