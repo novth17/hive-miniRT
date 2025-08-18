@@ -20,7 +20,6 @@ int	run_minirt(t_minirt *minirt, char **argv)
 	minirt->scene.light_dist_mult = 1.0f;
 	minirt->scene.use_point_light = true;
 	minirt->recalculate_cam = 1;
-
 	mlx_loop(minirt->mlx);
 	mlx_terminate(minirt->mlx);
 	return (SUCCESS);
