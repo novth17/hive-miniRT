@@ -15,10 +15,14 @@ MLX42 := $(MLX42_DIR)/build/libmlx42.a
 OBJ_DIR		= obj/
 SRC_DIR		= src
 
-HEADERS		= 	inc/error.h \
+HEADERS		= 	inc/camera.h \
+				inc/error.h \
+				inc/hit.h \
+				inc/image_to_file.h \
 				inc/mini_rt.h \
 				inc/object.h \
-				inc/rt_math.h
+				inc/rt_math.h \
+				inc/types.h
 
 SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/init.c \
@@ -32,6 +36,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/guide.c \
 				$(SRC_DIR)/background.c \
 				$(SRC_DIR)/parser/parse.c \
+				$(SRC_DIR)/parser/parse_utils.c \
 				$(SRC_DIR)/parser/validate.c \
 				$(SRC_DIR)/parser/fill_arr.c \
 				$(SRC_DIR)/parser/attribute/color.c \
