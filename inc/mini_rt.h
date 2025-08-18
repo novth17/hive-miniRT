@@ -58,10 +58,6 @@ typedef struct s_scene
 	t_object	*objects;
 	bool		is_valid;
 
-
-
-
-
 }	t_scene;
 
 
@@ -83,6 +79,7 @@ typedef struct s_mini_rt
 
 	t_scene			scene;
 	bool			file_has_content;
+	bool			has_camera;
 
 	bool			write_image_to_file;
 	bool			recalculate_cam;
@@ -121,7 +118,7 @@ t_color	parse_color(char *str, bool *is_valid);
 t_vec3	parse_vec3(char *str, bool *is_valid);
 bool	is_in_range_vec3(t_vec3 vector);
 bool	check_comma_and_move(char **str, bool *is_valid);
-bool	is_normalized(t_vec3 vec3);
+bool	is_normalized(t_vec3 *vec);
 int		parse_material(char **t, t_scene *scene, t_material *m, int o);
 
 /* ===================== FILL ARRAY ===================== */
