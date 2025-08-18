@@ -12,6 +12,7 @@
 # include "../libs/libft/inc/libft.h"
 # include "object.h"
 # include "error.h"
+# include "hit.h"
 
 # include "rt_math.h"
 # include "camera.h"
@@ -60,16 +61,6 @@ typedef struct s_scene
 
 }	t_scene;
 
-
-typedef struct s_hit_record
-{
-	t_v3 position; // p
-	t_v3 normal;
-	float distance; // t
-	bool front_face; // maybe not needed;
-	bool did_hit; // can be removed later
-	t_material mat; // for now maybe have material index or smth idunno
-} t_hit;
 
 typedef struct s_mini_rt
 {
@@ -120,6 +111,9 @@ bool	is_in_range_vec3(t_vec3 vector);
 bool	check_comma_and_move(char **str, bool *is_valid);
 bool	is_normalized(t_vec3 *vec);
 int		parse_material(char **t, t_scene *scene, t_material *m, int o);
+char	*set_next_line(char **line, int fd);
+void	check_fd(t_minirt *minirt, int fd);
+void	normalize_whitespace(char *line);
 
 /* ===================== FILL ARRAY ===================== */
 int fill_obj_arr(t_minirt *minirt, t_scene *scene);
