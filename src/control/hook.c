@@ -54,17 +54,12 @@ void scroll_hook(double delta_x, double delta_y, void *param)
 	set_in_bounds(cam);
 }
 
-
 // maybe just close window and leave from main?
 // or maybe this is easier i dunno
 static void	esc_key_func(mlx_key_data_t keydata, t_minirt *minirt)
 {
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
-	{
-		mlx_terminate(minirt->mlx);
-		delete_minirt(minirt);
-		exit(EXIT_SUCCESS);
-	}
+		mlx_close_window(minirt->mlx);
 }
 
 static
