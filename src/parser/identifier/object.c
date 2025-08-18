@@ -1,8 +1,8 @@
 #include "mini_rt.h"
 
-static t_object *create_objects(t_scene *scene, t_obj_type type)
+static t_object	*create_objects(t_scene *scene, t_obj_type type)
 {
-	t_object *obj;
+	t_object	*obj;
 
 	obj = malloc(sizeof(t_object));
 	if (!obj)
@@ -17,9 +17,9 @@ static t_object *create_objects(t_scene *scene, t_obj_type type)
 	return (obj);
 }
 
-int parse_sphere(char **tokens, t_scene *scene)
+int	parse_sphere(char **tokens, t_scene *scene)
 {
-	t_object *object;
+	t_object	*object;
 
 	if (check_obj_args_count(tokens, "Sphere", SP_ARG_MIN, SP_ARG_MAX) == FAIL)
 		return (FAIL);
@@ -42,9 +42,9 @@ int parse_sphere(char **tokens, t_scene *scene)
 	return (SUCCESS);
 }
 
-int parse_plane(char **tokens, t_scene *scene)
+int	parse_plane(char **tokens, t_scene *scene)
 {
-	t_object *object;
+	t_object	*object;
 
 	if (check_obj_args_count(tokens, "Plane", PL_ARG_MIN, PL_ARG_MAX) == FAIL)
 		return (FAIL);
@@ -69,7 +69,7 @@ int parse_plane(char **tokens, t_scene *scene)
 	return (SUCCESS);
 }
 
-static int parse_cyl_elem(char **tokens, t_scene *scene, t_object *object)
+static int	parse_cyl_elem(char **tokens, t_scene *scene, t_object *object)
 {
 	object->cyl.center = parse_vec3(tokens[1], &scene->is_valid);
 	if (!scene->is_valid)
@@ -83,7 +83,8 @@ static int parse_cyl_elem(char **tokens, t_scene *scene, t_object *object)
 		return (print_error("Cylinder: axis: " ERROR_NORM, tokens[2]));
 	object->cyl.diameter = parse_float(tokens[3], &scene->is_valid);
 	if (object->cyl.diameter < 0)
-		return (print_error("Cylinder: diameter: Can't be negative", tokens[3]));
+		return (print_error("Cylinder: diameter: Can't be negative",
+				tokens[3]));
 	if (!scene->is_valid)
 		return (print_error("Cylinder: diameter: " ERROR_FLOAT, tokens[3]));
 	object->cyl.height = parse_float(tokens[4], &scene->is_valid);
@@ -94,9 +95,9 @@ static int parse_cyl_elem(char **tokens, t_scene *scene, t_object *object)
 	return (SUCCESS);
 }
 
-int parse_cyl(char **tokens, t_scene *scene)
+int	parse_cyl(char **tokens, t_scene *scene)
 {
-	t_object *object;
+	t_object	*object;
 
 	if (check_obj_args_count(tokens, "Cylinder", CYL_ARG_MIN, CYL_ARG_MAX))
 		return (FAIL);

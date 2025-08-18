@@ -1,6 +1,6 @@
 #include "mini_rt.h"
 
-static float parse_rgb_comp(char **str, bool *is_valid_comp)
+static float	parse_rgb_comp(char **str, bool *is_valid_comp)
 {
 	long	num;
 	int		i;
@@ -28,26 +28,22 @@ static float parse_rgb_comp(char **str, bool *is_valid_comp)
 	return (exact_srgb_to_linear((float)num / 255.0f));
 }
 
-t_color parse_color(char *str, bool *is_valid)
+t_color	parse_color(char *str, bool *is_valid)
 {
 	t_color	color;
 
 	*is_valid = true;
-
 	color.r = parse_rgb_comp(&str, is_valid);
 	if (!check_comma_and_move(&str, is_valid))
 		return ((t_color){});
-
 	color.g = parse_rgb_comp(&str, is_valid);
 	if (!check_comma_and_move(&str, is_valid))
 		return ((t_color){});
-
 	color.b = parse_rgb_comp(&str, is_valid);
 	if (!*is_valid || (*str != '\0' && !ft_isspace(*str)))
 	{
 		*is_valid = false;
 		return ((t_color){});
 	}
-
-	return color;
+	return (color);
 }
