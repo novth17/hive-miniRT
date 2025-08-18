@@ -122,6 +122,8 @@ int fill_obj_arr(t_minirt *minirt, t_scene *scene);
 
 void key_hook(struct mlx_key_data data, void * param);
 void scroll_hook(double delta_x, double delta_y, void *param);
+void mouse_hook(double xpos, double ypos, void* param);
+void mouse_control(t_minirt *minirt);
 
 /* ===================== FOR DRAW ===================== */
 void init_camera_for_frame(t_minirt *minirt, t_camera *cam);

@@ -46,6 +46,58 @@ float square_root(float a)
 	return (result);
 }
 
+float q_length(t_v4 q)
+{
+	float result;
+
+	result = q.x*q.x + q.y*q.y + q.z*q.z + q.w*q.w;
+	return (square_root(result));
+}
+
+t_v4 unit_quaternion(t_v4 q)
+{
+	const float one_over_len = 1.0f / q_length(q);
+	t_v4 result;
+
+	result.x = q.x * one_over_len;
+	result.y = q.y * one_over_len;
+	result.z = q.z * one_over_len;
+	result.w = q.w * one_over_len;
+	return (result);
+}
+
+t_v4 q_mul_v3(t_v4 q, t_v3 v)
+{
+	const float w = -(q.x * v.x) - (q.y * v.y) - (q.z * v.z);
+	const float x = (q.w * v.x) + (q.y * v.z) - (q.z * v.y);
+	const float y = (q.w * v.y) + (q.z * v.x) - (q.x * v.z);
+	const float z = (q.w * v.z) + (q.x * v.y) - (q.y * v.x);
+
+	return (v4(x, y, z, w));
+}
+
+t_v4 q_mul_q(t_v4 a, t_v4 b)
+{
+	const float w = (a.w * b.w) - (a.x * b.x) - (a.y * b.y) - (a.z * b.z);
+	const float x = (a.x * b.w) + (a.w * b.x) + (a.y * b.z) - (a.z * b.y);
+	const float y = (a.y * b.w) + (a.w * b.y) + (a.z * b.x) - (a.x * b.z);
+	const float z = (a.z * b.w) + (a.w * b.z) + (a.x * b.y) - (a.y * b.x);
+
+	return (v4(x, y, z, w));
+}
+
+t_v4 quaternion_conjugate(t_v4 q)
+{
+	t_v4 result;
+
+	result.w = q.w;
+	result.x = -q.x;
+	result.y = -q.y;
+	result.z = -q.z;
+	return (result);
+}
+
+
 inline
 t_v4	v4(float x, float y, float z, float w)
 {

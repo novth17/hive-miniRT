@@ -53,6 +53,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/math/interpolate.c \
 				$(SRC_DIR)/math/random.c \
 				$(SRC_DIR)/control/hook.c \
+				$(SRC_DIR)/control/mouse.c \
 				$(SRC_DIR)/shape/pl_hit.c \
 				$(SRC_DIR)/shape/cyl_side_hit.c  \
 				$(SRC_DIR)/shape/cyl_hit.c
