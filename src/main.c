@@ -10,7 +10,7 @@
 
 
 static
-int	run_minirt(t_minirt *minirt, char **argv)
+int		run_minirt(t_minirt *minirt, char **argv)
 {
 	if (init_minirt(minirt, argv) == FAIL)
 		return (FAIL);
@@ -27,7 +27,7 @@ int	run_minirt(t_minirt *minirt, char **argv)
 
 int	main(int argc, char **argv)
 {
-	t_minirt minirt;
+	t_minirt	minirt;
 
 	if (validate_input(argc, argv[1]) == FAIL)
 		return (FAIL);

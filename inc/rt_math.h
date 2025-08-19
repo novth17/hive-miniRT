@@ -50,11 +50,16 @@ t_v3		noz(t_v3 a);
 t_v4	v4(float x, float y, float z, float w);
 t_v4	v4_mul_f32(t_v4 a, float b);
 t_v4	v4_add(t_v4 a, t_v4 b);
+
+// quaternion.c
+/////////////////////////////
 t_v4 	quaternion_conjugate(t_v4 q);
 t_v4 	q_mul_q(t_v4 a, t_v4 b);
 t_v4 	q_mul_v3(t_v4 q, t_v3 v);
-t_v4	unit_quaternion(t_v4 q);
-float	q_length(t_v4 q);
+t_v4	quaternion_from_axis_angle(t_v3 axis, float angle);
+t_v3	rotate(t_v3 direction, t_v3 axis, float angle);
+
+/////////////////////////////
 
 
 t_v4		linear_to_srgb255(t_v4 c);

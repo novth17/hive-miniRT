@@ -7,95 +7,12 @@
 
 static uint32_t g_accummulated_frames = 0;
 
-#if 1
-	#define STRATI
-#endif
-
-#define A x
-#define H y
-#define C z
-
-inline
-void set_face_normal(t_hit * restrict rec, const t_ray *restrict ray)
-{
-	rec->front_face = dot(ray->direction, rec->normal) < 0;
-	if (false == rec->front_face)
-		rec->normal = neg(rec->normal);
-}
-
-
-static inline
-t_hit create_sphere_hit_record(const t_ray ray, const t_sphere sp, const float root)
-{
-	t_hit rec;
-
-	rec.did_hit = true;
-	rec.distance = root;
-	rec.position = at(ray, rec.distance);
-	rec.mat = sp.material;
-	rec.normal = noz(v3_div_f32(V3_SUB(rec.position, sp.center), sp.radius));
-	set_face_normal(&rec, &ray);
-	return (rec);
-}
-
-static inline
-float sphere_hit(const t_sphere sp, const t_ray ray)
-{
-	const t_v3 oc = v3_sub_v3(sp.center, ray.origin);
-	const t_v3 v = {
-			.A = dot(ray.direction, ray.direction), 	// const float a = dot(ray.direction, ray.direction);
-			.H = dot(ray.direction, oc), 				// const float h = dot(ray.direction, oc);
-			.C = dot(oc, oc) - sp.radius*sp.radius}; 	// const float c = dot(oc, oc) - sp.radius*sp.radius;
-	const float discriminant = v.H*v.H - v.A*v.C;
-	float sqrtd;
-	float root;
-
-	if (discriminant < 0)
-		return (-1.0f);
-	sqrtd = square_root(discriminant);
-	root = (v.H - sqrtd) / v.A;
-	if (root <= MIN_HIT_DIST || root >= MAX_HIT_DIST)
-	{
-		root = (v.H + sqrtd) / v.A;
-		if (root <= MIN_HIT_DIST || root >= MAX_HIT_DIST)
-			return (-1.0f);
-	}
-	return (root);
-}
-
-static inline
-float check_spheres(t_hit *restrict rec, const t_sphere *spheres, const uint32_t count, const t_ray ray)
-{
-	// t_hit temp_rec;
-	uint32_t i;
-
-	// temp_rec = (t_hit){};
-	// temp_rec.distance = MAX_HIT_DIST;
-	float hit_distance;
-	float current_hit_distance = rec->distance;
-	i = 0;
-	while (i < count)
-	{
-		hit_distance = sphere_hit(spheres[i], ray);
-		if(hit_distance > MIN_HIT_DIST && hit_distance < current_hit_distance)
-		{
-			*rec = create_sphere_hit_record(ray, spheres[i], hit_distance); // @QUESTION when to use set_face_normal - here or later?
-			current_hit_distance = hit_distance;
-			// *rec = temp_rec;
-		}
-		++i;
-	}
-	return (current_hit_distance);
-}
-
 static inline
 bool shadow_hit(const t_scene *scene, const t_ray ray, const float light_distance)
 {
 	uint32_t i;
 	float hit_distance;
 
-	// im probably calculating something wrong
-	// the shadow rays are causing point lights to not work inside room_test.rt
 	i = -1;
 	while (++i < scene->pl_count)
 	{
@@ -103,7 +20,6 @@ bool shadow_hit(const t_scene *scene, const t_ray ray, const float light_distanc
 		if (hit_distance > MIN_HIT_DIST && hit_distance < light_distance)
 			return (true);
 	}
-
 	i = -1;
 	while (++i < scene->spheres_count)
 	{
@@ -146,14 +62,16 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 	const t_v3 light_vector = V3_SUB(scene->light.origin, rec->position);
 	const float light_distance = length(light_vector);
 	t_ray shadow_ray;
+	t_color color;
 
+	color = v3(0, 0, 0);
 	shadow_ray.origin = rec->position;
 	shadow_ray.direction = f32_mul_v3(1.0f / light_distance, light_vector);
 	if (shadow_hit(scene, shadow_ray, light_distance) == false)
 	{
-		return(point_light_color(scene, rec, shadow_ray.direction, light_distance));
+		color = point_light_color(scene, rec, shadow_ray.direction, light_distance);
 	}
-	return (v3(0, 0, 0));
+	return (color);
 }
 
 
@@ -211,8 +129,8 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 	// ray.origin = V3_SUB(rec->position, v3_mul_f32(ray.direction, 1e-4f)); // look to see if this value is good or not
 	ray.origin = rec->position;
 	// ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
-	ray.direction = normalize(v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce)); // do we need to normalize?
-
+	ray.direction = v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce); // do we need to normalize?
+	ray.direction = normalize(ray.direction);
 
 
 
@@ -261,7 +179,7 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 
 			if (i > 0 && !prev_specular)
 			{
-				float p = fmax(ray_color.r, fmax(ray_color.g, ray_color.b));
+				float p = fmaxf(ray_color.r, fmaxf(ray_color.g, ray_color.b));
 				if (random_float(seed) >= p)
 				{
 					ray_color = prev_color;
@@ -303,11 +221,14 @@ t_v3 defocus_disk_sample(const t_camera *restrict cam, uint32_t *rng_state)
 static inline
 t_ray get_ray(const t_camera *cam, t_cord cord, t_cord strati, uint32_t *seed)
 {
-	const t_v2 offset = sample_square_stratified(strati.x, strati.y, cam->recip_sqrt_spp, seed);
-	// const t_v2 offset = {};
-	const t_v3 x_delta = f32_mul_v3(cord.x + offset.x, cam->pixel_delta_u);
-	const t_v3 y_delta = f32_mul_v3(cord.y + offset.y, cam->pixel_delta_v);
-	const t_v3 pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
+	const t_v2	offset = sample_square_stratified(
+		strati.x,
+		strati.y,
+		cam->recip_sqrt_spp,
+		seed);
+	const t_v3	x_delta = f32_mul_v3(cord.x + offset.x, cam->pixel_delta_u);
+	const t_v3	y_delta = f32_mul_v3(cord.y + offset.y, cam->pixel_delta_v);
+	const t_v3	pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
 	t_ray ray;
 
 	ray.origin = cam->camera_center;
@@ -319,11 +240,11 @@ t_ray get_ray(const t_camera *cam, t_cord cord, t_cord strati, uint32_t *seed)
 
 t_v4 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_cord original_cord, uint32_t seed)
 {
-	t_ray ray;
-	t_v4 color;
-	t_v4 incoming_light;
-	int y_s;
-	int x_s;
+	t_ray	ray;
+	t_v4	color;
+	t_v4	incoming_light;
+	int32_t	y_s;
+	int32_t	x_s;
 
 	incoming_light = v4(0, 0, 0, 0);
 	y_s = 0;
@@ -440,19 +361,19 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 static
 void set_title(t_minirt *minirt)
 {
-	static char title_buf[100] = "MiniRay --";
+	static char title_base[100] = "MiniRay";
 	int status;
 	t_string title;
 
-	title.buf = title_buf;
-	title.size = sizeof(title_buf);
-	title.len = sizeof("MiniRay --") - 1;
+	title.buf = title_base;
+	title.size = sizeof(title_base);
+	title.len = sizeof("MiniRay") - 1;
 	status = 0;
-	status = cat_cstring_to_string(&title, " frame time: ");
+	status = cat_cstring_to_string(&title, " -- Frame Time: ");
 	status = cat_uint_to_str(&title, round(minirt->mlx->delta_time * 1000));
-	status = cat_cstring_to_string(&title, " SPP: ");
+	status = cat_cstring_to_string(&title, " -- Samples: ");
 	status = cat_uint_to_str(&title, minirt->scene.camera.samples_per_pixel);
-	status = cat_cstring_to_string(&title, " max bounces: ");
+	status = cat_cstring_to_string(&title, " -- Max Bounces: ");
 	status = cat_uint_to_str(&title, minirt->scene.camera.max_bounce);
 	if (status == FAIL)
 	{
@@ -473,6 +394,31 @@ void recalculate_camera(t_minirt *minirt, t_camera *frame_cam)
 	g_accummulated_frames = 0;
 }
 
+void prepare_to_render(t_minirt *minirt, mlx_t *mlx, mlx_image_t *img, t_camera *frame_cam)
+{
+	set_title(minirt);
+	if (check_movement_keys(&minirt->scene.camera, mlx, mlx->delta_time))
+		minirt->recalculate_cam = true;
+	mouse_control(minirt);
+	if (minirt->write_image_to_file == true)
+	{
+		pixels_to_image_file(minirt->image);
+		minirt->write_image_to_file = false;
+	}
+	if (img->width != (uint32_t)mlx->width || img->height != (uint32_t)mlx->height)
+	{
+		if (mlx_resize_image(minirt->image, mlx->width, mlx->height) == false)
+			ft_putstr_fd("miniRT: Failed to resize image\n", 2);
+		if (mlx_resize_image(minirt->background, mlx->width, mlx->height) == false)
+			ft_putstr_fd("miniRT: Failed to resize background\n", 2);
+		recalculate_camera(minirt, frame_cam);
+		draw_background(minirt);
+	}
+	if (minirt->recalculate_cam == true)
+	{
+		recalculate_camera(minirt, frame_cam);
+	}
+}
 
 void per_frame(void * param)
 {
@@ -482,25 +428,7 @@ void per_frame(void * param)
 
 	minirt = (t_minirt *)param;
 	mlx = minirt->mlx;
-	set_title(minirt);
-	if (minirt->write_image_to_file == true)
-	{
-		pixels_to_image_file(minirt->image);
-		minirt->write_image_to_file = false;
-	}
-	if (minirt->image->width != (uint)mlx->width || minirt->image->height != (uint)mlx->height)
-	{
-		if (mlx_resize_image(minirt->image, mlx->width, mlx->height) == false)
-			ft_putstr_fd("miniRT: Failed to resize image\n", 2);
-		if (mlx_resize_image(minirt->background, mlx->width, mlx->height) == false)
-			ft_putstr_fd("miniRT: Failed to resize background\n", 2);
-		recalculate_camera(minirt, &frame_cam);
-		draw_background(minirt);
-	}
-	if (minirt->recalculate_cam == true)
-	{
-		recalculate_camera(minirt, &frame_cam);
-	}
+	prepare_to_render(minirt, mlx, minirt->image, &frame_cam);
 	render(&minirt->scene, &frame_cam, (uint32_t *)minirt->image->pixels);
 	++g_accummulated_frames;
 }
