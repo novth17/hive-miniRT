@@ -3,7 +3,7 @@ NAME		= miniRT
 CC			= cc
 INCLUDE		:= -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
 
-CFLAGS		= $(INCLUDE) -Wall -Wextra -O3 -flto -march=native #-Werror
+CFLAGS		= $(INCLUDE) -Wall -Wextra -flto -march=native -O3 #-Werror
 
 
 LIBFT_DIR := libs/libft
@@ -49,13 +49,18 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/math/vec2.c \
 				$(SRC_DIR)/math/vec3_1.c \
 				$(SRC_DIR)/math/vec3_2.c \
+				$(SRC_DIR)/math/quaternion.c \
 				$(SRC_DIR)/math/normalize.c \
 				$(SRC_DIR)/math/interpolate.c \
 				$(SRC_DIR)/math/random.c \
 				$(SRC_DIR)/control/hook.c \
+				$(SRC_DIR)/control/mouse.c \
+				$(SRC_DIR)/control/scroll.c \
+				$(SRC_DIR)/control/utils.c \
 				$(SRC_DIR)/shape/pl_hit.c \
 				$(SRC_DIR)/shape/cyl_side_hit.c  \
-				$(SRC_DIR)/shape/cyl_hit.c
+				$(SRC_DIR)/shape/cyl_hit.c \
+				$(SRC_DIR)/shape/sphere_hit.c
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 

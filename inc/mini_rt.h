@@ -125,8 +125,13 @@ t_object	*create_objects(t_scene *scene, t_obj_type type);
 
 /* ===================== FOR CONTROL ===================== */
 
+void set_in_bounds(t_camera *cam);
+bool should_recalculate(keys_t key);
+bool check_movement_keys(t_camera *cam, mlx_t *mlx, double time_step);
 void key_hook(struct mlx_key_data data, void * param);
 void scroll_hook(double delta_x, double delta_y, void *param);
+void mouse_control(t_minirt *minirt);
+void rotate_view(t_camera *cam);
 
 /* ===================== FOR DRAW ===================== */
 void init_camera_for_frame(t_minirt *minirt, t_camera *cam);
@@ -139,6 +144,8 @@ float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t co
 float plane_hit(const t_plane pl, const t_ray ray);
 float check_cyl(t_hit *restrict rec, const t_cylinder *cyl, const uint32_t count, const t_ray ray);
 float cyl_hit(const t_cylinder cyl, const t_ray ray);
+float	check_spheres(t_hit *restrict rec, const t_sphere *spheres, const uint32_t count, const t_ray ray);
+float	sphere_hit(const t_sphere sp, const t_ray ray);
 
 /* ===================== FOR ERROR ===================== */
 int		check_id_args_count(char **tokens, const char *id, int expected);
