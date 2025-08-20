@@ -14,6 +14,8 @@ static void	delete_objects(t_object *obj)
 
 static void	delete_obj_arr(t_minirt *minirt)
 {
+	if (minirt->scene.lights)
+		free(minirt->scene.lights);
 	if (minirt->scene.spheres)
 		free(minirt->scene.spheres);
 	if (minirt->scene.pls)
