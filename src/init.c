@@ -22,10 +22,10 @@ static int	setup_mlx(t_minirt *minirt)
 		return (FAIL);
 	}
 	init_background(minirt);
-
 	mlx_key_hook(minirt->mlx, &key_hook, minirt);
 	mlx_scroll_hook(minirt->mlx, &scroll_hook, minirt);
 	mlx_loop_hook(minirt->mlx, &per_frame, minirt);
+
 	return (SUCCESS);
 }
 

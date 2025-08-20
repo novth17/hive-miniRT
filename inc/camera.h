@@ -6,6 +6,7 @@
 
 typedef struct s_camera
 {
+	t_v3 base_direction;
 	float	aspect_ratio; //
 	int32_t image_width;
 	int32_t image_height;
