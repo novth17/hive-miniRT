@@ -76,22 +76,20 @@ t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
 
 
 static inline
-t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict scene)
+bool find_closest_ray_intesection(t_hit *restrict rec, const t_ray ray, const t_scene * restrict scene)
 {
 	// t_sphere point_light_sphere = {.material.color = v3(1, 1, 1), .center = scene->light.origin, .radius = 0.05f}; // debugging
 	// point_light_sphere.material.emitter = 0.0f;
 	// point_light_sphere.material.diffuse = 0.0f;
 	// point_light_sphere.material.specular_probability = 0.0f;
-	t_hit hit_record;
 
-	hit_record = (t_hit){};
-	hit_record.distance = MAX_HIT_DIST;
-	check_planes(&hit_record, scene->pls, scene->pl_count, ray);
-	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
+	rec->distance = MAX_HIT_DIST;
+	check_planes(rec, scene->pls, scene->pl_count, ray);
+	check_spheres(rec, scene->spheres, scene->spheres_count, ray);
 	// check_spheres(&hit_record, &point_light_sphere, 1, ray);
-	check_cyl(&hit_record, scene->cyls, scene->cyls_count, ray);
+	check_cyl(rec, scene->cyls, scene->cyls_count, ray);
 
-	return (hit_record);
+	return (rec->did_hit);
 }
 
 // Return true if the vector is close to zero in all dimensions.
@@ -126,9 +124,7 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 	pure_bounce = f32_mul_v3(2.0f*dot(ray.direction, rec->normal), rec->normal);
 	pure_bounce = v3_sub_v3(ray.direction, pure_bounce);
 
-	// ray.origin = V3_SUB(rec->position, v3_mul_f32(ray.direction, 1e-4f)); // look to see if this value is good or not
 	ray.origin = rec->position;
-	// ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
 	ray.direction = v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce); // do we need to normalize?
 	ray.direction = normalize(ray.direction);
 
@@ -160,14 +156,13 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 	bool prev_specular = true;
 	while (i <= max_bounce)
 	{
-		rec = find_closest_ray_intesection(ray, scene);
-		if (rec.did_hit)
+		if (find_closest_ray_intesection(&rec, ray, scene))
 		{
 			// if we hit something calculate the light contribution of that point into the total light of the ray
 
 			hit_once = true;
 			rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f));
-			// rec.position = V3_SUB(rec.position, v3_mul_f32(ray.direction, 1e-4f));
+			// rec.position = V3_SUB(rec->position, v3_mul_f32(ray.direction, 1e-4f)); // look to see if this value is good or not
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
 			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
 			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
