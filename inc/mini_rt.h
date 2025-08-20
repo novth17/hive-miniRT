@@ -31,12 +31,12 @@ typedef struct	s_ambient
 }			t_ambient;
 
 
-typedef struct	s_light
-{
-	t_vec3	origin;
-	float	bright_ratio; // Brightness ratio in range [0.0, 1.0]
-	t_color	color;
-}	t_light;
+// typedef struct	s_light
+// {
+// 	t_vec3	origin;
+// 	float	bright_ratio; // Brightness ratio in range [0.0, 1.0]
+// 	t_color	color;
+// }	t_light;
 
 typedef struct s_scene
 {
@@ -44,8 +44,12 @@ typedef struct s_scene
 	t_ambient	ambient;
 	t_camera	camera;
 	t_light		light;
+
 	float		light_dist_mult;
 	bool		use_point_light;
+
+	uint32_t	lights_count;
+	t_light		*lights;
 
 	uint32_t	spheres_count;
 	t_sphere	*spheres;
@@ -117,6 +121,7 @@ void	normalize_whitespace(char *line);
 
 /* ===================== FILL ARRAY ===================== */
 int fill_obj_arr(t_minirt *minirt, t_scene *scene);
+t_object	*create_objects(t_scene *scene, t_obj_type type);
 
 /* ===================== FOR CONTROL ===================== */
 

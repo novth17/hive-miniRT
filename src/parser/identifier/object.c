@@ -1,6 +1,6 @@
 #include "mini_rt.h"
 
-static t_object	*create_objects(t_scene *scene, t_obj_type type)
+t_object	*create_objects(t_scene *scene, t_obj_type type)
 {
 	t_object	*obj;
 
@@ -39,6 +39,7 @@ int	parse_sphere(char **tokens, t_scene *scene)
 		ft_dprintf(2, RED "Error from Sphere\n" RESET);
 		return (FAIL);
 	}
+	scene->spheres_count++;
 	return (SUCCESS);
 }
 
@@ -66,6 +67,7 @@ int	parse_plane(char **tokens, t_scene *scene)
 		ft_dprintf(2, RED "Error from Plane\n" RESET);
 		return (FAIL);
 	}
+	scene->pl_count++;
 	return (SUCCESS);
 }
 
@@ -114,5 +116,6 @@ int	parse_cyl(char **tokens, t_scene *scene)
 		ft_dprintf(2, RED "Error from Cylinder\n" RESET);
 		return (FAIL);
 	}
+	scene->cyls_count++;
 	return (SUCCESS);
 }

@@ -1,7 +1,6 @@
 #include "../inc/mini_rt.h"
 #include "../inc/rt_math.h"
 #include "../test_stuff/MLX42.h"
-#include "../inc/object.h"
 
 
 #include <float.h>
