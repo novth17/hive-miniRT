@@ -4,7 +4,7 @@
 #define H y
 #define C z
 
-inline
+static inline
 void	set_face_normal(t_hit *restrict rec, const t_ray *restrict ray)
 {
 	rec->front_face = dot(ray->direction, rec->normal) < 0;

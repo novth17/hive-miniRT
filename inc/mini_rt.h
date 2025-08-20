@@ -17,8 +17,8 @@
 # include "rt_math.h"
 # include "camera.h"
 
-# define WINDOW_WIDTH 512
-# define WINDOW_HEIGHT 512
+# define WINDOW_WIDTH 1080
+# define WINDOW_HEIGHT 1080
 
 
 #define MIN_HIT_DIST 0.0001f

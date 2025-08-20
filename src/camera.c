@@ -6,7 +6,7 @@ float deg_to_rad(float a)
 	return (a * M_PI / 180.0f);
 }
 
-inline
+static inline
 t_v3	viewport_top_left(const t_camera *cam, const t_v3 w)
 {
 	const t_v3 half_u = v3_div_f32(cam->viewport_u, 2.0f);
@@ -20,7 +20,7 @@ t_v3	viewport_top_left(const t_camera *cam, const t_v3 w)
 	return (result);
 }
 
-inline
+static inline
 t_v3	pixel00_location(const t_camera *cam, const t_v3 w)
 {
 	const t_v3 viewport_upper_left = viewport_top_left(cam, w);
