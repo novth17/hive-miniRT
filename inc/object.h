@@ -1,6 +1,7 @@
 # ifndef OBJECT_H
 # define OBJECT_H
 
+#include "mini_rt.h"
 #include "types.h"
 
 #define SP_ARG_MIN 4
@@ -18,11 +19,20 @@
 #define RAY_PARALLEL_EPSILON 1e-6f
 #define QUADRATIC_A_EPSILON 1e-8f
 
+typedef struct	s_light
+{
+	t_vec3	origin;
+	float	bright_ratio;
+	t_color	color;
+
+}	t_light;
+
 typedef enum e_obj_type
 {
+	LIGHT,
 	SPHERE,
 	PLANE,
-	CYLINDER,
+	CYLINDER
 	// later: TRIANGLE, CAT UIIA, etc.
 }				t_obj_type;
 
@@ -66,6 +76,7 @@ typedef struct s_object
 		t_sphere	sphere;
 		t_cylinder	cyl;
 		t_plane		pl;
+		t_light		light;
 	};
 	struct s_object	*next;
 }				t_object;

@@ -31,36 +31,25 @@ typedef struct	s_ambient
 }			t_ambient;
 
 
-typedef struct	s_light
-{
-	t_vec3	origin;
-	float	bright_ratio; // Brightness ratio in range [0.0, 1.0]
-	t_color	color;
-}	t_light;
-
 typedef struct s_scene
 {
 
 	t_ambient	ambient;
 	t_camera	camera;
-	t_light		light;
 	float		light_dist_mult;
 	bool		use_point_light;
-
+	uint32_t	lights_count;
+	t_light		*lights;
 	uint32_t	spheres_count;
 	t_sphere	*spheres;
-
 	uint32_t	pl_count;
 	t_plane		*pls;
-
 	uint32_t	cyls_count;
 	t_cylinder	*cyls;
-
 	t_object	*objects;
 	bool		is_valid;
 
 }	t_scene;
-
 
 typedef struct s_mini_rt
 {
@@ -117,6 +106,7 @@ void	normalize_whitespace(char *line);
 
 /* ===================== FILL ARRAY ===================== */
 int fill_obj_arr(t_minirt *minirt, t_scene *scene);
+t_object	*create_objects(t_scene *scene, t_obj_type type);
 
 /* ===================== FOR CONTROL ===================== */
 
@@ -135,10 +125,10 @@ void base_init_cam(t_camera *cam);
 void per_frame(void * param);
 
 /* ===================== FOR CHECK HIT ===================== */
-float check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t count, const t_ray ray);
-float plane_hit(const t_plane pl, const t_ray ray);
-float check_cyl(t_hit *restrict rec, const t_cylinder *cyl, const uint32_t count, const t_ray ray);
-float cyl_hit(const t_cylinder cyl, const t_ray ray);
+float 	check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t count, const t_ray ray);
+float 	plane_hit(const t_plane pl, const t_ray ray);
+float	check_cyl(t_hit *restrict rec, const t_cylinder *cyl, const uint32_t count, const t_ray ray);
+float 	cyl_hit(const t_cylinder cyl, const t_ray ray);
 float	check_spheres(t_hit *restrict rec, const t_sphere *spheres, const uint32_t count, const t_ray ray);
 float	sphere_hit(const t_sphere sp, const t_ray ray);
 
@@ -156,6 +146,5 @@ void	delete_minirt(t_minirt *minirt);
 /* ===================== FOR BACKGROUND ===================== */
 int		init_background(t_minirt *minirt);
 void	draw_background(t_minirt *mrt);
-
 
 # endif

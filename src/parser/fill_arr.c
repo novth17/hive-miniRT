@@ -1,18 +1,35 @@
 #include "mini_rt.h"
 
-int	fill_spheres_arr(t_minirt *minirt, t_scene *scene)
+static int	fill_lights_arr(t_minirt *minirt, t_scene *scene)
 {
 	t_object	*cur;
 	int			i;
 
 	cur = scene->objects;
-	scene->spheres_count = 0;
+
+	if (scene->lights_count == 0)
+		return (FAIL);
+	scene->lights = malloc(sizeof(t_light) * scene->lights_count);
+	if (!scene->lights)
+		exit_error(minirt, "Malloc failed in fill_lights_arr");
+	cur = scene->objects;
+	i = 0;
 	while (cur)
 	{
-		if (cur->type == SPHERE)
-			scene->spheres_count++;
+		if (cur->type == LIGHT)
+			scene->lights[i++] = cur->light;
 		cur = cur->next;
 	}
+	return (SUCCESS);
+}
+
+static int	fill_spheres_arr(t_minirt *minirt, t_scene *scene)
+{
+	t_object	*cur;
+	int			i;
+
+	cur = scene->objects;
+
 	if (scene->spheres_count == 0)
 		return (FAIL);
 	scene->spheres = malloc(sizeof(t_sphere) * scene->spheres_count);
@@ -29,20 +46,14 @@ int	fill_spheres_arr(t_minirt *minirt, t_scene *scene)
 	return (SUCCESS);
 }
 
-int	fill_pls_arr(t_minirt *minirt, t_scene *scene)
+static int	fill_pls_arr(t_minirt *minirt, t_scene *scene)
 {
 	t_object	*cur;
 	int			i;
 
 	i = 0;
-	scene->pl_count = 0;
+
 	cur = scene->objects;
-	while (cur)
-	{
-		if (cur->type == PLANE)
-			scene->pl_count++;
-		cur = cur->next;
-	}
 	if (scene->pl_count == 0)
 		return (FAIL);
 	scene->pls = malloc(sizeof(t_plane) * scene->pl_count);
@@ -58,20 +69,15 @@ int	fill_pls_arr(t_minirt *minirt, t_scene *scene)
 	return (SUCCESS);
 }
 
-int	fill_cyls_arr(t_minirt *minirt, t_scene *scene)
+static int	fill_cyls_arr(t_minirt *minirt, t_scene *scene)
 {
 	t_object	*cur;
 	int			i;
 
 	i = 0;
-	scene->cyls_count = 0;
+
 	cur = scene->objects;
-	while (cur)
-	{
-		if (cur->type == CYLINDER)
-			scene->cyls_count++;
-		cur = cur->next;
-	}
+
 	if (scene->cyls_count == 0)
 		return (FAIL);
 	scene->cyls = malloc(sizeof(t_cylinder) * scene->cyls_count);
@@ -92,6 +98,8 @@ int	fill_obj_arr(t_minirt *minirt, t_scene *scene)
 	int	result;
 
 	result = FAIL;
+	if (fill_lights_arr(minirt, scene) == SUCCESS)
+		result = SUCCESS;
 	if (fill_spheres_arr(minirt, scene) == SUCCESS)
 		result = SUCCESS;
 	if (fill_pls_arr(minirt, scene) == SUCCESS)
