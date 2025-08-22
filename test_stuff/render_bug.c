@@ -90,6 +90,7 @@ bool find_closest_ray_intesection(t_hit *restrict rec, const t_ray ray, const t_
 	// point_light_sphere.material.diffuse = 0.0f;
 	// point_light_sphere.material.specular_probability = 0.0f;
 
+	rec->distance = MAX_HIT_DIST;
 	check_planes(rec, scene->pls, scene->pl_count, ray);
 	check_spheres(rec, scene->spheres, scene->spheres_count, ray);
 	// check_spheres(&hit_record, &point_light_sphere, 1, ray);
@@ -141,9 +142,6 @@ t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 	return (ray);
 }
 
-#define HIT_ONCE 0
-#define PREV_SPECULAR 1
-
 static inline
 t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce, uint32_t *seed) // change to all objects or scene;
 {
@@ -155,18 +153,14 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 
 
 	t_hit rec;
-	rec = (t_hit){};
-	rec.distance = MAX_HIT_DIST;
-
 	t_color ray_color;
 	t_color prev_color;
 	ray_color = v3(1, 1, 1);
 	prev_color = ray_color;
+	i = 0;
 	total_incoming_light = v3(0, 0, 0);
 	bool hit_once = false;
 	bool prev_specular = true;
-
-	i = 0;
 	while (i <= max_bounce)
 	{
 		if (find_closest_ray_intesection(&rec, ray, scene))
