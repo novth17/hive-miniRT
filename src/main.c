@@ -6,7 +6,26 @@
 #include <float.h>
 #include <stdint.h>
 #include <math.h>
+#include <sched.h>
+#include <unistd.h>
 
+#ifdef MINIRT_BONUS
+
+int get_core_count(void)
+{
+	cpu_set_t cpuset;
+	pid_t pid;
+
+	pid = getpid();
+	sched_getaffinity(pid, sizeof(cpuset), &cpuset);
+	return (CPU_COUNT(&cpuset));
+}
+#else
+int get_core_count(void)
+{
+	return (1);
+}
+#endif
 
 static
 int		run_minirt(t_minirt *minirt, char **argv)
@@ -16,9 +35,13 @@ int		run_minirt(t_minirt *minirt, char **argv)
 	base_init_cam(&minirt->scene.camera);
 	init_camera_for_frame(minirt, &minirt->scene.camera);
 	draw_background(minirt);
+
+	minirt->core_count = get_core_count();
+	printf("core_count %i\n", minirt->core_count);
 	minirt->scene.light_dist_mult = 1.0f;
 	minirt->scene.use_point_light = true;
 	minirt->recalculate_cam = 1;
+	create_task_queue(minirt, &minirt->scene.camera);
 	mlx_loop(minirt->mlx);
 	mlx_terminate(minirt->mlx);
 	return (SUCCESS);

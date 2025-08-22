@@ -2,6 +2,7 @@
 #define MINI_RT_H
 
 #include "types.h"
+
 #define SUCCESS	0
 #define FAIL	1
 
@@ -16,6 +17,7 @@
 
 # include "rt_math.h"
 # include "camera.h"
+# include "task.h"
 
 # define WINDOW_WIDTH 1080
 # define WINDOW_HEIGHT 1080
@@ -63,7 +65,13 @@ typedef struct s_mini_rt
 
 	bool			write_image_to_file;
 	bool			recalculate_cam;
+
+	int				core_count;
+	t_task_queue    queue;
+
 }	t_minirt;
+
+
 
 typedef struct s_string
 {

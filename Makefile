@@ -3,7 +3,7 @@ NAME		= miniRT
 CC			= cc
 INCLUDE		:= -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
 
-CFLAGS		= $(INCLUDE) -Wall -Wextra -flto -march=native -O3 #-Werror
+CFLAGS		= $(INCLUDE) -Wall -Wextra -flto -march=native -O3 -g #-Werror
 
 
 LIBFT_DIR := libs/libft
@@ -22,13 +22,15 @@ HEADERS		= 	inc/camera.h \
 				inc/mini_rt.h \
 				inc/object.h \
 				inc/rt_math.h \
-				inc/types.h
+				inc/types.h \
+				inc/task.h
 
 SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/init.c \
 				$(SRC_DIR)/error.c \
 				$(SRC_DIR)/delete.c \
         		$(SRC_DIR)/camera.c \
+          		$(SRC_DIR)/task.c \
 				$(SRC_DIR)/render.c \
 				$(SRC_DIR)/image_to_file.c \
 				$(SRC_DIR)/image_to_file_utils.c \
@@ -82,6 +84,9 @@ $(LIBFT):
 $(NAME): $(MLX42) $(LIBFT) $(OBJS)
 	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(MLX42) -ldl -lglfw -pthread -lm -o $(NAME)
 	@echo "\033[0;32mminiRT built with MLX42 successfully ✅\033[0m"
+
+bonus: CFLAGS += -D MINIRT_BONUS -D _GNU_SOURCE
+bonus: $(NAME)
 
 clean:
 	@rm -rf $(OBJ_DIR)

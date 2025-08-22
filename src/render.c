@@ -1,5 +1,6 @@
 # include "../inc/mini_rt.h"
 #include <math.h>
+
 #include <stdbool.h>
 #include <stdint.h>
 #include "../inc/image_to_file.h"
@@ -156,7 +157,6 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 
 	t_hit rec;
 	rec = (t_hit){};
-	rec.distance = MAX_HIT_DIST;
 
 	t_color ray_color;
 	t_color prev_color;
@@ -169,6 +169,7 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 	i = 0;
 	while (i <= max_bounce)
 	{
+		rec.distance = MAX_HIT_DIST;
 		if (find_closest_ray_intesection(&rec, ray, scene))
 		{
 			// if we hit something calculate the light contribution of that point into the total light of the ray
@@ -297,27 +298,181 @@ t_v4 accumulate(const t_v4 old_color, const t_v4 new_color)
 	return (accumulated_average);
 }
 
-void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restrict out)
+
+
+void render_tile(t_task task)
 {
-	t_v4 color;
-	int32_t x;
-	int32_t y;
-	uint32_t rng_seed;
+	t_v4		color;
+	uint32_t	*out;
+	uint32_t	x;
+	uint32_t	y;
+	uint32_t	rng_seed;
 
-	y = 0;
-	while (y < cam->image_height)
+
+	y = task.y_start;
+	while (y < task.y_end_plus_one)
 	{
-		x = 0;
-		while (x < cam->image_width)
+		out = task.out + (y * task.cam->image_width);
+		x = task.x_start;
+		while (x < task.x_end_plus_one)
 		{
-			rng_seed = (y * cam->image_width + x) + g_accummulated_frames * 792858;
-			color = sample_pixel(scene, cam, (t_cord){x, y}, rng_seed);
+			rng_seed = (y * task.cam->image_width + x) + g_accummulated_frames * 792858;
+			color = sample_pixel(task.scene, task.cam, (t_cord){x, y}, rng_seed);
 
-			color = accumulate(exact_unpack(*out), color);
-			*out++ = exact_pack(color);
+			color = accumulate(exact_unpack(out[x]), color);
+			out[x] = exact_pack(color);
 
 
-			// lerp(color.r)
+
+
+
+			++x;
+		}
+		++y;
+	}
+	// return (0);
+}
+
+
+
+
+
+static
+void set_title(t_minirt *minirt)
+{
+	static char title_base[100] = "MiniRay";
+	int status;
+	t_string title;
+
+	title.buf = title_base;
+	title.size = sizeof(title_base);
+	title.len = sizeof("MiniRay") - 1;
+	status = 0;
+	status = cat_cstring_to_string(&title, " -- Frame Time: ");
+	status = cat_uint_to_str(&title, round(minirt->mlx->delta_time * 1000));
+	status = cat_cstring_to_string(&title, " -- Samples: ");
+	status = cat_uint_to_str(&title, minirt->scene.camera.samples_per_pixel);
+	status = cat_cstring_to_string(&title, " -- Max Bounces: ");
+	status = cat_uint_to_str(&title, minirt->scene.camera.max_bounce);
+	if (status == FAIL)
+	{
+		ft_dprintf(2, "Failed to create title\n"
+			"buf_size <%u> len <%u> data <%s>\n", title.size, title.len, title.buf);
+		mlx_set_window_title(minirt->mlx, "MiniRay -- Info not available");
+		return ;
+	}
+	mlx_set_window_title(minirt->mlx, title.buf);
+}
+
+static
+void recalculate_camera(t_minirt *minirt, t_camera *frame_cam)
+{
+	init_camera_for_frame(minirt, &minirt->scene.camera);
+	*frame_cam = minirt->scene.camera;
+	minirt->recalculate_cam = false;
+	g_accummulated_frames = 0;
+}
+
+
+
+void prepare_to_render(t_minirt *minirt, mlx_t *mlx, mlx_image_t *img, t_camera *frame_cam)
+{
+	set_title(minirt);
+	if (check_movement_keys(&minirt->scene.camera, mlx, mlx->delta_time))
+		minirt->recalculate_cam = true;
+	mouse_control(minirt);
+	if (minirt->write_image_to_file == true)
+	{
+		pixels_to_image_file(minirt->image);
+		minirt->write_image_to_file = false;
+	}
+	if (img->width != (uint32_t)mlx->width || img->height != (uint32_t)mlx->height)
+	{
+		if (mlx_resize_image(minirt->image, mlx->width, mlx->height) == false)
+			ft_putstr_fd("miniRT: Failed to resize image\n", 2);
+		if (mlx_resize_image(minirt->background, mlx->width, mlx->height) == false)
+			ft_putstr_fd("miniRT: Failed to resize background\n", 2);
+		recalculate_camera(minirt, frame_cam);
+		draw_background(minirt);
+		create_task_queue(minirt, frame_cam);
+	}
+	if (minirt->recalculate_cam == true)
+	{
+		recalculate_camera(minirt, frame_cam);
+	}
+}
+
+// #define MINIRT_BONUS
+
+#ifdef MINIRT_BONUS
+
+#include <stdatomic.h>
+
+void get_and_render_tile(t_task_queue *queue)
+{
+	t_task *task = queue->tasks + atomic_fetch_add(&queue->next_task_index, 1);;
+
+	// queue->next_task_index++;
+
+	render_tile(*task);
+	// queue->tiles_retired_count++;
+	atomic_fetch_add(&queue->tiles_retired_count, 1);
+}
+
+void per_frame(void * param)
+{
+	static t_camera frame_cam = {};
+	t_minirt *minirt;
+	mlx_t *mlx;
+	t_task_queue *queue;
+
+	minirt = (t_minirt *)param;
+	mlx = minirt->mlx;
+	prepare_to_render(minirt, mlx, minirt->image, &frame_cam);
+	queue = &minirt->queue;
+	queue->tiles_retired_count = 0;
+	queue->next_task_index = 0;
+	while (queue->tiles_retired_count < queue->task_count)
+	{
+		get_and_render_tile(queue);
+	}
+	++g_accummulated_frames;
+}
+
+#else
+
+void get_and_render_tile(t_task_queue *queue)
+{
+	const t_task *task = queue->tasks;
+
+	render_tile(*task);
+	queue->tiles_retired_count++;
+}
+
+void per_frame(void * param)
+{
+	static t_camera frame_cam = {};
+	t_minirt *minirt;
+	mlx_t *mlx;
+	t_task_queue *queue;
+
+	minirt = (t_minirt *)param;
+	mlx = minirt->mlx;
+	prepare_to_render(minirt, mlx, minirt->image, &frame_cam);
+	queue = &minirt->queue;
+	queue->tiles_retired_count = 0;
+	queue->next_task_index = 0;
+	render_tile(queue->tasks[0]);
+	++g_accummulated_frames;
+}
+
+#endif
+
+
+
+// luminance and brightness threshold stuff
+//
+// lerp(color.r)
 
 			// uint32_t rgba = exact_pack(color);
 			// int num = roundf(random_float(&rng_seed) * 4.0f);
@@ -357,86 +512,3 @@ void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restri
 
 			// color = accumulate(rgb_u32_to_v4(*out), color);
 			// *out++ = rgb_pack4x8(v3_clamp(color.rgb)); // maybe dont need clamp or do it in color correction
-
-
-			++x;
-		}
-		++y;
-	}
-	// return (0);
-}
-
-static
-void set_title(t_minirt *minirt)
-{
-	static char title_base[100] = "MiniRay";
-	int status;
-	t_string title;
-
-	title.buf = title_base;
-	title.size = sizeof(title_base);
-	title.len = sizeof("MiniRay") - 1;
-	status = 0;
-	status = cat_cstring_to_string(&title, " -- Frame Time: ");
-	status = cat_uint_to_str(&title, round(minirt->mlx->delta_time * 1000));
-	status = cat_cstring_to_string(&title, " -- Samples: ");
-	status = cat_uint_to_str(&title, minirt->scene.camera.samples_per_pixel);
-	status = cat_cstring_to_string(&title, " -- Max Bounces: ");
-	status = cat_uint_to_str(&title, minirt->scene.camera.max_bounce);
-	if (status == FAIL)
-	{
-		ft_dprintf(2, "Failed to create title\n"
-			"buf_size <%u> len <%u> data <%s>\n", title.size, title.len, title.buf);
-		mlx_set_window_title(minirt->mlx, "MiniRay -- Info not available");
-		return ;
-	}
-	mlx_set_window_title(minirt->mlx, title.buf);
-}
-
-static
-void recalculate_camera(t_minirt *minirt, t_camera *frame_cam)
-{
-	init_camera_for_frame(minirt, &minirt->scene.camera);
-	*frame_cam = minirt->scene.camera;
-	minirt->recalculate_cam = false;
-	g_accummulated_frames = 0;
-}
-
-void prepare_to_render(t_minirt *minirt, mlx_t *mlx, mlx_image_t *img, t_camera *frame_cam)
-{
-	set_title(minirt);
-	if (check_movement_keys(&minirt->scene.camera, mlx, mlx->delta_time))
-		minirt->recalculate_cam = true;
-	mouse_control(minirt);
-	if (minirt->write_image_to_file == true)
-	{
-		pixels_to_image_file(minirt->image);
-		minirt->write_image_to_file = false;
-	}
-	if (img->width != (uint32_t)mlx->width || img->height != (uint32_t)mlx->height)
-	{
-		if (mlx_resize_image(minirt->image, mlx->width, mlx->height) == false)
-			ft_putstr_fd("miniRT: Failed to resize image\n", 2);
-		if (mlx_resize_image(minirt->background, mlx->width, mlx->height) == false)
-			ft_putstr_fd("miniRT: Failed to resize background\n", 2);
-		recalculate_camera(minirt, frame_cam);
-		draw_background(minirt);
-	}
-	if (minirt->recalculate_cam == true)
-	{
-		recalculate_camera(minirt, frame_cam);
-	}
-}
-
-void per_frame(void * param)
-{
-	static t_camera frame_cam = {};
-	t_minirt *minirt;
-	mlx_t *mlx;
-
-	minirt = (t_minirt *)param;
-	mlx = minirt->mlx;
-	prepare_to_render(minirt, mlx, minirt->image, &frame_cam);
-	render(&minirt->scene, &frame_cam, (uint32_t *)minirt->image->pixels);
-	++g_accummulated_frames;
-}
