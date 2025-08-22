@@ -1,19 +1,27 @@
 #include "../inc/mini_rt.h"
 
-static
-void set_default_task(t_task_queue *queue, t_minirt *minirt, t_camera *cam)
+t_task *get_default_task()
 {
-	static t_task g_default_task = {};
-	g_default_task.out = (uint32_t *)minirt->image->pixels;
-	g_default_task.scene = &minirt->scene;
-	g_default_task.cam = cam;
-	g_default_task.x_start = 0;
-	g_default_task.y_start = 0;
-	g_default_task.x_end_plus_one = cam->image_width;
-	g_default_task.y_end_plus_one = cam->image_height;
-	queue[0].next_task_index = 0;
-	queue[0].task_count = 1;
-	queue[0].tasks = &g_default_task;
+	static t_task	default_task = {};
+	return (&default_task);
+}
+
+static
+void	set_default_task(t_task_queue *queue, t_minirt *minirt, t_camera *cam)
+{
+	t_task *default_task;
+
+	default_task = get_default_task();
+	default_task->out = (uint32_t *)minirt->image->pixels;
+	default_task->scene = &minirt->scene;
+	default_task->cam = cam;
+	default_task->x_start = 0;
+	default_task->y_start = 0;
+	default_task->x_end_plus_one = cam->image_width;
+	default_task->y_end_plus_one = cam->image_height;
+	queue->next_task_index = 0;
+	queue->task_count = 1;
+	queue->tasks = default_task;
 }
 
 //
@@ -24,7 +32,7 @@ void set_default_task(t_task_queue *queue, t_minirt *minirt, t_camera *cam)
 #define TILE_SIZE 6
 
 static
-void set_task(t_task *task, t_tile_info *info, t_minirt *minirt, t_camera *cam)
+void	set_task(t_task *task, t_tile_info *info, t_minirt *minirt, t_camera *cam)
 {
 	task->cam = cam;
 	task->scene = &minirt->scene;
@@ -64,14 +72,14 @@ void	set_tasks(t_task_queue *queue, t_tile_info *info, t_minirt *minirt, t_camer
 	}
 }
 
-bool create_task_queue(t_minirt *minirt, t_camera *cam)
+bool	create_task_queue(t_minirt *minirt, t_camera *cam)
 {
 	t_tile_info		info;
 	t_task_queue	*queue;
 
 	queue = &minirt->queue;
-	info.tile_width = cam->image_width / TILE_SIZE;
-	info.tile_height = info.tile_width;
+	info.tile_width = 64;//cam->image_width / TILE_SIZE;
+	info.tile_height = 64;//info.tile_width;
 	info.tile_count_x = (cam->image_width + info.tile_width - 1) / info.tile_width;
 	info.tile_count_y = (cam->image_height + info.tile_height - 1) / info.tile_height;
 	info.total_tile_count = info.tile_count_x * info.tile_count_y;

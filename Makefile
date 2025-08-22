@@ -3,7 +3,7 @@ NAME		= miniRT
 CC			= cc
 INCLUDE		:= -Iinc -Ilibs/libft/inc -Ilibs/MLX42/include/MLX42
 
-CFLAGS		= $(INCLUDE) -Wall -Wextra -flto -march=native -O3 -g #-Werror
+CFLAGS		= $(INCLUDE) -Wall -Wextra -flto -march=native -O3 #-Werror
 
 
 LIBFT_DIR := libs/libft
@@ -31,6 +31,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/delete.c \
         		$(SRC_DIR)/camera.c \
           		$(SRC_DIR)/task.c \
+				$(SRC_DIR)/thread.c \
 				$(SRC_DIR)/render.c \
 				$(SRC_DIR)/image_to_file.c \
 				$(SRC_DIR)/image_to_file_utils.c \

@@ -394,6 +394,8 @@ void prepare_to_render(t_minirt *minirt, mlx_t *mlx, mlx_image_t *img, t_camera 
 			ft_putstr_fd("miniRT: Failed to resize background\n", 2);
 		recalculate_camera(minirt, frame_cam);
 		draw_background(minirt);
+		if (minirt->queue.tasks && minirt->queue.tasks != get_default_task())
+			free(minirt->queue.tasks);
 		create_task_queue(minirt, frame_cam);
 	}
 	if (minirt->recalculate_cam == true)
@@ -402,51 +404,70 @@ void prepare_to_render(t_minirt *minirt, mlx_t *mlx, mlx_image_t *img, t_camera 
 	}
 }
 
-// #define MINIRT_BONUS
+
 
 #ifdef MINIRT_BONUS
 
-#include <stdatomic.h>
 
-void get_and_render_tile(t_task_queue *queue)
+bool get_and_render_tile(t_task_queue *queue)
 {
-	t_task *task = queue->tasks + atomic_fetch_add(&queue->next_task_index, 1);;
+	t_task *task;
 
-	// queue->next_task_index++;
+	uint32_t work_order_index;
 
+	work_order_index = atomic_fetch_add(&queue->next_task_index, 1);
+	if (work_order_index >= queue->task_count)
+	{
+		return (false);
+	}
+	task = queue->tasks + work_order_index;
 	render_tile(*task);
-	// queue->tiles_retired_count++;
 	atomic_fetch_add(&queue->tiles_retired_count, 1);
+
+	return (true);
 }
+
+
+t_camera *get_frame_cam(void)
+{
+	static t_camera frame_cam = {};
+	return (&frame_cam);
+}
+
+#include <stdatomic.h>
 
 void per_frame(void * param)
 {
-	static t_camera frame_cam = {};
+	t_camera *frame_cam;
 	t_minirt *minirt;
 	mlx_t *mlx;
 	t_task_queue *queue;
 
 	minirt = (t_minirt *)param;
 	mlx = minirt->mlx;
-	prepare_to_render(minirt, mlx, minirt->image, &frame_cam);
+	frame_cam = get_frame_cam();
+	prepare_to_render(minirt, mlx, minirt->image, frame_cam);
 	queue = &minirt->queue;
 	queue->tiles_retired_count = 0;
 	queue->next_task_index = 0;
+	atomic_exchange(&minirt->render, true);
 	while (queue->tiles_retired_count < queue->task_count)
 	{
-		get_and_render_tile(queue);
+		usleep(100);
 	}
+	atomic_exchange(&minirt->render, false);
 	++g_accummulated_frames;
 }
 
 #else
 
-void get_and_render_tile(t_task_queue *queue)
+bool	get_and_render_tile(t_task_queue *queue)
 {
 	const t_task *task = queue->tasks;
 
 	render_tile(*task);
 	queue->tiles_retired_count++;
+	return (false);
 }
 
 void per_frame(void * param)

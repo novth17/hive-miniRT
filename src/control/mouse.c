@@ -7,7 +7,7 @@ static int32_t		prev_y;
 static const float	rotation_speed = 0.002f;
 static float		total_rotation_x = 0.f;
 static float		total_rotation_y = 0.f;
-static bool			mouse_was_down = false;
+// static bool			mouse_was_down = false;
 
 void rotate_view(t_camera *cam)
 {
@@ -47,18 +47,18 @@ void mouse_control(t_minirt *minirt)
 	if (mlx_is_mouse_down(minirt->mlx, MLX_MOUSE_BUTTON_RIGHT))
 	{
 		mlx_set_cursor_mode(minirt->mlx, MLX_MOUSE_DISABLED);
-		if (mouse_was_down == true)
-		{
+		// if (mouse_was_down == true)
+		// {
 			delta.x = (float)(prev_x - x);
 			delta.y = (float)(prev_y - y);
 			if (delta.x != 0.f || delta.y != 0.f)
 				mouse_moved(minirt, delta);
-		}
-		mouse_was_down = true;
+		// }
+		// mouse_was_down = true;
 	}
 	else
 	{
-		mouse_was_down = false;
+		// mouse_was_down = false;
 		mlx_set_cursor_mode(minirt->mlx, MLX_MOUSE_NORMAL);
 	}
 	prev_x = x;

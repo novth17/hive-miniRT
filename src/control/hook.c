@@ -7,7 +7,10 @@ static float g_speed = 0.5f;
 static void	esc_key_func(mlx_key_data_t keydata, t_minirt *minirt)
 {
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
+	{
+		minirt->stop_threads = true;
 		mlx_close_window(minirt->mlx);
+	}
 }
 
 bool check_movement_keys(t_camera *cam, mlx_t *mlx, double time_step)

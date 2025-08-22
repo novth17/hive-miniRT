@@ -1,0 +1,57 @@
+
+#ifdef MINIRT_BONUS
+
+# include <unistd.h>
+# include <stdatomic.h>
+# include <pthread.h>
+# include "mini_rt.h"
+
+static
+void	*render_thread(void *param)
+{
+	t_minirt *minirt;
+	t_task_queue *queue;
+
+	minirt = (t_minirt *)param;
+	queue = &minirt->queue;
+
+	while (!minirt->stop_threads)
+	{
+		if (minirt->render == true)
+		{
+			while (get_and_render_tile(queue))
+			{
+				;
+			}
+		}
+		usleep(100);
+	}
+	return (NULL);
+}
+
+
+bool create_worker_threads(t_minirt *minirt)
+{
+	const uint32_t	thread_count = minirt->core_count;
+	pthread_t		thread_handle;
+	uint32_t		i;
+
+	if (minirt->core_count > 1)
+	{
+		i = 0;
+		while (i < thread_count)
+		{
+			if (pthread_create(&thread_handle, NULL, &render_thread, minirt))
+			{
+				minirt->stop_threads = true;
+				ft_putstr_fd("MiniRt: thread creation failed\n"
+					"Using main thread for rendering\n", 2);
+				return (-1);
+			}
+			pthread_detach(thread_handle);
+			++i;
+		}
+	}
+	return (0);
+}
+#endif

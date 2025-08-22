@@ -19,6 +19,10 @@
 # include "camera.h"
 # include "task.h"
 
+#ifdef MINIRT_BONUS
+# include "thread.h"
+#endif
+
 # define WINDOW_WIDTH 1080
 # define WINDOW_HEIGHT 1080
 
@@ -68,6 +72,8 @@ typedef struct s_mini_rt
 
 	int				core_count;
 	t_task_queue    queue;
+	volatile bool	stop_threads;
+	volatile bool	render;
 
 }	t_minirt;
 
@@ -79,6 +85,8 @@ typedef struct s_string
 	size_t len;
 	size_t size;
 }	t_string;
+
+t_camera *get_frame_cam(void);
 
 /* ===================== Helpers for string type ===================== */
 // string.c

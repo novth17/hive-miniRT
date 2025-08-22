@@ -58,7 +58,8 @@ typedef struct s_tile_info
 	uint32_t one_past_max_y;
 } t_tile_info;
 
+t_task *get_default_task();
 bool create_task_queue(t_minirt *minirt, t_camera *cam);
-
+bool get_and_render_tile(t_task_queue *queue);
 
 #endif

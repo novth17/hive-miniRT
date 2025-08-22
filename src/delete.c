@@ -30,4 +30,9 @@ void	delete_minirt(t_minirt *minirt)
 		return ;
 	delete_obj_arr(minirt);
 	delete_objects(minirt->scene.objects);
+	if (minirt->queue.tasks != NULL && minirt->queue.tasks != get_default_task())
+	{
+		free(minirt->queue.tasks);
+		minirt->queue.tasks = NULL;
+	}
 }
