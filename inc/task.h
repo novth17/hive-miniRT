@@ -60,6 +60,5 @@ typedef struct s_tile_info
 
 t_task	*get_default_task(void);
 bool	create_task_queue(t_task_queue *queue, t_minirt *minirt, t_camera *cam);
-bool	get_and_render_tile(t_task_queue *queue);
 
 #endif

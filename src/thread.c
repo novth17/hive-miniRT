@@ -7,6 +7,24 @@
 # include <sched.h>
 
 static
+bool	get_and_render_tile(t_task_queue *queue)
+{
+	t_task		*task;
+	uint32_t	work_order_index;
+
+
+	work_order_index = atomic_fetch_add(&queue->next_task_index, 1);
+	if (work_order_index >= queue->task_count)
+	{
+		return (false);
+	}
+	task = queue->tasks + work_order_index;
+	render_tile(*task);
+	atomic_fetch_add(&queue->tiles_retired_count, 1);
+	return (true);
+}
+
+static
 void	*render_thread(void *param)
 {
 	t_minirt		*minirt;

@@ -145,9 +145,20 @@ t_ray	calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_
 
 void init_camera_for_frame(t_minirt *minirt, t_camera *cam);
 void base_init_cam(t_camera *cam);
+
+// prepare_to_render.c
+void	prepare_to_render(t_minirt *minirt, mlx_t *mlx, mlx_image_t *img, t_camera *frame_cam);
+
+// render.c
+void render_tile(t_task task);
+void recalculate_camera(t_minirt *minirt, t_camera *frame_cam);
 void per_frame(void * param);
 
+//sample.c
+t_v4 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_cord original_cord, uint32_t seed);
 
+// point_light.c
+t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec);
 
 
 

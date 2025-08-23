@@ -34,7 +34,10 @@ SRC 		=	$(SRC_DIR)/main.c \
           		$(SRC_DIR)/task.c \
 				$(SRC_DIR)/thread.c \
 				$(SRC_DIR)/ray.c \
+				$(SRC_DIR)/prepare_to_render.c \
 				$(SRC_DIR)/render.c \
+				$(SRC_DIR)/sample.c \
+				$(SRC_DIR)/point_light.c \
 				$(SRC_DIR)/string.c \
 				$(SRC_DIR)/image_to_file.c \
 				$(SRC_DIR)/image_to_file_utils.c \
