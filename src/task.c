@@ -1,15 +1,9 @@
 #include "../inc/mini_rt.h"
 
-t_task *get_default_task()
-{
-	static t_task	default_task = {};
-	return (&default_task);
-}
-
 static
 void	set_default_task(t_task_queue *queue, t_minirt *minirt, t_camera *cam)
 {
-	t_task *default_task;
+	t_task	*default_task;
 
 	default_task = get_default_task();
 	default_task->out = (uint32_t *)minirt->image->pixels;
@@ -29,10 +23,10 @@ void	set_default_task(t_task_queue *queue, t_minirt *minirt, t_camera *cam)
 
 #ifdef MINIRT_BONUS
 
-#define TILE_SIZE 6
-
 static
-void	set_task(t_task *task, t_tile_info *info, t_minirt *minirt, t_camera *cam)
+void	set_single_task(
+	t_task *task,		t_tile_info *info,
+	t_minirt *minirt,	t_camera *cam)
 {
 	task->cam = cam;
 	task->scene = &minirt->scene;
@@ -44,7 +38,9 @@ void	set_task(t_task *task, t_tile_info *info, t_minirt *minirt, t_camera *cam)
 }
 
 static
-void	set_tasks(t_task_queue *queue, t_tile_info *info, t_minirt *minirt, t_camera *cam)
+void	set_tasks(
+	t_task_queue *queue,	t_tile_info *info,
+	t_minirt *minirt,		t_camera *cam)
 {
 	uint32_t	tile_y;
 	uint32_t	tile_x;
@@ -65,23 +61,24 @@ void	set_tasks(t_task_queue *queue, t_tile_info *info, t_minirt *minirt, t_camer
 			info->one_past_max_x = info->min_x + info->tile_width;
 			if (info->one_past_max_x > (uint32_t)cam->image_width)
 				info->one_past_max_x = cam->image_width;
-			set_task(task, info, minirt, cam);
+			set_single_task(task, info, minirt, cam);
 			++tile_x;
 		}
 		++tile_y;
 	}
 }
 
-bool	create_task_queue(t_minirt *minirt, t_camera *cam)
+# define TILE_WIDTH 64
+# define TILE_HEIGHT 64
+
+bool	create_task_queue(t_task_queue *queue, t_minirt *minirt, t_camera *cam)
 {
 	t_tile_info		info;
-	t_task_queue	*queue;
 
-	queue = &minirt->queue;
-	info.tile_width = 64;//cam->image_width / TILE_SIZE;
-	info.tile_height = 64;//info.tile_width;
-	info.tile_count_x = (cam->image_width + info.tile_width - 1) / info.tile_width;
-	info.tile_count_y = (cam->image_height + info.tile_height - 1) / info.tile_height;
+	info.tile_width = TILE_WIDTH;
+	info.tile_height = TILE_HEIGHT;
+	info.tile_count_x = (cam->image_width + TILE_WIDTH - 1) / TILE_WIDTH;
+	info.tile_count_y = (cam->image_height + TILE_HEIGHT - 1) / TILE_HEIGHT;
 	info.total_tile_count = info.tile_count_x * info.tile_count_y;
 	ft_memset(queue, 0, sizeof(*queue));
 	if (minirt->core_count > 1)
@@ -102,13 +99,11 @@ bool	create_task_queue(t_minirt *minirt, t_camera *cam)
 	return (0);
 }
 
-
-
 #else
 
-bool create_task_queue(t_minirt *minirt, t_camera *cam)
+bool	create_task_queue(t_task_queue *queue, t_minirt *minirt, t_camera *cam)
 {
-	set_default_task(&minirt->queue, minirt, cam);
+	set_default_task(queue, minirt, cam);
 	return (0);
 }
 

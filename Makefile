@@ -29,6 +29,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/init.c \
 				$(SRC_DIR)/error.c \
 				$(SRC_DIR)/delete.c \
+				$(SRC_DIR)/getters.c \
         		$(SRC_DIR)/camera.c \
           		$(SRC_DIR)/task.c \
 				$(SRC_DIR)/thread.c \

@@ -40,7 +40,7 @@ int		run_minirt(t_minirt *minirt, char **argv)
 	minirt->scene.light_dist_mult = 1.0f;
 	minirt->scene.use_point_light = true;
 	minirt->recalculate_cam = 1;
-	create_task_queue(minirt, get_frame_cam());
+	create_task_queue(&minirt->queue, minirt, get_frame_cam());
 	if (create_worker_threads(minirt))
 		minirt->core_count = 1;
 	mlx_loop(minirt->mlx);

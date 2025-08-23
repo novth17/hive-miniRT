@@ -396,7 +396,7 @@ void prepare_to_render(t_minirt *minirt, mlx_t *mlx, mlx_image_t *img, t_camera 
 		draw_background(minirt);
 		if (minirt->queue.tasks && minirt->queue.tasks != get_default_task())
 			free(minirt->queue.tasks);
-		create_task_queue(minirt, frame_cam);
+		create_task_queue(&minirt->queue, minirt, frame_cam);
 	}
 	if (minirt->recalculate_cam == true)
 	{
@@ -426,15 +426,6 @@ bool get_and_render_tile(t_task_queue *queue)
 
 	return (true);
 }
-
-
-t_camera *get_frame_cam(void)
-{
-	static t_camera frame_cam = {};
-	return (&frame_cam);
-}
-
-#include <stdatomic.h>
 
 void per_frame(void * param)
 {
@@ -472,14 +463,15 @@ bool	get_and_render_tile(t_task_queue *queue)
 
 void per_frame(void * param)
 {
-	static t_camera frame_cam = {};
-	t_minirt *minirt;
-	mlx_t *mlx;
-	t_task_queue *queue;
+	t_camera		*frame_cam;
+	t_minirt		*minirt;
+	mlx_t			*mlx;
+	t_task_queue	*queue;
 
 	minirt = (t_minirt *)param;
 	mlx = minirt->mlx;
-	prepare_to_render(minirt, mlx, minirt->image, &frame_cam);
+	frame_cam = get_frame_cam();
+	prepare_to_render(minirt, mlx, minirt->image, frame_cam);
 	queue = &minirt->queue;
 	queue->tiles_retired_count = 0;
 	queue->next_task_index = 0;

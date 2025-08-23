@@ -20,7 +20,7 @@ uint8_t	num_length(uint32_t num)
 }
 
 // concatinate a number to the end of a t_string
-bool cat_uint_to_str(t_string *dest, size_t num)
+bool	cat_uint_to_str(t_string *dest, size_t num)
 {
 	const uint8_t	num_len = num_length(num);
 	uint32_t		i;
@@ -39,7 +39,7 @@ bool cat_uint_to_str(t_string *dest, size_t num)
 }
 
 // concatinate a c string to the end of a t_string
-bool cat_cstring_to_string(t_string *dest, char *cstr)
+bool	cat_cstring_to_string(t_string *dest, char *cstr)
 {
 	size_t cstr_len;
 
