@@ -1,6 +1,6 @@
 #include "mini_rt.h"
 
-void set_in_bounds(t_camera *cam)
+void	set_in_bounds(t_camera *cam)
 {
 	if (cam->focus_dist < 1.f)
 		cam->focus_dist = 1.f;
@@ -16,9 +16,8 @@ void set_in_bounds(t_camera *cam)
 		cam->samples_per_pixel = 1;
 }
 
-bool should_recalculate(keys_t key)
+bool	should_recalculate(keys_t key)
 {
-
 	if (key == MLX_KEY_EQUAL)
 		return (true);
 	if (key == MLX_KEY_MINUS)
