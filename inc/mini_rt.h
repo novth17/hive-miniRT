@@ -63,6 +63,7 @@ typedef struct s_mini_rt
 	mlx_image_t		*image;
 	mlx_image_t		*background;
 
+	char			*scene_file_name;
 	t_scene			scene;
 	bool			file_has_content;
 	bool			has_camera;
@@ -90,7 +91,8 @@ t_camera *get_frame_cam(void);
 
 /* ===================== Helpers for string type and title function ===================== */
 // title.c
-bool 	cat_cstring_to_string(t_string *dest, char *cstr);
+bool 	cat_cstring_to_string(t_string *dest, const char *cstr);
+bool	cat_cstring_to_string_n(t_string *dest, const char *cstr, uint32_t n);
 bool 	cat_uint_to_str(t_string *dest, size_t num);
 void	set_title(t_minirt *minirt);
 

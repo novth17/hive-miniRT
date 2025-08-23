@@ -347,14 +347,14 @@ void recalculate_camera(t_minirt *minirt, t_camera *frame_cam)
 void prepare_to_render(t_minirt *minirt, mlx_t *mlx, mlx_image_t *img, t_camera *frame_cam)
 {
 	set_title(minirt);
+	if (minirt->write_image_to_file == true)
+	{
+		pixels_to_image_file(minirt);
+		minirt->write_image_to_file = false;
+	}
 	if (check_movement_keys(&minirt->scene.camera, mlx, mlx->delta_time))
 		minirt->recalculate_cam = true;
 	mouse_control(minirt);
-	if (minirt->write_image_to_file == true)
-	{
-		pixels_to_image_file(minirt->image);
-		minirt->write_image_to_file = false;
-	}
 	if (img->width != (uint32_t)mlx->width || img->height != (uint32_t)mlx->height)
 	{
 		if (mlx_resize_image(minirt->image, mlx->width, mlx->height) == false)
@@ -413,7 +413,7 @@ void per_frame(void * param)
 	atomic_exchange(&minirt->render, true);
 	while (queue->tiles_retired_count < queue->task_count)
 	{
-		usleep(100);
+		usleep(1000);
 	}
 	atomic_exchange(&minirt->render, false);
 	++g_accummulated_frames;

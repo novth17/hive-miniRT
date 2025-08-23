@@ -1,36 +1,32 @@
-
 #ifdef MINIRT_BONUS
 
 # include <unistd.h>
 # include <stdatomic.h>
 # include <pthread.h>
 # include "mini_rt.h"
+# include <sched.h>
 
 static
 void	*render_thread(void *param)
 {
-	t_minirt *minirt;
-	t_task_queue *queue;
+	t_minirt		*minirt;
+	t_task_queue	*queue;
 
 	minirt = (t_minirt *)param;
 	queue = &minirt->queue;
-
 	while (!minirt->stop_threads)
 	{
 		if (minirt->render == true)
 		{
 			while (get_and_render_tile(queue))
-			{
 				;
-			}
 		}
 		usleep(100);
 	}
 	return (NULL);
 }
 
-
-bool create_worker_threads(t_minirt *minirt)
+bool	create_worker_threads(t_minirt *minirt)
 {
 	const uint32_t	thread_count = minirt->core_count;
 	pthread_t		thread_handle;
@@ -54,4 +50,21 @@ bool create_worker_threads(t_minirt *minirt)
 	}
 	return (0);
 }
+
+int	get_core_count(void)
+{
+	cpu_set_t	cpuset;
+	pid_t		pid;
+
+	pid = getpid();
+	sched_getaffinity(pid, sizeof(cpuset), &cpuset);
+	return (CPU_COUNT(&cpuset));
+}
+#else
+
+int	get_core_count(void)
+{
+	return (1);
+}
+
 #endif
