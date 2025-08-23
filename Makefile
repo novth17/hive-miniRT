@@ -51,6 +51,7 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/identifier/material.c \
 				$(SRC_DIR)/math/rt_math.c \
 				$(SRC_DIR)/math/square.c \
+				$(SRC_DIR)/math/cross_dot_length.c \
 				$(SRC_DIR)/math/vec2.c \
 				$(SRC_DIR)/math/vec3_1.c \
 				$(SRC_DIR)/math/vec3_2.c \

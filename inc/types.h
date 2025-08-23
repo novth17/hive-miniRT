@@ -1,13 +1,13 @@
 #ifndef TYPES_H
-#define TYPES_H
+# define TYPES_H
 
-#include <stdint.h>
+# include <stdint.h>
 
-typedef struct u_cordinate
+typedef struct s_cordinate
 {
-	uint32_t x;
-	uint32_t y;
-} t_cord;
+	uint32_t	x;
+	uint32_t	y;
+}	t_cord;
 
 typedef union u_vec2
 {
@@ -86,25 +86,10 @@ typedef union u_vec4
 	float	elements[4];
 }	t_v4;
 
-
-typedef union
+typedef struct s_ray
 {
-	struct
-	{
-
-		t_v4 x;
-		t_v4 y;
-		t_v4 z;
-		t_v4 w;
-	};
-	float mat[4][4];
-} t_mat4;
-
-
-typedef struct
-{
-	t_v3 origin;
-	t_v3 direction;
-} t_ray;
+	t_v3	origin;
+	t_v3	direction;
+}	t_ray;
 
 #endif
