@@ -19,23 +19,28 @@ t_v4	accumulate(const t_v4 old_color, const t_v4 new_color)
 void	render_tile(const t_task task)
 {
 	t_v4		color;
-	uint32_t	*out;
-	uint32_t	rng_seed;
+	uint32_t	pixel_index;
+	uint32_t	seed;
 	uint32_t	x;
 	uint32_t	y;
 
 	y = task.y_start;
 	while (y < task.y_end_plus_one)
 	{
-		out = task.out + (y * task.cam->image_width);
 		x = task.x_start;
 		while (x < task.x_end_plus_one)
 		{
-			rng_seed = (y * task.cam->image_width + x) + g_accumulated_frames * 792858;
-			color = sample_pixel(task.scene, task.cam, (t_cord){x, y}, rng_seed);
-
-			color = accumulate(exact_unpack(out[x]), color);
-			out[x] = exact_pack(color);
+			pixel_index = (y * task.cam->image_width + x);
+			seed = pixel_index + g_accumulated_frames * 792858;
+			color = sample_pixel(task.scene, task.cam, (t_cord){x, y}, seed);
+			if (task.linear_buf != NULL)
+			{
+				color =	accumulate(task.linear_buf[pixel_index], color);
+				task.linear_buf[pixel_index] = color;
+			}
+			else
+				color = accumulate(exact_unpack(task.out[pixel_index]), color);
+			task.out[pixel_index] = exact_pack(color);
 			++x;
 		}
 		++y;

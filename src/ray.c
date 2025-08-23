@@ -3,8 +3,20 @@
 #include "rt_math.h"
 #include "camera.h"
 
-// for calculating the defocus blur effect
 inline
+bool	find_closest_ray_intesection(
+		t_hit *restrict rec,
+		const t_ray ray,
+		const t_scene *restrict scene)
+{
+	check_planes(rec, scene->pls, scene->pl_count, ray);
+	check_spheres(rec, scene->spheres, scene->spheres_count, ray);
+	check_cyl(rec, scene->cyls, scene->cyls_count, ray);
+	return (rec->did_hit);
+}
+
+// for calculating the defocus blur effect
+static inline
 t_v3	defocus_disk_sample(const t_camera *restrict cam, uint32_t *rng_state)
 {
 	const t_point3	point = random_in_unit_disk(rng_state);

@@ -7,6 +7,7 @@ void	set_default_task(t_task_queue *queue, t_minirt *minirt, t_camera *cam)
 
 	default_task = get_default_task();
 	default_task->out = (uint32_t *)minirt->image->pixels;
+	default_task->linear_buf = minirt->linear_color_buf;
 	default_task->scene = &minirt->scene;
 	default_task->cam = cam;
 	default_task->x_start = 0;
@@ -31,6 +32,7 @@ void	set_single_task(
 	task->cam = cam;
 	task->scene = &minirt->scene;
 	task->out = (uint32_t *)minirt->image->pixels;
+	task->linear_buf = minirt->linear_color_buf;
 	task->x_start = info->min_x;
 	task->x_end_plus_one = info->one_past_max_x;
 	task->y_start = info->min_y;

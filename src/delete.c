@@ -35,4 +35,5 @@ void	delete_minirt(t_minirt *minirt)
 		free(minirt->queue.tasks);
 		minirt->queue.tasks = NULL;
 	}
+	free(minirt->linear_color_buf);
 }

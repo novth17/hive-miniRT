@@ -2,8 +2,8 @@
 
 void	set_in_bounds(t_camera *cam)
 {
-	if (cam->focus_dist < 1.f)
-		cam->focus_dist = 1.f;
+	if (cam->focus_dist < 0.2f)
+		cam->focus_dist = 0.2f;
 	if (cam->defocus_angle < 0.0f)
 		cam->defocus_angle = 0.0f;
 	if (cam->fov > 180.0f)

@@ -40,6 +40,28 @@ void	set_defaults(t_minirt *minirt, char *scene_file_name)
 
 #endif
 
+int	resize_linear_color_buf(t_minirt *minirt)
+{
+	t_v4 *buf;
+	size_t total_size;
+
+	if (minirt->linear_color_buf != NULL)
+	{
+		free(minirt->linear_color_buf);
+		minirt->linear_color_buf = NULL;
+	}
+	total_size = (minirt->image->width * minirt->image->height) * sizeof(*buf);
+	buf = malloc(total_size);
+	if (buf == NULL)
+	{
+		ft_putstr_fd("miniRT: Failed to resize linear color buf\n", 2);
+		return (-1);
+	}
+	ft_memset(buf, 0, total_size);
+	minirt->linear_color_buf = buf;
+	return (0);
+}
+
 static
 int	run_minirt(t_minirt *minirt, char **argv)
 {
@@ -49,6 +71,7 @@ int	run_minirt(t_minirt *minirt, char **argv)
 	init_camera_for_frame(minirt, &minirt->scene.camera);
 	draw_background(minirt);
 	set_defaults(minirt, argv[1]);
+	resize_linear_color_buf(minirt);
 	mlx_loop(minirt->mlx);
 	minirt->stop_threads = true;
 	minirt->render = false;

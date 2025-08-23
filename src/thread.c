@@ -12,7 +12,6 @@ bool	get_and_render_tile(t_task_queue *queue)
 	t_task		*task;
 	uint32_t	work_order_index;
 
-
 	work_order_index = atomic_fetch_add(&queue->next_task_index, 1);
 	if (work_order_index >= queue->task_count)
 	{

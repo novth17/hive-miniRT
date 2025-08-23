@@ -14,6 +14,7 @@ typedef struct s_scene		t_scene;
 typedef struct s_task
 {
 	uint32_t	*out;
+	t_v4		*linear_buf;
 	t_scene		*scene;
 	t_camera	*cam;
 	uint32_t	x_start;

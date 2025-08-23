@@ -9,8 +9,8 @@
 #include <stdio.h> // @WARNING FOR DEBUGGING CURRENTLY
 
 # include <fcntl.h>
-# include "../libs/MLX42/include/MLX42/MLX42.h"
-# include "../libs/libft/inc/libft.h"
+# include "MLX42.h"
+# include "libft.h"
 # include "object.h"
 # include "error.h"
 # include "hit.h"
@@ -28,7 +28,7 @@
 
 
 #define MIN_HIT_DIST 0.0001f
-#define MAX_HIT_DIST FLT_MAX // for now
+#define MAX_HIT_DIST FLT_MAX
 
 typedef struct	s_ambient
 {
@@ -60,6 +60,7 @@ typedef struct s_scene
 typedef struct s_mini_rt
 {
 	mlx_t			*mlx;
+	t_v4			*linear_color_buf;
 	mlx_image_t		*image;
 	mlx_image_t		*background;
 
@@ -88,6 +89,8 @@ typedef struct s_string
 }	t_string;
 
 t_camera *get_frame_cam(void);
+int	resize_linear_color_buf(t_minirt *minirt);
+
 
 /* ===================== Helpers for string type and title function ===================== */
 // title.c
@@ -142,6 +145,10 @@ void rotate_view(t_camera *cam);
 // ray.c
 t_ray	get_ray(const t_camera *restrict cam, t_cord cord, t_cord strati, uint32_t *seed);
 t_ray	calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_bounce, uint32_t *seed);
+bool	find_closest_ray_intesection(
+		t_hit *restrict rec,
+		const t_ray ray,
+		const t_scene *restrict scene);
 
 void init_camera_for_frame(t_minirt *minirt, t_camera *cam);
 void base_init_cam(t_camera *cam);
