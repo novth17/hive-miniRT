@@ -7,12 +7,6 @@
 
 # include "types.h"
 
-# define U16MAX	65535
-# define U32MAX	UINT32_MAX // ((uint32_t)-1)
-# define U64MAX UINT64_MAX // ((uint64_t)-1)
-# define F32MAX	FLT_MAX
-# define F32MIN	FLT_MIN
-
 // vec2.c
 /////////////////////////////
 t_v2		v2(float x, float y);
