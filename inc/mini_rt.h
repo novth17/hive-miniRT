@@ -88,10 +88,12 @@ typedef struct s_string
 
 t_camera *get_frame_cam(void);
 
-/* ===================== Helpers for string type ===================== */
-// string.c
-bool cat_cstring_to_string(t_string *dest, char *cstr);
-bool cat_uint_to_str(t_string *dest, size_t num);
+/* ===================== Helpers for string type and title function ===================== */
+// title.c
+bool 	cat_cstring_to_string(t_string *dest, char *cstr);
+bool 	cat_uint_to_str(t_string *dest, size_t num);
+void	set_title(t_minirt *minirt);
+
 
 
 /* ===================== INPUT PARSING & INIT ===================== */
