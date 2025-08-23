@@ -139,10 +139,17 @@ void mouse_control(t_minirt *minirt);
 void rotate_view(t_camera *cam);
 
 /* ===================== FOR DRAW ===================== */
+// ray.c
+t_ray	get_ray(const t_camera *restrict cam, t_cord cord, t_cord strati, uint32_t *seed);
+t_ray	calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_bounce, uint32_t *seed);
+
 void init_camera_for_frame(t_minirt *minirt, t_camera *cam);
 void base_init_cam(t_camera *cam);
-
 void per_frame(void * param);
+
+
+
+
 
 /* ===================== FOR CHECK HIT ===================== */
 float 	check_planes(t_hit *restrict rec, const t_plane *planes, const uint32_t count, const t_ray ray);
