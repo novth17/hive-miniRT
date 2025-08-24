@@ -91,41 +91,44 @@ void	add_num_and_extension_to_filename(t_string *filename, uint32_t num)
 }
 
 static
-void	create_filename_base(t_string *filename, t_minirt *minirt)
+void	create_filename_base(t_string *filename, t_minirt *minirt, double current_time)
 {
-	static const uint32_t	filename_length = sizeof(OUTPUT_FILENAME) - 1;
+	static const uint32_t	filename_start_length = sizeof(OUTPUT_FILENAME) - 1;
 	static char				name_buf[FILENAME_BUFFER_SIZE] = OUTPUT_FILENAME;
 	const char				*scene_name = minirt->scene_file_name;
-	const uint32_t			scene_name_len = ft_strlen(scene_name);
+	const uint32_t			scene_name_len = ft_strlen(scene_name) - 3;
 	uint32_t				scene_name_len_to_write;
 
 	filename->buf = name_buf;
-	filename->len = filename_length;
+	filename->len = filename_start_length;
 	filename->size = sizeof(name_buf);
 	scene_name_len_to_write = scene_name_len;
 	if (scene_name_len_to_write > 20)
-		scene_name_len_to_write = 20;
+		scene_name_len_to_write = 17;
 	cat_cstring_to_string_n(filename, scene_name, scene_name_len_to_write);
 	if (scene_name_len != scene_name_len_to_write)
 		cat_cstring_to_string(filename, "...");
-	cat_cstring_to_string(filename, ")");
+	cat_cstring_to_string(filename, "_rt_");
 	cat_cstring_to_string(filename, "_spp-");
 	cat_uint_to_str(filename, minirt->scene.camera.samples_per_pixel);
 	cat_cstring_to_string(filename, "_maxbounces-");
 	cat_uint_to_str(filename, minirt->scene.camera.max_bounce);
-	cat_cstring_to_string(filename, "_running-");
-	cat_uint_to_str(filename, (uint32_t)mlx_get_time());
-	cat_cstring_to_string(filename, "sec__");
+	cat_cstring_to_string(filename, "_frames-");
+	cat_uint_to_str(filename, minirt->accumulated_frames);
+	cat_cstring_to_string(filename, "avg_frame_time-");
+	cat_uint_to_str(filename, minirt->avg_frame_time);
+	cat_cstring_to_string(filename, "ms");
 }
 
 void	pixels_to_image_file(t_minirt *minirt)
 {
-	static uint32_t	num;
+	const double	current_time = mlx_get_time();
+	uint32_t		num;
 	t_string		filename;
 	int				fd;
 	int				tries;
 
-	create_filename_base(&filename, minirt);
+	create_filename_base(&filename, minirt, current_time);
 	num = 0;
 	tries = 0;
 	fd = -1;

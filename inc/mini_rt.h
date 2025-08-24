@@ -71,6 +71,10 @@ typedef struct s_mini_rt
 
 	bool			write_image_to_file;
 	bool			recalculate_cam;
+	size_t			accumulated_frames;
+	double			accum_start_time;
+	double			total_frame_time;
+	double			avg_frame_time;
 
 	int				core_count;
 	t_task_queue    queue;

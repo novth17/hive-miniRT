@@ -2,7 +2,6 @@
 #include "thread.h"
 
 #ifdef MINIRT_BONUS
-# include <pthread.h>
 
 void	set_defaults(t_minirt *minirt, char *scene_file_name)
 {
@@ -42,8 +41,8 @@ void	set_defaults(t_minirt *minirt, char *scene_file_name)
 
 int	resize_linear_color_buf(t_minirt *minirt)
 {
-	t_v4 *buf;
-	size_t total_size;
+	t_v4	*buf;
+	size_t	total_size;
 
 	if (minirt->linear_color_buf != NULL)
 	{
@@ -72,6 +71,7 @@ int	run_minirt(t_minirt *minirt, char **argv)
 	draw_background(minirt);
 	set_defaults(minirt, argv[1]);
 	resize_linear_color_buf(minirt);
+	minirt->accum_start_time = mlx_get_time();
 	mlx_loop(minirt->mlx);
 	minirt->stop_threads = true;
 	minirt->render = false;

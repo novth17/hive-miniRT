@@ -1,6 +1,6 @@
 #include "mini_rt.h"
 
-static uint32_t	g_accumulated_frames = 0;
+static size_t	g_accumulated_frames = 0;
 
 // lerp between according to weight
 static inline
@@ -70,6 +70,12 @@ void	per_frame(void *param)
 	}
 	atomic_exchange(&minirt->render, false);
 	++g_accumulated_frames;
+	if (g_accumulated_frames != 0)
+	{
+		minirt->total_frame_time += mlx->delta_time * 1000;
+		minirt->avg_frame_time = minirt->total_frame_time / g_accumulated_frames;
+	}
+	minirt->accumulated_frames = g_accumulated_frames;
 }
 
 #else
@@ -90,6 +96,12 @@ void	per_frame(void *param)
 	queue->next_task_index = 0;
 	render_tile(queue->tasks[0]);
 	++g_accumulated_frames;
+	if (g_accumulated_frames != 0)
+	{
+		minirt->total_frame_time += mlx->delta_time * 1000;
+		minirt->avg_frame_time = minirt->total_frame_time / g_accumulated_frames;
+	}
+	minirt->accumulated_frames = g_accumulated_frames;
 }
 
 #endif
@@ -100,4 +112,6 @@ void	recalculate_camera(t_minirt *minirt, t_camera *frame_cam)
 	*frame_cam = minirt->scene.camera;
 	minirt->recalculate_cam = false;
 	g_accumulated_frames = 0;
+	minirt->accum_start_time = mlx_get_time();
+	minirt->total_frame_time = 0;
 }

@@ -14,7 +14,6 @@ void	resize_images(t_minirt *minirt, mlx_t *mlx, t_camera *frame_cam)
 		free(minirt->queue.tasks);
 	resize_linear_color_buf(minirt);
 	create_task_queue(&minirt->queue, minirt, frame_cam);
-
 }
 
 void	prepare_to_render(t_minirt *minirt, mlx_t *mlx,
