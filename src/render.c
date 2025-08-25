@@ -1,293 +1,13 @@
-# include "../inc/mini_rt.h"
-#include <math.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include "../inc/image_to_file.h"
+#include "mini_rt.h"
 
+static size_t	g_accumulated_frames = 0;
 
-static uint32_t g_accummulated_frames = 0;
-
+// lerp between according to weight
 static inline
-bool shadow_hit(const t_scene *scene, const t_ray ray, const float light_distance)
+t_v4	accumulate(const t_v4 old_color, const t_v4 new_color)
 {
-	uint32_t i;
-	float hit_distance;
-
-	i = -1;
-	while (++i < scene->pl_count)
-	{
-		hit_distance = plane_hit(scene->pls[i], ray);
-		if (hit_distance > MIN_HIT_DIST && hit_distance < light_distance)
-			return (true);
-	}
-	i = -1;
-	while (++i < scene->spheres_count)
-	{
-		hit_distance = sphere_hit(scene->spheres[i], ray);
-		if(hit_distance > MIN_HIT_DIST && hit_distance < light_distance)// sphere_hit(&temp_rec, scene->spheres[i], ray))
-			return (true);
-	}
-	i = -1;
-	while (++i < scene->cyls_count)
-	{
-		hit_distance = cyl_hit(scene->cyls[i], ray);
-		if(hit_distance > MIN_HIT_DIST && hit_distance < MAX_HIT_DIST)// sphere_hit(&temp_rec, scene->spheres[i], ray))
-			return (true);
-	}
-	return (false);
-}
-
-static inline
-t_v3 point_light_color(const t_light *restrict light, const t_hit *restrict rec, t_v3 light_direction, float dist)
-{
-	// look at https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model to make this better
-	// const t_color ambient_light = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
-	const t_v3 point_light_color = f32_mul_v3(light->bright_ratio, light->color);
-	float light_angle;
-	t_v3 color;
-
-	// light_direction = f32_mul_v3(1.0f / dist, light_direction);
-	light_angle = smoothstep(dot(rec->normal, light_direction), 0.0f, 2.0f);
-	color = f32_mul_v3(light_angle, point_light_color);
-	color = f32_mul_v3(1.0f / (dist * dist), color);
-	// color = V3_ADD(ambient_light, color);
-	// color = v3_mul_v3(rec->color, color);
-	return (v3_clamp(color));
-}
-
-static inline
-t_v3 check_point_light(const t_scene *restrict scene, const t_hit *restrict rec)
-{
-	uint32_t	i;
-	t_color	color;
-	t_ray shadow_ray;
-	t_v3 light_vector;
-	float light_distance;
-
-	i = 0;
-	color = v3(0, 0, 0);
-	while (i < scene->lights_count)
-	{
-		light_vector = V3_SUB(scene->lights[i].origin, rec->position);
-		light_distance = length(light_vector);
-		shadow_ray.origin = rec->position;
-		shadow_ray.direction = f32_mul_v3(1.0f / light_distance, light_vector);
-		if (shadow_hit(scene, shadow_ray, light_distance) == false)
-		{
-			color = V3_ADD(color, point_light_color(&scene->lights[i], rec, shadow_ray.direction, light_distance / scene->light_dist_mult));
-		}
-		i++;
-	}
-	return (v3_clamp(color));
-}
-
-
-static inline
-t_hit find_closest_ray_intesection(const t_ray ray, const t_scene * restrict scene)
-{
-	// t_sphere point_light_sphere = {.material.color = v3(1, 1, 1), .center = scene->light.origin, .radius = 0.05f}; // debugging
-	// point_light_sphere.material.emitter = 0.0f;
-	// point_light_sphere.material.diffuse = 0.0f;
-	// point_light_sphere.material.specular_probability = 0.0f;
-	t_hit hit_record;
-
-	hit_record = (t_hit){};
-	hit_record.distance = MAX_HIT_DIST;
-	check_planes(&hit_record, scene->pls, scene->pl_count, ray);
-	check_spheres(&hit_record, scene->spheres, scene->spheres_count, ray);
-	// check_spheres(&hit_record, &point_light_sphere, 1, ray);
-	check_cyl(&hit_record, scene->cyls, scene->cyls_count, ray);
-
-	return (hit_record);
-}
-
-// Return true if the vector is close to zero in all dimensions.
-static
-bool near_zero(const t_v3 a) {
-    const float s = 1e-8f;
-    return ((fabsf(a.x) < s) && (fabsf(a.y) < s) && (fabsf(a.z) < s));
-}
-
-
-// not normalizing the random bounce direction and the final ray direction
-// causes the image to be noticably brighter
-// it is also quite a bit faster to render
-// the light seems to not spread properly
-static inline
-t_ray calculate_next_ray(const t_hit *restrict rec, t_ray ray, bool is_specular_bounce, uint32_t *seed)
-{
-	// const t_v3 scatter = random_direction_in_hemisphere(rec->normal, seed); // do we need to normalize?
-	// const t_v3 random_bounce = v3_mul_f32(scatter, !near_zero(scatter));
-
-
-	// const t_v3 scatter = random_direction_in_hemisphere(rec->normal, seed);
-	// const t_v3 random_bounce = noz(random_direction_in_hemisphere(rec->normal, seed)); // do we need to normalize?
-
-	const t_v3 scatter = in_unit_sphere(seed);
-	const t_v3 random_bounce = normalize(V3_ADD(rec->normal, v3_mul_f32(scatter, !near_zero(scatter))));
-	t_v3 pure_bounce;
-
-	// inner product (or dot product) gives us the angle difference between
-	// the normal at the hit point and the direction of the ray
-	// that angle times 2 is the direction we want the mirror reflection to go
-	pure_bounce = f32_mul_v3(2.0f*dot(ray.direction, rec->normal), rec->normal);
-	pure_bounce = v3_sub_v3(ray.direction, pure_bounce);
-
-	// ray.origin = V3_SUB(rec->position, v3_mul_f32(ray.direction, 1e-4f)); // look to see if this value is good or not
-	ray.origin = rec->position;
-	// ray.origin = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
-	ray.direction = v3_lerp(random_bounce, rec->mat.diffuse * is_specular_bounce, pure_bounce); // do we need to normalize?
-	ray.direction = normalize(ray.direction);
-
-
-
-
-
-	return (ray);
-}
-
-static inline
-t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce, uint32_t *seed) // change to all objects or scene;
-{
-	t_v3 ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color);
-	// t_v3 point_light_color = f32_mul_v3(scene->light.bright_ratio * scene->light_strength_mult, scene->light.color);
-	// t_sphere point_light_sphere = {.color = v3(20, 20, 20), .center = scene->light.origin, .radius = 0.05f};
-	uint32_t i;
-	t_color total_incoming_light;
-
-
-	t_hit rec;
-	t_color ray_color;
-	t_color prev_color;
-	ray_color = v3(1, 1, 1);
-	prev_color = ray_color;
-	i = 0;
-	total_incoming_light = v3(0, 0, 0);
-	bool hit_once = false;
-	bool prev_specular = true;
-	while (i <= max_bounce)
-	{
-		rec = find_closest_ray_intesection(ray, scene);
-		if (rec.did_hit)
-		{
-			// if we hit something calculate the light contribution of that point into the total light of the ray
-
-			hit_once = true;
-			rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f));
-			// rec.position = V3_SUB(rec.position, v3_mul_f32(ray.direction, 1e-4f));
-			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
-			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
-			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));
-			ray_color = v3_mul_v3(ray_color, v3_lerp(rec.mat.color, is_specular_bounce, rec.mat.specular_color));
-			if (scene->use_point_light)
-			{
-				total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(check_point_light(scene, &rec), ray_color));
-			}
-
-			if (i > 0 && !prev_specular)
-			{
-				float p = fmaxf(ray_color.r, fmaxf(ray_color.g, ray_color.b));
-				if (random_float(seed) >= p)
-				{
-					ray_color = prev_color;
-					break;
-				}
-			}
-			prev_specular = is_specular_bounce;
-			prev_color = ray_color;
-			ray = calculate_next_ray(&rec, ray, is_specular_bounce, seed);
-			++i;
-		}
-		else
-		{
-
-			break ;
-		}
-	}
-	if (hit_once)
-	{
-		total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(ambient, ray_color));
-		return ((t_v4){.rgb = v3_clamp(total_incoming_light), .a = 1.0f});
-	}
-
-	return (v4(0, 0, 0, 0));
-}
-
-
-// for calculating the defocus blur effect
-t_v3 defocus_disk_sample(const t_camera *restrict cam, uint32_t *rng_state)
-{
-	const t_point3 point = random_in_unit_disk(rng_state);
-	t_v3 result;
-
-	result = V3_ADD(cam->camera_center, f32_mul_v3(point.x, cam->defocus_disk_u));
-	result = V3_ADD(result, f32_mul_v3(point.y, cam->defocus_disk_v));
-	return (result);
-}
-
-static inline
-t_ray get_ray(const t_camera *cam, t_cord cord, t_cord strati, uint32_t *seed)
-{
-	const t_v2	offset = sample_square_stratified(
-		strati.x,
-		strati.y,
-		cam->recip_sqrt_spp,
-		seed);
-	const t_v3	x_delta = f32_mul_v3(cord.x + offset.x, cam->pixel_delta_u);
-	const t_v3	y_delta = f32_mul_v3(cord.y + offset.y, cam->pixel_delta_v);
-	const t_v3	pixel_sample = V3_ADD(cam->pixel00_loc, V3_ADD(x_delta, y_delta));
-	t_ray ray;
-
-	ray.origin = cam->camera_center;
-	if (cam->defocus_angle > 0.0f)
-		ray.origin = defocus_disk_sample(cam, seed);
-	ray.direction = normalize(V3_SUB(pixel_sample, ray.origin));
-	return (ray);
-}
-
-t_v4 sample_pixel(const t_scene *scene, const t_camera *restrict cam, const t_cord original_cord, uint32_t seed)
-{
-	t_ray	ray;
-	t_v4	color;
-	t_v4	incoming_light;
-	int32_t	y_s;
-	int32_t	x_s;
-
-	incoming_light = v4(0, 0, 0, 0);
-	y_s = 0;
-	while (y_s < cam->sqrt_spp)
-	{
-		x_s = 0;
-		while (x_s < cam->sqrt_spp)
-		{
-
-			ray = get_ray(cam, original_cord, (t_cord){x_s, y_s}, &seed);
-			color = trace(ray, scene, cam->max_bounce, &seed);
-			incoming_light = v4_add(incoming_light, color);
-			++x_s;
-		}
-		++y_s;
-	}
-	color = v4_mul_f32(incoming_light, cam->pixel_sample_scale_strati);
-	return (color);
-}
-
-// static inline
-// t_v3 rgb_u32_to_float(uint32_t c)
-// {
-// 	t_v3 result;
-
-// 	result.b = (float)((c >> 16) & 0xFF) / 255.0f;
-// 	result.g = (float)((c >> 8) & 0xFF) / 255.0f;
-// 	result.r = (float)((c >> 0) & 0xFF) / 255.0f;
-// 	return (result);
-// }
-
-static inline
-t_v4 accumulate(const t_v4 old_color, const t_v4 new_color)
-{
-	const float weight = 1.0 / (g_accummulated_frames + 1); // @TODO screw around with the weight
-	t_v4 accumulated_average;
+	const float	weight = 1.0 / (g_accumulated_frames + 1);
+	t_v4		accumulated_average;
 
 	accumulated_average.r = old_color.r * (1 - weight) + new_color.r * weight;
 	accumulated_average.g = old_color.g * (1 - weight) + new_color.g * weight;
@@ -296,146 +16,102 @@ t_v4 accumulate(const t_v4 old_color, const t_v4 new_color)
 	return (accumulated_average);
 }
 
-void render(const t_scene *scene, const t_camera *restrict cam, uint32_t *restrict out)
+void	render_tile(const t_task task)
 {
-	t_v4 color;
-	int32_t x;
-	int32_t y;
-	uint32_t rng_seed;
+	t_v4		color;
+	uint32_t	pixel_index;
+	uint32_t	seed;
+	uint32_t	x;
+	uint32_t	y;
 
-	y = 0;
-	while (y < cam->image_height)
+	y = task.y_start;
+	while (y < task.y_end_plus_one)
 	{
-		x = 0;
-		while (x < cam->image_width)
+		x = task.x_start;
+		while (x < task.x_end_plus_one)
 		{
-			rng_seed = (y * cam->image_width + x) + g_accummulated_frames * 792858;
-			color = sample_pixel(scene, cam, (t_cord){x, y}, rng_seed);
-
-			color = accumulate(exact_unpack(*out), color);
-			*out++ = exact_pack(color);
-
-
-			// lerp(color.r)
-
-			// uint32_t rgba = exact_pack(color);
-			// int num = roundf(random_float(&rng_seed) * 4.0f);
-			// uint32_t r = (rgba >> 0) & 0xff;
-			// uint32_t g = (rgba >> 8) & 0xff;
-			// uint32_t b = (rgba >> 16) & 0xff;
-			// uint32_t a = (rgba >> 24) & 0xff;
-			// switch (num)
-			// {
-			// 	case 1: r += random_float(&rng_seed) * 4.0f; break;
-			// 	case 2: g += random_float(&rng_seed) * 4.0f; break;
-			// 	case 3: b += random_float(&rng_seed) * 4.0f; break;
-			// }
-
-			// *out++ = (a << 24 | b << 16 | g << 8 | r << 0);
-			// t_color luminance;
-		 // 	luminance.r = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
-			// luminance.g = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
-			// luminance.b = 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
-			// t_color threshold;
-
-			// threshold = (t_v3){};
-			// if (luminance.r >= 0.5f)
-			// 	threshold.r = 1.0f;
-			// if (luminance.g >= 0.5f)
-			// 	threshold.g = 1.0f;
-			// if (luminance.b >= 0.5f)
-			// 	threshold.b = 1.0f;
-
-			// *out++ = exact_pack((t_v4){.rgb = threshold, .a = color.a});
-			// *out++ = exact_pack((t_v4){.rgb = luminance, .a = color.a});
-
-
-			// color = accumulate(gamma2_unpack(*out), color);
-			// *out++ = gamma2_pack(color);
-
-
-			// color = accumulate(rgb_u32_to_v4(*out), color);
-			// *out++ = rgb_pack4x8(v3_clamp(color.rgb)); // maybe dont need clamp or do it in color correction
-
-
+			pixel_index = (y * task.cam->image_width + x);
+			seed = pixel_index + g_accumulated_frames * 792858;
+			color = sample_pixel(task.scene, task.cam, (t_cord){x, y}, seed);
+			if (task.linear_buf != NULL)
+			{
+				color =	accumulate(task.linear_buf[pixel_index], color);
+				task.linear_buf[pixel_index] = color;
+			}
+			else
+				color = accumulate(exact_unpack(task.out[pixel_index]), color);
+			task.out[pixel_index] = exact_pack(color);
 			++x;
 		}
 		++y;
 	}
-	// return (0);
 }
 
-static
-void set_title(t_minirt *minirt)
+#ifdef MINIRT_BONUS
+
+void	per_frame(void *param)
 {
-	static char title_base[100] = "MiniRay";
-	int status;
-	t_string title;
+	t_camera		*frame_cam;
+	t_minirt		*minirt;
+	mlx_t			*mlx;
+	t_task_queue	*queue;
 
-	title.buf = title_base;
-	title.size = sizeof(title_base);
-	title.len = sizeof("MiniRay") - 1;
-	status = 0;
-	status = cat_cstring_to_string(&title, " -- Frame Time: ");
-	status = cat_uint_to_str(&title, round(minirt->mlx->delta_time * 1000));
-	status = cat_cstring_to_string(&title, " -- Samples: ");
-	status = cat_uint_to_str(&title, minirt->scene.camera.samples_per_pixel);
-	status = cat_cstring_to_string(&title, " -- Max Bounces: ");
-	status = cat_uint_to_str(&title, minirt->scene.camera.max_bounce);
-	if (status == FAIL)
+	minirt = (t_minirt *)param;
+	mlx = minirt->mlx;
+	frame_cam = get_frame_cam();
+	prepare_to_render(minirt, mlx, minirt->image, frame_cam);
+	queue = &minirt->queue;
+	queue->tiles_retired_count = 0;
+	queue->next_task_index = 0;
+	atomic_exchange(&minirt->render, true);
+	while (queue->tiles_retired_count < queue->task_count)
 	{
-		ft_dprintf(2, "Failed to create title\n"
-			"buf_size <%u> len <%u> data <%s>\n", title.size, title.len, title.buf);
-		mlx_set_window_title(minirt->mlx, "MiniRay -- Info not available");
-		return ;
+		usleep(1000);
 	}
-	mlx_set_window_title(minirt->mlx, title.buf);
+	atomic_exchange(&minirt->render, false);
+	++g_accumulated_frames;
+	if (g_accumulated_frames != 0)
+	{
+		minirt->total_frame_time += mlx->delta_time * 1000;
+		minirt->avg_frame_time = minirt->total_frame_time / g_accumulated_frames;
+	}
+	minirt->accumulated_frames = g_accumulated_frames;
 }
 
-static
-void recalculate_camera(t_minirt *minirt, t_camera *frame_cam)
+#else
+
+void	per_frame(void *param)
+{
+	t_camera		*frame_cam;
+	t_minirt		*minirt;
+	mlx_t			*mlx;
+	t_task_queue	*queue;
+
+	minirt = (t_minirt *)param;
+	mlx = minirt->mlx;
+	frame_cam = get_frame_cam();
+	prepare_to_render(minirt, mlx, minirt->image, frame_cam);
+	queue = &minirt->queue;
+	queue->tiles_retired_count = 0;
+	queue->next_task_index = 0;
+	render_tile(queue->tasks[0]);
+	++g_accumulated_frames;
+	if (g_accumulated_frames != 0)
+	{
+		minirt->total_frame_time += mlx->delta_time * 1000;
+		minirt->avg_frame_time = minirt->total_frame_time / g_accumulated_frames;
+	}
+	minirt->accumulated_frames = g_accumulated_frames;
+}
+
+#endif
+
+void	recalculate_camera(t_minirt *minirt, t_camera *frame_cam)
 {
 	init_camera_for_frame(minirt, &minirt->scene.camera);
 	*frame_cam = minirt->scene.camera;
 	minirt->recalculate_cam = false;
-	g_accummulated_frames = 0;
-}
-
-void prepare_to_render(t_minirt *minirt, mlx_t *mlx, mlx_image_t *img, t_camera *frame_cam)
-{
-	set_title(minirt);
-	if (check_movement_keys(&minirt->scene.camera, mlx, mlx->delta_time))
-		minirt->recalculate_cam = true;
-	mouse_control(minirt);
-	if (minirt->write_image_to_file == true)
-	{
-		pixels_to_image_file(minirt->image);
-		minirt->write_image_to_file = false;
-	}
-	if (img->width != (uint32_t)mlx->width || img->height != (uint32_t)mlx->height)
-	{
-		if (mlx_resize_image(minirt->image, mlx->width, mlx->height) == false)
-			ft_putstr_fd("miniRT: Failed to resize image\n", 2);
-		if (mlx_resize_image(minirt->background, mlx->width, mlx->height) == false)
-			ft_putstr_fd("miniRT: Failed to resize background\n", 2);
-		recalculate_camera(minirt, frame_cam);
-		draw_background(minirt);
-	}
-	if (minirt->recalculate_cam == true)
-	{
-		recalculate_camera(minirt, frame_cam);
-	}
-}
-
-void per_frame(void * param)
-{
-	static t_camera frame_cam = {};
-	t_minirt *minirt;
-	mlx_t *mlx;
-
-	minirt = (t_minirt *)param;
-	mlx = minirt->mlx;
-	prepare_to_render(minirt, mlx, minirt->image, &frame_cam);
-	render(&minirt->scene, &frame_cam, (uint32_t *)minirt->image->pixels);
-	++g_accummulated_frames;
+	g_accumulated_frames = 0;
+	minirt->accum_start_time = mlx_get_time();
+	minirt->total_frame_time = 0;
 }

@@ -22,17 +22,26 @@ HEADERS		= 	inc/camera.h \
 				inc/mini_rt.h \
 				inc/object.h \
 				inc/rt_math.h \
-				inc/types.h
+				inc/types.h \
+				inc/task.h
 
 SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/init.c \
 				$(SRC_DIR)/error.c \
 				$(SRC_DIR)/delete.c \
+				$(SRC_DIR)/getters.c \
         		$(SRC_DIR)/camera.c \
+          		$(SRC_DIR)/task.c \
+				$(SRC_DIR)/thread.c \
+				$(SRC_DIR)/ray.c \
+				$(SRC_DIR)/prepare_to_render.c \
 				$(SRC_DIR)/render.c \
+				$(SRC_DIR)/sample.c \
+				$(SRC_DIR)/point_light.c \
+				$(SRC_DIR)/string.c \
 				$(SRC_DIR)/image_to_file.c \
 				$(SRC_DIR)/image_to_file_utils.c \
-				$(SRC_DIR)/string.c \
+				$(SRC_DIR)/title.c \
 				$(SRC_DIR)/guide.c \
 				$(SRC_DIR)/background.c \
 				$(SRC_DIR)/parser/parse.c \
@@ -46,13 +55,17 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/parser/identifier/object.c \
 				$(SRC_DIR)/parser/identifier/material.c \
 				$(SRC_DIR)/math/rt_math.c \
+				$(SRC_DIR)/math/square.c \
+				$(SRC_DIR)/math/cross_dot_length.c \
 				$(SRC_DIR)/math/vec2.c \
 				$(SRC_DIR)/math/vec3_1.c \
 				$(SRC_DIR)/math/vec3_2.c \
+				$(SRC_DIR)/math/vec4.c \
 				$(SRC_DIR)/math/quaternion.c \
 				$(SRC_DIR)/math/normalize.c \
 				$(SRC_DIR)/math/interpolate.c \
 				$(SRC_DIR)/math/random.c \
+				$(SRC_DIR)/math/color_correction.c \
 				$(SRC_DIR)/control/hook.c \
 				$(SRC_DIR)/control/mouse.c \
 				$(SRC_DIR)/control/scroll.c \
@@ -82,6 +95,9 @@ $(LIBFT):
 $(NAME): $(MLX42) $(LIBFT) $(OBJS)
 	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(MLX42) -ldl -lglfw -pthread -lm -o $(NAME)
 	@echo "\033[0;32mminiRT built with MLX42 successfully ✅\033[0m"
+
+bonus: CFLAGS += -D MINIRT_BONUS -D _GNU_SOURCE
+bonus: $(NAME)
 
 clean:
 	@rm -rf $(OBJ_DIR)
