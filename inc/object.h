@@ -4,6 +4,8 @@
 #include "mini_rt.h"
 #include "types.h"
 
+#define CHECKER_SIZE 0.7
+
 #define SP_ARG_MIN 4
 #define SP_ARG_MAX 9
 
