@@ -12,14 +12,14 @@ t_color checker_plane(t_v3 p, t_material *m)
 
 t_color checker_sphere(t_v3 p, const t_sphere *sphere)
 {
-    t_v3 local = V3_SUB(p, sphere->center); //maybe no need normalize?
+    t_v3 local = normalize(V3_SUB(p, sphere->center)); //maybe no need normalize?
 
     double phi = atan2(local.z, local.x);
     double theta = asin(local.y);
 
     // Scale with suze maybe i need a scaler???
-    int u = floor((phi + M_PI) / (M_PI / CHECKER_SIZE));
-    int v = floor(theta / (M_PI / CHECKER_SIZE));
+    int u = (0.5 + (phi / (2 * M_PI))) * (sphere->radius);
+    int v = (0.5 + (theta / (M_PI))) * (sphere->radius);
 
     if ((u + v) % 2 == 0)
         return (sphere->material.color);
