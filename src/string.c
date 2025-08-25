@@ -1,6 +1,4 @@
-
 #include "mini_rt.h"
-
 
 // maybe add this to some general utils file
 static
@@ -20,7 +18,7 @@ uint8_t	num_length(uint32_t num)
 }
 
 // concatinate a number to the end of a t_string
-bool cat_uint_to_str(t_string *dest, size_t num)
+bool	cat_uint_to_str(t_string *dest, size_t num)
 {
 	const uint8_t	num_len = num_length(num);
 	uint32_t		i;
@@ -39,9 +37,9 @@ bool cat_uint_to_str(t_string *dest, size_t num)
 }
 
 // concatinate a c string to the end of a t_string
-bool cat_cstring_to_string(t_string *dest, char *cstr)
+bool	cat_cstring_to_string(t_string *dest, const char *cstr)
 {
-	size_t cstr_len;
+	size_t	cstr_len;
 
 	if (cstr == NULL)
 		return (1);
@@ -54,3 +52,22 @@ bool cat_cstring_to_string(t_string *dest, char *cstr)
 	return (0);
 }
 
+// concatinate up to n characters of a c string to the end of a t_string
+bool	cat_cstring_to_string_n(t_string *dest, const char *cstr, uint32_t n)
+{
+	size_t	cstr_len;
+	size_t	to_write;
+
+	if (cstr == NULL)
+		return (1);
+	cstr_len = ft_strlen(cstr);
+	to_write = n;
+	if (cstr_len < n)
+		to_write = n;
+	if (dest->size <= dest->len + to_write)
+		return (1);
+	ft_memmove(&dest->buf[dest->len], cstr, to_write);
+	dest->len += to_write;
+	dest->buf[dest->len] = '\0';
+	return (0);
+}

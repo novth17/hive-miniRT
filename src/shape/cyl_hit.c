@@ -19,13 +19,14 @@ static t_hit	create_cyl_hit_record(const t_ray ray, const t_cylinder cyl,
 	t_hit		rec;
 	t_cyl_hit	h;
 
-	h.hit_point = at(ray, t);
-	h.vec_to_hit = v3_sub_v3(h.hit_point, cyl.center);
-	h.proj_len = dot(h.vec_to_hit, cyl.axis);
-	rec.position = h.hit_point;
 	rec.distance = t;
+	rec.position = at(ray, t);
 	rec.mat = cyl.material;
+	if (rec.mat.has_checker)
+		rec.mat.color = checker_cylinder(rec.position, &cyl);
 	rec.did_hit = true;
+	h.vec_to_hit = v3_sub_v3(rec.position, cyl.center);
+	h.proj_len = dot(h.vec_to_hit, cyl.axis);
 	h.half_height = cyl.height * 0.5f;
 	if (h.proj_len < -h.half_height + CYL_CAP_EPSILON)
 		rec.normal = neg(cyl.axis);

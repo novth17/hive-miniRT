@@ -3,12 +3,12 @@
 
 # include <stdint.h>
 # include <string.h>
+# include "mini_rt.h"
 # include "MLX42.h"
 
-# define OUTPUT_FILENAME "minirt_img"
-# define OUTPUT_FILENAME_BUFFER_SIZE 30
+# define OUTPUT_FILENAME "minirt_("
+# define FILENAME_BUFFER_SIZE 80
 # define OUTPUT_FILE_EXTENSION ".bmp"
-
 
 # pragma pack(push, 1)
 
@@ -36,11 +36,14 @@ typedef struct s_bitmap_header
 
 # pragma pack(pop)
 
-void	pixels_to_image_file(mlx_image_t *image);
+void			pixels_to_image_file(t_minirt *minirt);
 
 // utils
-uint32_t	reorder_color(uint32_t color);
-uint8_t		num_length(uint32_t num);
-
+uint32_t		reorder_color(uint32_t color);
+uint8_t			num_length(uint32_t num);
+uint32_t		blend_fore_and_background(uint32_t foreground,
+					uint32_t background);
+t_bitmap_header	make_header(const mlx_image_t *image,
+					uint32_t output_pixel_size);
 
 #endif

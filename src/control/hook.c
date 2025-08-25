@@ -1,20 +1,24 @@
 #include "../../inc/mini_rt.h"
 
-static float g_speed = 0.5f;
+static float	g_speed = 0.5f;
 
 // maybe just close window and leave from main?
 // or maybe this is easier i dunno
 static void	esc_key_func(mlx_key_data_t keydata, t_minirt *minirt)
 {
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
+	{
+		minirt->stop_threads = true;
 		mlx_close_window(minirt->mlx);
+	}
 }
 
-bool check_movement_keys(t_camera *cam, mlx_t *mlx, double time_step)
+bool	check_movement_keys(t_camera *cam, mlx_t *mlx, double time_step)
 {
-	const t_v3	right_direction = v3_mul_f32(cam->right, g_speed * time_step);
-	const t_v3	forward_direction = v3_mul_f32(cam->lookat, g_speed * time_step);
-	const t_v3	up_direction = v3_mul_f32(cam->vup, g_speed * time_step);
+	const float	speed = g_speed * time_step;
+	const t_v3	right_direction = v3_mul_f32(cam->right, speed);
+	const t_v3	forward_direction = v3_mul_f32(cam->lookat, speed);
+	const t_v3	up_direction = v3_mul_f32(cam->vup, speed);
 	int			moved;
 
 	moved = 0;
@@ -35,7 +39,7 @@ bool check_movement_keys(t_camera *cam, mlx_t *mlx, double time_step)
 	return (moved != 0);
 }
 
-void check_setting_keys(keys_t key, t_minirt *minirt, t_camera *cam)
+void	check_setting_keys(keys_t key, t_minirt *minirt, t_camera *cam)
 {
 	if (key == MLX_KEY_P)
 		minirt->write_image_to_file = true;
@@ -63,15 +67,13 @@ void check_setting_keys(keys_t key, t_minirt *minirt, t_camera *cam)
 		g_speed -= 0.1f;
 }
 
-
-void key_hook(struct mlx_key_data data, void * param)
+void	key_hook(struct mlx_key_data data, void *param)
 {
-	t_minirt *minirt;
+	t_minirt	*minirt;
 
 	minirt = (t_minirt *)param;
 	if (data.action == MLX_RELEASE)
 		return ;
-
 	esc_key_func(data, minirt);
 	minirt->recalculate_cam = should_recalculate(data.key);
 	check_setting_keys(data.key, minirt, &minirt->scene.camera);

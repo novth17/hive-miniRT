@@ -20,6 +20,8 @@ void	create_sphere_hit_record(t_hit *restrict rec, const t_ray ray,
 	rec->distance = root;
 	rec->position = at(ray, rec->distance);
 	rec->mat = sp.material;
+	if (rec->mat.has_checker)
+		rec->mat.color = checker_sphere(rec->position, &sp);
 	rec->normal = noz(v3_div_f32(V3_SUB(rec->position, sp.center), sp.radius));
 	set_face_normal(rec, &ray);
 }

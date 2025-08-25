@@ -34,6 +34,8 @@ static inline t_hit	create_plane_hit_record(const t_ray ray, const t_plane pl,
 	rec.distance = t;
 	rec.position = at(ray, rec.distance);
 	face_normal = pl.axis;
+	if (rec.mat.has_checker)
+		rec.mat.color = checker_plane(rec.position, &rec.mat);
 	rec.front_face = dot(ray.direction, face_normal) < 0;
 	if (rec.front_face)
 		rec.normal = face_normal;

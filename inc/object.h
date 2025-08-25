@@ -31,6 +31,7 @@ typedef struct	s_light
 
 typedef enum e_obj_type
 {
+	NO_TYPE = 0,
 	LIGHT,
 	SPHERE,
 	PLANE,
@@ -46,8 +47,7 @@ typedef struct s_material
 	float	diffuse;
 	float	emitter;
 
-
-    int     has_checker;
+    bool	has_checker;
 } t_material;
 
 typedef struct s_sphere
