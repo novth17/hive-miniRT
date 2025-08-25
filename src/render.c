@@ -174,7 +174,8 @@ t_v4 trace(t_ray ray, const t_scene * restrict scene, const uint32_t max_bounce,
 
 			hit_once = true;
 			rec.position = V3_ADD(rec.position, v3_mul_f32(rec.normal, 1e-4f));
-			// rec.position = V3_SUB(rec.position, v3_mul_f32(ray.direction, 1e-4f));
+			
+			rec.mat.color = get_surface_color(&rec.mat, rec.position, scene->objects);			// rec.position = V3_SUB(rec.position, v3_mul_f32(ray.direction, 1e-4f));
 			const bool is_specular_bounce = rec.mat.specular_probability >= random_float(seed);
 			t_color emmitted_light = v3_mul_f32(rec.mat.color, rec.mat.emitter);
 			total_incoming_light = V3_ADD(total_incoming_light, v3_mul_v3(emmitted_light, ray_color));

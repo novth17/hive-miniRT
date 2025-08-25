@@ -60,7 +60,8 @@ SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/shape/pl_hit.c \
 				$(SRC_DIR)/shape/cyl_side_hit.c  \
 				$(SRC_DIR)/shape/cyl_hit.c \
-				$(SRC_DIR)/shape/sphere_hit.c
+				$(SRC_DIR)/shape/sphere_hit.c \
+				$(SRC_DIR)/checker/check.c
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 

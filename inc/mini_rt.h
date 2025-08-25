@@ -91,6 +91,7 @@ int		parse_light(char **tokens, t_scene *scene);
 int		parse_sphere(char **tokens, t_scene *scene);
 int		parse_plane(char **tokens, t_scene *scene);
 int		parse_cyl(char **tokens, t_scene *scene);
+t_color get_surface_color(t_material *m, t_v3 hit_point, t_object *obj);
 
 /* ===================== Parse utils ===================== */
 double	parse_float(const char *str, bool *is_valid);
