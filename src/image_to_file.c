@@ -104,11 +104,11 @@ void	create_filename_base(t_string *filename, t_minirt *minirt)
 	filename->size = sizeof(name_buf);
 	scene_name_len_to_write = scene_name_len;
 	if (scene_name_len_to_write > 20)
-		scene_name_len_to_write = 17;
+		scene_name_len_to_write = 20 - (sizeof("--truncated") - 1);
 	cat_cstring_to_string_n(filename, scene_name, scene_name_len_to_write);
 	if (scene_name_len != scene_name_len_to_write)
-		cat_cstring_to_string(filename, "...");
-	cat_cstring_to_string(filename, "_rt_");
+		cat_cstring_to_string(filename, "--truncated");
+	cat_cstring_to_string(filename, "_rt");
 	cat_cstring_to_string(filename, "_spp-");
 	cat_uint_to_str(filename, minirt->scene.camera.samples_per_pixel);
 	cat_cstring_to_string(filename, "_maxbounces-");
