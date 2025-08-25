@@ -5,13 +5,13 @@
 #include "types.h"
 
 #define SP_ARG_MIN 4
-#define SP_ARG_MAX 8
+#define SP_ARG_MAX 9
 
 #define PL_ARG_MIN 4
-#define PL_ARG_MAX 8
+#define PL_ARG_MAX 9
 
 #define CYL_ARG_MIN 6
-#define CYL_ARG_MAX 10
+#define CYL_ARG_MAX 11
 
 #define FLOAT_EPSILON 1e-4f
 #define SHADOW_BIAS 1e-4f
@@ -43,6 +43,9 @@ typedef struct s_material
 	float	specular_probability;
 	float	diffuse;
 	float	emitter;
+
+
+    int     has_checker;
 } t_material;
 
 typedef struct s_sphere
