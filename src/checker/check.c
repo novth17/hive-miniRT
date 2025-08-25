@@ -12,9 +12,10 @@ t_color checker_plane(t_v3 p, t_object *obj)
 
 t_color checker_sphere(t_v3 p, t_object *obj)
 {
-    t_v3 local = normalize(V3_SUB(p, obj->sphere.center));
-    double phi = atan2(local.z, local.x);   
-    double theta = acos(local.y);         
+    t_v3 local = V3_SUB(p, obj->sphere.center); //maybe no need normalize?
+
+    double phi = atan2(local.z, local.x);
+    double theta = asin(local.y);
 
     // Scale with suze maybe i need a scaler???
     int u = floor((phi + M_PI) / (M_PI / CHECKER_SIZE));
@@ -24,11 +25,13 @@ t_color checker_sphere(t_v3 p, t_object *obj)
         return obj->sphere.material.color;
     return v3(0, 0, 0);
 }
-
 t_color checker_cylinder(t_v3 p, t_object *obj)
 {
     double phi = atan2(p.z - obj->cyl.center.z, p.x - obj->cyl.center.x);
     double h   = p.y - obj->cyl.center.y;
+
+	//angular position around the cylinder.
+	//h = height position along the y-axis.
 
     // Scale with suze maybe i need a scaler???
     int u = floor((phi + M_PI) / (M_PI / CHECKER_SIZE));
