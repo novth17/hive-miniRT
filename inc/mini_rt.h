@@ -105,7 +105,7 @@ void	check_fd(t_minirt *minirt, int fd);
 void	normalize_whitespace(char *line);
 
 /* ===================== FILL ARRAY ===================== */
-int fill_obj_arr(t_minirt *minirt, t_scene *scene);
+int			fill_obj_arr(t_minirt *minirt, t_scene *scene);
 t_object	*create_objects(t_scene *scene, t_obj_type type);
 
 /* ===================== FOR CONTROL ===================== */
