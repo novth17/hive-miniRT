@@ -81,17 +81,17 @@ void	add_num_and_extension_to_filename(t_string *filename, uint32_t num)
 	if (error)
 	{
 		len_required = sizeof(OUTPUT_FILE_EXTENSION);
-		len_required += (sizeof(".._") - 1);
+		len_required += (sizeof("--truncated") - 1);
 		if (num > 0)
 			len_required += num_length(num) + 2;
 		filename->len -= len_required;
-		cat_cstring_to_string(filename, ".._");
+		cat_cstring_to_string(filename, "--truncated");
 		add_num_and_extension_to_filename(filename, num);
 	}
 }
 
 static
-void	create_filename_base(t_string *filename, t_minirt *minirt, double current_time)
+void	create_filename_base(t_string *filename, t_minirt *minirt)
 {
 	static const uint32_t	filename_start_length = sizeof(OUTPUT_FILENAME) - 1;
 	static char				name_buf[FILENAME_BUFFER_SIZE] = OUTPUT_FILENAME;
@@ -115,20 +115,19 @@ void	create_filename_base(t_string *filename, t_minirt *minirt, double current_t
 	cat_uint_to_str(filename, minirt->scene.camera.max_bounce);
 	cat_cstring_to_string(filename, "_frames-");
 	cat_uint_to_str(filename, minirt->accumulated_frames);
-	cat_cstring_to_string(filename, "avg_frame_time-");
+	cat_cstring_to_string(filename, "_avg_frame_time-");
 	cat_uint_to_str(filename, minirt->avg_frame_time);
 	cat_cstring_to_string(filename, "ms");
 }
 
 void	pixels_to_image_file(t_minirt *minirt)
 {
-	const double	current_time = mlx_get_time();
 	uint32_t		num;
 	t_string		filename;
 	int				fd;
 	int				tries;
 
-	create_filename_base(&filename, minirt, current_time);
+	create_filename_base(&filename, minirt);
 	num = 0;
 	tries = 0;
 	fd = -1;

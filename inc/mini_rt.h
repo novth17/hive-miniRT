@@ -20,6 +20,7 @@
 # include "task.h"
 
 #ifdef MINIRT_BONUS
+# include <stdatomic.h>
 # include "thread.h"
 #endif
 
@@ -57,6 +58,36 @@ typedef struct s_scene
 
 }	t_scene;
 
+# ifdef MINIRT_BONUS
+
+typedef struct s_mini_rt
+{
+	mlx_t				*mlx;
+	t_v4				*linear_color_buf;
+	mlx_image_t			*image;
+	mlx_image_t			*background;
+
+	char				*scene_file_name;
+	t_scene				scene;
+	bool				file_has_content;
+	bool				has_camera;
+
+	bool				write_image_to_file;
+	bool				recalculate_cam;
+	size_t				accumulated_frames;
+	double				accum_start_time;
+	double				total_frame_time;
+	double				avg_frame_time;
+
+	int					core_count;
+	t_task_queue   		queue;
+	volatile atomic_bool	stop_threads;
+	volatile atomic_bool	render;
+
+}	t_minirt;
+
+# else
+
 typedef struct s_mini_rt
 {
 	mlx_t			*mlx;
@@ -83,7 +114,7 @@ typedef struct s_mini_rt
 
 }	t_minirt;
 
-
+# endif
 
 typedef struct s_string
 {
