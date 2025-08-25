@@ -13,10 +13,10 @@ t_color checker_plane(t_v3 p, t_object *obj)
 t_color checker_sphere(t_v3 p, t_object *obj)
 {
     t_v3 local = normalize(V3_SUB(p, obj->sphere.center));
-    double phi = atan2(local.z, local.x);   // [-π, π]
-    double theta = acos(local.y);           // [0, π]
+    double phi = atan2(local.z, local.x);   
+    double theta = acos(local.y);         
 
-    // Scale with CHECKER_SIZE
+    // Scale with suze maybe i need a scaler???
     int u = floor((phi + M_PI) / (M_PI / CHECKER_SIZE));
     int v = floor(theta / (M_PI / CHECKER_SIZE));
 
@@ -30,7 +30,7 @@ t_color checker_cylinder(t_v3 p, t_object *obj)
     double phi = atan2(p.z - obj->cyl.center.z, p.x - obj->cyl.center.x);
     double h   = p.y - obj->cyl.center.y;
 
-    // Scale with CHECKER_SIZE
+    // Scale with suze maybe i need a scaler???
     int u = floor((phi + M_PI) / (M_PI / CHECKER_SIZE));
     int v = floor(h / CHECKER_SIZE);
 
