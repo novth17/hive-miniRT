@@ -3,6 +3,7 @@
 
 #ifdef MINIRT_BONUS
 
+static
 void	set_defaults(t_minirt *minirt, char *scene_file_name)
 {
 	t_camera	*frame_cam;
@@ -23,6 +24,7 @@ void	set_defaults(t_minirt *minirt, char *scene_file_name)
 
 #else
 
+static
 void	set_defaults(t_minirt *minirt, char *scene_file_name)
 {
 	t_camera	*frame_cam;
