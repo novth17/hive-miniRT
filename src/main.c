@@ -15,6 +15,7 @@ void	set_defaults(t_minirt *minirt, char *scene_file_name)
 	minirt->scene.use_point_light = true;
 	minirt->recalculate_cam = 1;
 	printf("core_count %i\n", minirt->core_count);
+	resize_linear_color_buf(minirt);
 	create_task_queue(&minirt->queue, minirt, frame_cam);
 	if (create_worker_threads(minirt))
 		minirt->core_count = 1;
@@ -34,6 +35,7 @@ void	set_defaults(t_minirt *minirt, char *scene_file_name)
 	minirt->scene.use_point_light = true;
 	minirt->recalculate_cam = 1;
 	printf("core_count %i\n", minirt->core_count);
+	resize_linear_color_buf(minirt);
 	create_task_queue(&minirt->queue, minirt, frame_cam);
 }
 
@@ -69,8 +71,9 @@ int	run_minirt(t_minirt *minirt, char **argv)
 	base_init_cam(&minirt->scene.camera);
 	init_camera_for_frame(minirt, &minirt->scene.camera);
 	draw_background(minirt);
+	minirt->stop_threads = false;
+	minirt->render = false;
 	set_defaults(minirt, argv[1]);
-	resize_linear_color_buf(minirt);
 	minirt->accum_start_time = mlx_get_time();
 	mlx_loop(minirt->mlx);
 	minirt->stop_threads = true;

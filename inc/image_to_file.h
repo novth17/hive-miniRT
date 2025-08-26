@@ -6,7 +6,7 @@
 # include "mini_rt.h"
 # include "MLX42.h"
 
-# define OUTPUT_FILENAME "minirt_("
+# define OUTPUT_FILENAME "minirt_"
 # define FILENAME_BUFFER_SIZE 80
 # define OUTPUT_FILE_EXTENSION ".bmp"
 
