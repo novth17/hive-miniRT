@@ -10,9 +10,9 @@ void	resize_images(t_minirt *minirt, mlx_t *mlx, t_camera *frame_cam)
 		ft_putstr_fd("miniRT: Failed to resize background\n", 2);
 	recalculate_camera(minirt, frame_cam);
 	draw_background(minirt);
+	resize_linear_color_buf(minirt);
 	if (minirt->queue.tasks && minirt->queue.tasks != get_default_task())
 		free(minirt->queue.tasks);
-	resize_linear_color_buf(minirt);
 	create_task_queue(&minirt->queue, minirt, frame_cam);
 }
 
