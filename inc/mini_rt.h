@@ -62,21 +62,20 @@ typedef struct s_mini_rt
 	t_v4					*linear_color_buf;
 	mlx_image_t				*image;
 	mlx_image_t				*background;
-
 	char					*scene_file_name;
-	t_scene					scene;
-	bool					file_has_content;
-	bool					has_camera;
 
-	bool					write_image_to_file;
-	bool					recalculate_cam;
 	size_t					accumulated_frames;
 	double					accum_start_time;
 	double					total_frame_time;
 	double					avg_frame_time;
+	t_scene					scene;
 
-	int						core_count;
 	t_task_queue			queue;
+	int						core_count;
+	bool					file_has_content;
+	bool					has_camera;
+	bool					write_image_to_file;
+	bool					recalculate_cam;
 	volatile atomic_bool	stop_threads;
 	volatile atomic_bool	render;
 
