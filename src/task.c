@@ -19,9 +19,6 @@ void	set_default_task(t_task_queue *queue, t_minirt *minirt, t_camera *cam)
 	queue->tasks = default_task;
 }
 
-//
-// #define MINIRT_BONUS // testing // define this at compile time
-
 #ifdef MINIRT_BONUS
 
 static

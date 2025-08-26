@@ -1,16 +1,17 @@
 #include "mini_rt.h"
 
-#define RAY 0
-#define PREV 1
-#define TOTAL 2
-#define IS 0
+#define RAY 0	// index for current ray color in color array
+#define PREV 1 	// index for prev ray color in color array and
+				// prev is specular bool in specular array
+#define TOTAL 2 // index for total accumulated color in color array
+#define IS 0	// index for is_specular bool in specular array
 
 static inline
 bool	hit_color(
-	t_color *restrict color,
-	t_hit *restrict rec,
-	const t_scene *restrict scene,
-	uint32_t *seed)
+			t_color *restrict color,
+			t_hit *restrict rec,
+			const t_scene *restrict scene,
+			uint32_t *seed)
 {
 	t_color	emit_color;
 	t_color	mat_color;
@@ -62,10 +63,11 @@ void	init_trace_variables(
 }
 
 static inline
-t_v4	trace(t_ray ray,
-		const t_scene *restrict scene,
-		const uint32_t max_bounce,
-		uint32_t *seed)
+t_v4	trace(
+			t_ray ray,
+			const t_scene *restrict scene,
+			const uint32_t max_bounce,
+			uint32_t *seed)
 {
 	t_hit		rec;
 	t_color		color[3];
