@@ -5,6 +5,7 @@
 #include "types.h"
 
 #define CHECKER_SIZE 0.7
+#define CHECKER_DENSITY 8
 
 #define SP_ARG_MIN 4
 #define SP_ARG_MAX 9
