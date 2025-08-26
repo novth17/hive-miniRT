@@ -12,6 +12,7 @@ int	parse_ambient(char **tokens, t_scene *scene)
 	scene->ambient.color = parse_color(tokens[2], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Ambient: " ERROR_COLOR, tokens[2]));
+	scene->ambient.color = v3_mul_f32(scene->ambient.color, scene->ambient.ratio);
 	return (SUCCESS);
 }
 
@@ -46,6 +47,7 @@ int	parse_light(char **tokens, t_scene *scene)
 	object = create_objects(scene, LIGHT);
 	if (!object)
 		return (FAIL);
+	object->light.color = (t_color){{1.0, 1.0, 1.0}};
 	object->light.origin = parse_vec3(tokens[1], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Light: " ERROR_COORD, tokens[1]));
@@ -60,10 +62,7 @@ int	parse_light(char **tokens, t_scene *scene)
 		if (!scene->is_valid)
 			return (print_error("Light: " ERROR_COLOR, tokens[3]));
 	}
-	else
-	{
-		object->light.color = (t_color){{1.0, 1.0, 1.0}};
-	}
 	scene->lights_count++;
+	object->light.color = v3_mul_f32(object->light.color, object->light.bright_ratio);
 	return (SUCCESS);
 }

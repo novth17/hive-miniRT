@@ -150,6 +150,7 @@ int		parse_sphere(char **tokens, t_scene *scene);
 int		parse_plane(char **tokens, t_scene *scene);
 int		parse_cyl(char **tokens, t_scene *scene);
 
+
 /* ===================== Parse utils ===================== */
 double	parse_float(const char *str, bool *is_valid);
 t_color	parse_color(char *str, bool *is_valid);
@@ -163,7 +164,7 @@ void	check_fd(t_minirt *minirt, int fd);
 void	normalize_whitespace(char *line);
 
 /* ===================== FILL ARRAY ===================== */
-int fill_obj_arr(t_minirt *minirt, t_scene *scene);
+int			fill_obj_arr(t_minirt *minirt, t_scene *scene);
 t_object	*create_objects(t_scene *scene, t_obj_type type);
 
 /* ===================== FOR CONTROL ===================== */
@@ -211,6 +212,10 @@ float	check_cyl(t_hit *restrict rec, const t_cylinder *cyl, const uint32_t count
 float 	cyl_hit(const t_cylinder cyl, const t_ray ray);
 float	check_spheres(t_hit *restrict rec, const t_sphere *spheres, const uint32_t count, const t_ray ray);
 float	sphere_hit(const t_sphere sp, const t_ray ray);
+
+t_color checker_plane(t_v3 p, t_material *m);
+t_color checker_sphere(t_v3 p, const t_sphere *sphere);
+t_color checker_cylinder(t_v3 p, const t_cylinder *cyl);
 
 /* ===================== FOR ERROR ===================== */
 int		check_id_args_count(char **tokens, const char *id, int expected);
