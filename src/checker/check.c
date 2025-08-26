@@ -38,17 +38,8 @@ t_color checker_cylinder(t_v3 p, const t_cylinder *cyl)
 
     // Scale with suze maybe i need a scaler???
     int u = ((phi + M_PI) * cyl->diameter * CHECKER_DENSITY) / (2.0 * M_PI);
-    int v = (h * CHECKER_DENSITY) / cyl->height;
+    int v = h * CHECKER_DENSITY / cyl->height;
 
-	// cyl-material.color;
-	// if (v < 0)
-	// {
-    // 	if ((u + v) % 2 != 0)
-	// 	{
-	// 		return (v3(0, 0, 0));
-	// 	}
-	// 	return (cyl->material.color);
-	// }
     if ((u + v) % 2 != 0)
 	{
 		return (cyl->material.color);
