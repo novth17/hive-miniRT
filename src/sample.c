@@ -34,7 +34,7 @@ bool	hit_color(
 }
 
 static inline
-bool	monte_carlo_termin(t_color *restrict color, uint32_t *seed)
+bool	monte_carlo_terminination(t_color *restrict color, uint32_t *seed)
 {
 	float	p;
 
@@ -82,7 +82,7 @@ t_v4	trace(
 		if (find_closest_ray_intesection(&rec, ray, scene))
 		{
 			specular[IS] = hit_color(color, &rec, scene, seed);
-			if (i > 0 && !specular[PREV] && monte_carlo_termin(color, seed))
+			if (i > 0 && !specular[PREV] && monte_carlo_terminination(color, seed))
 				break ;
 			specular[PREV] = specular[IS];
 			color[PREV] = color[RAY];

@@ -41,12 +41,13 @@ t_v3	point_light_color(
 		float dist)
 {
 	float		light_angle;
-	t_v3		color;
+	t_color		lambertian;
 
+	dist = dist * dist;
 	light_angle = smoothstep(dot(rec->normal, light_direction), 0.0f, 2.0f);
-	color = f32_mul_v3(light_angle, light->color);
-	color = f32_mul_v3(1.0f / (dist * dist), color);
-	return (v3_clamp(color));
+	lambertian = f32_mul_v3(light_angle, light->color);
+	lambertian = f32_mul_v3(1.0f / dist, lambertian);
+	return (v3_clamp(lambertian));
 }
 
 inline
