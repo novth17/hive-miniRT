@@ -12,8 +12,12 @@ void	set_in_bounds(t_camera *cam)
 		cam->fov = 0.0f;
 	if (cam->max_bounce < 0)
 		cam->max_bounce = 0;
+	if (cam->max_bounce > 256)
+		cam->max_bounce = 256;
 	if (cam->samples_per_pixel < 1)
 		cam->samples_per_pixel = 1;
+	if (cam->samples_per_pixel > 65536)
+		cam->samples_per_pixel = 65536;
 }
 
 bool	should_recalculate(keys_t key)

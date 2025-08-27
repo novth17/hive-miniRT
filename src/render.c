@@ -1,12 +1,12 @@
 #include "mini_rt.h"
 
-static size_t	g_accumulated_frames = 0;
+static size_t	g_frames_count = 0;
 
 // lerp between according to weight
 static inline
 t_v4	accumulate(const t_v4 old_color, const t_v4 new_color)
 {
-	const float	weight = 1.0 / (g_accumulated_frames + 1);
+	const float	weight = 1.0 / (g_frames_count + 1);
 	t_v4		accumulated_average;
 
 	accumulated_average.r = old_color.r * (1 - weight) + new_color.r * weight;
@@ -20,30 +20,27 @@ void	render_tile(const t_task task)
 {
 	t_v4		color;
 	uint32_t	pixel_index;
-	uint32_t	seed;
-	uint32_t	x;
-	uint32_t	y;
+	t_cord		pos;
 
-	y = task.y_start;
-	while (y < task.y_end_plus_one)
+	pos.y = task.y_start;
+	while (pos.y < task.y_end_plus_one)
 	{
-		x = task.x_start;
-		while (x < task.x_end_plus_one)
+		pos.x = task.x_start;
+		while (pos.x < task.x_end_plus_one)
 		{
-			pixel_index = (y * task.cam->image_width + x);
-			seed = pixel_index + g_accumulated_frames * 792858;
-			color = sample_pixel(task.scene, task.cam, (t_cord){x, y}, seed);
+			pixel_index = (pos.y * task.cam->image_width + pos.x);
+			color = sample_pixel(task.scene, task.cam, pos, g_frames_count);
 			if (task.linear_buf != NULL)
 			{
-				color =	accumulate(task.linear_buf[pixel_index], color);
+				color = accumulate(task.linear_buf[pixel_index], color);
 				task.linear_buf[pixel_index] = color;
 			}
 			else
 				color = accumulate(exact_unpack(task.out[pixel_index]), color);
 			task.out[pixel_index] = exact_pack(color);
-			++x;
+			++pos.x;
 		}
-		++y;
+		++pos.y;
 	}
 }
 
@@ -69,13 +66,13 @@ void	per_frame(void *param)
 		usleep(1000);
 	}
 	atomic_exchange(&minirt->render, false);
-	++g_accumulated_frames;
-	if (g_accumulated_frames != 0)
+	++g_frames_count;
+	if (g_frames_count != 0)
 	{
 		minirt->total_frame_time += mlx->delta_time * 1000;
-		minirt->avg_frame_time = minirt->total_frame_time / g_accumulated_frames;
+		minirt->avg_frame_time = minirt->total_frame_time / g_frames_count;
 	}
-	minirt->accumulated_frames = g_accumulated_frames;
+	minirt->accumulated_frames = g_frames_count;
 }
 
 #else
@@ -95,13 +92,13 @@ void	per_frame(void *param)
 	queue->tiles_retired_count = 0;
 	queue->next_task_index = 0;
 	render_tile(queue->tasks[0]);
-	++g_accumulated_frames;
-	if (g_accumulated_frames != 0)
+	++g_frames_count;
+	if (g_frames_count != 0)
 	{
 		minirt->total_frame_time += mlx->delta_time * 1000;
-		minirt->avg_frame_time = minirt->total_frame_time / g_accumulated_frames;
+		minirt->avg_frame_time = minirt->total_frame_time / g_frames_count;
 	}
-	minirt->accumulated_frames = g_accumulated_frames;
+	minirt->accumulated_frames = g_frames_count;
 }
 
 #endif
@@ -111,7 +108,7 @@ void	recalculate_camera(t_minirt *minirt, t_camera *frame_cam)
 	init_camera_for_frame(minirt, &minirt->scene.camera);
 	*frame_cam = minirt->scene.camera;
 	minirt->recalculate_cam = false;
-	g_accumulated_frames = 0;
+	g_frames_count = 0;
 	minirt->accum_start_time = mlx_get_time();
 	minirt->total_frame_time = 0;
 }

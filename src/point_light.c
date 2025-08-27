@@ -31,7 +31,8 @@ bool	shadow_hit(const t_scene *restrict scene,
 	return (false);
 }
 
-// look at https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model to make this better
+// look at https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model
+// to make this better
 static inline
 t_v3	point_light_color(
 		const t_light *restrict light,
@@ -39,12 +40,11 @@ t_v3	point_light_color(
 		t_v3 light_direction,
 		float dist)
 {
-	const t_v3	point_light_color = f32_mul_v3(light->bright_ratio, light->color); // move this to parsing
 	float		light_angle;
 	t_v3		color;
 
 	light_angle = smoothstep(dot(rec->normal, light_direction), 0.0f, 2.0f);
-	color = f32_mul_v3(light_angle, point_light_color);
+	color = f32_mul_v3(light_angle, light->color);
 	color = f32_mul_v3(1.0f / (dist * dist), color);
 	return (v3_clamp(color));
 }

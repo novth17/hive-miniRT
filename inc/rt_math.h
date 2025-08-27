@@ -46,6 +46,7 @@ t_v3		noz(t_v3 a);
 t_v4		v4(float x, float y, float z, float w);
 t_v4		v4_mul_f32(t_v4 a, float b);
 t_v4		v4_add(t_v4 a, t_v4 b);
+t_v4		v3_to_v4(t_v3 v3, float w);
 /////////////////////////////
 
 // quaternion.c

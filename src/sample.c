@@ -1,37 +1,36 @@
 #include "mini_rt.h"
 
-#define HIT_ONCE 0
-#define PREV_SPECULAR 1
-
-#define RAY 0
-#define PREV 1
-#define INCOMING 2
-#define TEMP 3
-
-#define IS 0
+#define RAY 0	// index for current ray color in color array
+#define PREV 1 	// index for prev ray color in color array and
+				// prev is specular bool in specular array
+#define TOTAL 2 // index for total accumulated color in color array
+#define IS 0	// index for is_specular bool in specular array
 
 static inline
-void	hit_color(
-	t_color *restrict color,
-	t_hit *restrict rec,
-	const t_scene *restrict scene,
-	bool is_specular)
+bool	hit_color(
+			t_color *restrict color,
+			t_hit *restrict rec,
+			const t_scene *restrict scene,
+			uint32_t *seed)
 {
 	t_color	emit_color;
 	t_color	mat_color;
 	t_color	light_color;
+	bool	is_specular;
 
+	is_specular = rec->mat.specular_probability >= random_float(seed);
 	rec->position = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
 	emit_color = v3_mul_f32(rec->mat.color, rec->mat.emitter);
 	emit_color = v3_mul_v3(emit_color, color[RAY]);
-	color[INCOMING] = V3_ADD(color[INCOMING], emit_color);
+	color[TOTAL] = V3_ADD(color[TOTAL], emit_color);
 	mat_color = v3_lerp(rec->mat.color, is_specular, rec->mat.specular_color);
 	color[RAY] = v3_mul_v3(color[RAY], mat_color);
 	if (scene->use_point_light)
 	{
 		light_color = v3_mul_v3(check_point_light(scene, rec), color[RAY]);
-		color[INCOMING] = V3_ADD(color[INCOMING], light_color);
+		color[TOTAL] = V3_ADD(color[TOTAL], light_color);
 	}
+	return (is_specular);
 }
 
 static inline
@@ -49,40 +48,40 @@ bool	monte_carlo_termin(t_color *restrict color, uint32_t *seed)
 }
 
 static inline
-void	init_trace_variables(
+uint32_t	init_trace_variables(
 	t_color *color,
 	bool *specular,
-	t_hit *rec, uint32_t *i)
+	t_hit *rec,
+	const t_ray *ray)
 {
 	*rec = (t_hit){};
+	rec->view_direction = ray->direction;
 	specular[IS] = false;
 	specular[PREV] = true;
 	color[RAY] = v3(1, 1, 1);
 	color[PREV] = color[RAY];
-	color[INCOMING] = v3(0, 0, 0);
-	*i = 0;
+	color[TOTAL] = v3(0, 0, 0);
+	return (0);
 }
 
 static inline
-t_v4	trace(t_ray ray,
-		const t_scene *restrict scene,
-		const uint32_t max_bounce,
-		uint32_t *seed)
+t_v4	trace(
+			t_ray ray,
+			const t_scene *restrict scene,
+			const uint32_t max_bounce,
+			uint32_t *seed)
 {
-	t_color		color[4];
-	bool		specular[2];
 	t_hit		rec;
+	t_color		color[3];
+	bool		specular[2];
 	uint32_t	i;
-	const t_v3	ambient = f32_mul_v3(scene->ambient.ratio, scene->ambient.color); // put this into scene when parsing
 
-	init_trace_variables(color, specular, &rec, &i);
+	i = init_trace_variables(color, specular, &rec, &ray);
 	while (i <= max_bounce)
 	{
-		rec.distance = MAX_HIT_DIST;
 		if (find_closest_ray_intesection(&rec, ray, scene))
 		{
-			specular[IS] = rec.mat.specular_probability >= random_float(seed);
-			hit_color(color, &rec, scene, specular[IS]);
+			specular[IS] = hit_color(color, &rec, scene, seed);
 			if (i > 0 && !specular[PREV] && monte_carlo_termin(color, seed))
 				break ;
 			specular[PREV] = specular[IS];
@@ -93,12 +92,10 @@ t_v4	trace(t_ray ray,
 		else
 			break ;
 	}
-	if (i > 0)
-	{
-		color[INCOMING] = V3_ADD(color[INCOMING], v3_mul_v3(ambient, color[RAY]));
-		return ((t_v4){.rgb = v3_clamp(color[INCOMING]), .a = 1.0f});
-	}
-	return (v4(0, 0, 0, 0));
+	if (i == 0)
+		return (v4(0, 0, 0, 0));
+	color[RAY] = v3_mul_v3(color[RAY], scene->ambient.color);
+	return (v3_to_v4(v3_clamp(V3_ADD(color[TOTAL], color[RAY])), 1.0f));
 }
 
 inline
@@ -114,6 +111,8 @@ t_v4	sample_pixel(
 	int32_t	y_s;
 	int32_t	x_s;
 
+	seed = (original_cord.y * cam->image_width + original_cord.x)
+		+ (seed * 779353);
 	incoming_light = v4(0, 0, 0, 0);
 	y_s = 0;
 	while (y_s < cam->sqrt_spp)
