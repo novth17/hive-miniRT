@@ -6,7 +6,6 @@ static int	fill_lights_arr(t_minirt *minirt, t_scene *scene)
 	int			i;
 
 	cur = scene->objects;
-
 	if (scene->lights_count == 0)
 		return (FAIL);
 	scene->lights = malloc(sizeof(t_light) * scene->lights_count);
@@ -29,7 +28,6 @@ static int	fill_spheres_arr(t_minirt *minirt, t_scene *scene)
 	int			i;
 
 	cur = scene->objects;
-
 	if (scene->spheres_count == 0)
 		return (FAIL);
 	scene->spheres = malloc(sizeof(t_sphere) * scene->spheres_count);
@@ -52,7 +50,6 @@ static int	fill_pls_arr(t_minirt *minirt, t_scene *scene)
 	int			i;
 
 	i = 0;
-
 	cur = scene->objects;
 	if (scene->pl_count == 0)
 		return (FAIL);
@@ -75,9 +72,7 @@ static int	fill_cyls_arr(t_minirt *minirt, t_scene *scene)
 	int			i;
 
 	i = 0;
-
 	cur = scene->objects;
-
 	if (scene->cyls_count == 0)
 		return (FAIL);
 	scene->cyls = malloc(sizeof(t_cylinder) * scene->cyls_count);
