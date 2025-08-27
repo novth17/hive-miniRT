@@ -56,7 +56,7 @@ typedef struct s_scene
 
 # ifdef MINIRT_BONUS
 
-typedef struct s_mini_rt
+typedef struct s_minirt
 {
 	mlx_t					*mlx;
 	t_v4					*linear_color_buf;

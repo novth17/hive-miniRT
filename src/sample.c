@@ -48,18 +48,20 @@ bool	monte_carlo_termin(t_color *restrict color, uint32_t *seed)
 }
 
 static inline
-void	init_trace_variables(
+uint32_t	init_trace_variables(
 	t_color *color,
 	bool *specular,
-	t_hit *rec, uint32_t *i)
+	t_hit *rec,
+	const t_ray *ray)
 {
 	*rec = (t_hit){};
+	rec->view_direction = ray->direction;
 	specular[IS] = false;
 	specular[PREV] = true;
 	color[RAY] = v3(1, 1, 1);
 	color[PREV] = color[RAY];
 	color[TOTAL] = v3(0, 0, 0);
-	*i = 0;
+	return (0);
 }
 
 static inline
@@ -71,10 +73,10 @@ t_v4	trace(
 {
 	t_hit		rec;
 	t_color		color[3];
-	uint32_t	i;
 	bool		specular[2];
+	uint32_t	i;
 
-	init_trace_variables(color, specular, &rec, &i);
+	i = init_trace_variables(color, specular, &rec, &ray);
 	while (i <= max_bounce)
 	{
 		if (find_closest_ray_intesection(&rec, ray, scene))
