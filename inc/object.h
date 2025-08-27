@@ -27,7 +27,6 @@ typedef struct	s_light
 	t_vec3	origin;
 	float	bright_ratio;
 	t_color	color;
-
 }	t_light;
 
 typedef enum e_obj_type
@@ -37,7 +36,6 @@ typedef enum e_obj_type
 	SPHERE,
 	PLANE,
 	CYLINDER
-	// later: TRIANGLE, CAT UIIA, etc.
 }				t_obj_type;
 
 typedef struct s_material
@@ -45,9 +43,8 @@ typedef struct s_material
 	t_color	color;
 	t_color specular_color;
 	float	specular_probability;
-	float	diffuse;
+	float	smoothness;
 	float	emitter;
-
     bool	has_checker;
 } t_material;
 
@@ -56,7 +53,6 @@ typedef struct s_sphere
 	t_vec3		center;
 	float		radius;
 	t_material	material;
-
 }				t_sphere;
 
 typedef struct s_plane
