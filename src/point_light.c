@@ -57,7 +57,7 @@ t_v3	point_light_color(
 {
 	float		light_angle;
 	t_color		lambertian;
-	// t_v3		half_direction;
+	t_v3		half_direction;
 	t_color		specular_color;
 	const float m = rec->mat.smoothness * 512.0f;
 
@@ -72,10 +72,11 @@ t_v3	point_light_color(
 		// BLINN PHON
 
 			half_direction = normalize(V3_SUB(light_direction, rec->view_direction));
-			light_angle = fmaxf(dot(half_direction, rec->normal), 0.0f);
-			float roughnessFactor = ((m + 8.0)*pow(max(dot(H,N),0.0), m))/8.0;
+			float half_light_angle = fmaxf(dot(half_direction, rec->normal), 0.0f);
+			float roughnessFactor = ((m + 8.0f) * powf(half_light_angle, m)) / 8.0f;
 			// light_angle = smoothstep(0.0f, 1.0f, dot(half_direction, rec->normal));
-			float specular = powf(light_angle, 256.0f);
+			// float specular = powf(light_angle, m);
+			float specular = roughnessFactor;
 
 		// PHONG
 		// t_v3 reflect_dir = reflect(neg(light_direction), rec->normal);
@@ -85,8 +86,8 @@ t_v3	point_light_color(
 		// light_angle = clamp(light_angle, 0.0f, 1.0f);
 		// // float specular = powf(light_angle, 1024.0f);
 
-		specular_color = f32_mul_v3(powf(light_angle, m), light->color);
-		specular_color = f32_mul_v3(40.0f, specular_color);
+		specular_color = f32_mul_v3(specular, light->color);
+		// specular_color = f32_mul_v3(40.0f, specular_color);
 		specular_color = f32_mul_v3(1.0f / dist, specular_color);
 	// }
 	return (v3_clamp(V3_ADD(lambertian, specular_color)));
