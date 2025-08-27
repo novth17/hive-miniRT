@@ -9,6 +9,7 @@ bool	find_closest_ray_intesection(
 		const t_ray ray,
 		const t_scene *restrict scene)
 {
+	rec->distance = MAX_HIT_DIST;
 	check_planes(rec, scene->pls, scene->pl_count, ray);
 	check_spheres(rec, scene->spheres, scene->spheres_count, ray);
 	check_cyl(rec, scene->cyls, scene->cyls_count, ray);

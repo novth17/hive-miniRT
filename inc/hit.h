@@ -55,6 +55,7 @@ typedef struct s_cyl_math
 
 typedef struct s_hit_record
 {
+	t_v3 view_direction;
 	t_v3 position; // p
 	t_v3	normal;
 	float distance;  // t

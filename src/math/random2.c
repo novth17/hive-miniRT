@@ -14,6 +14,10 @@ t_v2	sample_square(uint32_t *seed)
 // @deprecated
 t_v2	random_point_in_circle(uint32_t *state)
 {
+
+	//// AWAASDASD\
+	// WARINGNGNGN THIS WHOLE FILE IS NOT USED
+	// MAYBE BETTER TO REMOVE
 	const float	angle = random_float(state) * M_PI * 2;
 	const float	sqr_ran = square_root(random_float(state));
 	t_v2		result;

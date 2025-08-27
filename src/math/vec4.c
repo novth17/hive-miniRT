@@ -29,3 +29,15 @@ t_v4	v4_add(t_v4 a, t_v4 b)
 	result.w = a.w + b.w;
 	return (result);
 }
+
+inline
+t_v4	v3_to_v4(t_v3 v3, float w)
+{
+	t_v4	result;
+
+	result.x = v3.x;
+	result.y = v3.y;
+	result.z = v3.z;
+	result.w = w;
+	return (result);
+}
