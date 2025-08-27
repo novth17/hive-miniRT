@@ -1,8 +1,5 @@
 #include "mini_rt.h"
 
-//valgrind --leak-check=full --show-leak-kinds=all  --suppressions=mlx42.supp
-//./mini_rt test_scene.rt
-
 static int	parse_line(char *line, t_minirt *minirt);
 static int	parse_elements(char **tokens, t_minirt *minirt);
 
@@ -40,7 +37,6 @@ static int	parse_line(char *line, t_minirt *minirt)
 	int		status;
 
 	status = SUCCESS;
-	ft_dprintf(1, "\nDEBUG!: line: %s", line);
 	normalize_whitespace(line);
 	tokens = ft_split(line, ' ');
 	if (!tokens || !tokens[0])
@@ -48,8 +44,6 @@ static int	parse_line(char *line, t_minirt *minirt)
 		ft_free_2d(tokens);
 		return (print_error(ERROR_MALLOC, NULL));
 	}
-	for (int i = 0; tokens[i] != NULL; ++i)
-		ft_dprintf(1, "DEBUG!: tokens[%i]: <%s>\n", i, tokens[i]);
 	status = parse_elements(tokens, minirt);
 	ft_free_2d(tokens);
 	return (status);
