@@ -9,7 +9,7 @@ static int	parse_mat_args1(char **t, int count, int o, t_material *m)
 	{
 		m->smoothness = parse_float(t[o + 1], &is_valid);
 		if (!is_valid)
-			return (print_error("Material: smoothness: " ERROR_FLOAT, t[o + 1]));
+			return (print_error("Material: smooth: " ERROR_FLOAT, t[o + 1]));
 	}
 	if (count > 2)
 	{

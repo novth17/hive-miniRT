@@ -121,8 +121,10 @@ int	init_minirt(t_minirt *minirt, char **argv)
 	minirt->has_camera = false;
 	if (parse_file(minirt, argv[1]) == FAIL)
 	{
-		ft_dprintf(2, "Parsing failed");
-		return (FAIL);
+		if (!minirt->file_has_content)
+			exit_error(minirt, "File is empty!");
+		if (!minirt->has_camera)
+			exit_error(minirt, "No camera detected!");
 	}
 	if (fill_obj_arr(minirt, &minirt->scene) == FAIL)
 		return (print_error("Filling object array failed", NULL));

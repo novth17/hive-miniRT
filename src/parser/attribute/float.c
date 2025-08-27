@@ -63,7 +63,7 @@ static int	check_decimal_places(const char *str)
 	while (*str && ft_isdigit(*str))
 	{
 		decimal_places++;
-		if (decimal_places > 9)
+		if (decimal_places > 7)
 			return (FAIL);
 		str++;
 	}

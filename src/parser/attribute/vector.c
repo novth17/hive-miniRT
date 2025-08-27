@@ -10,9 +10,7 @@ bool	is_normalized(t_vec3 *vec)
 	float	len;
 
 	len = calc_v3_len(*vec);
-	printf("DEBUG: Length of the vector is %f\n", len);
 	*vec = normalize(*vec);
-	printf("DEBUG: Length of the vector is %f\n", length(*vec));
 	return (fabsf(len - 1.0f) < 1e-1f);
 }
 

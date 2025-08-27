@@ -11,6 +11,7 @@
 #define ERROR_COORD 	RED "Invalid coordinates for vector" RESET
 #define ERROR_FLOAT 	RED "Invalid float" RESET
 #define ERROR_IN_RANGE 	RED "Component must be in range [-1,1]" RESET
+#define ERROR_IN_RANGE2	RED "Component must be in range [0,1]" RESET
 #define ERROR_FOV		RED "FOV: not in range [0,180]" RESET
 #define ERROR_NORM		RED "Not a normalized vector" RESET
 #define ERROR_EMPTY		RED "File is empty or no camera detected!" RESET
