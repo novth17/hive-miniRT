@@ -31,6 +31,20 @@ bool	shadow_hit(const t_scene *restrict scene,
 	return (false);
 }
 
+
+static inline
+t_v3	reflect(t_v3 incident, t_v3 normal)
+{
+	t_v3 result;
+	const float two_times_dot = 2.0f * dot(normal, incident);
+
+	result = f32_mul_v3(two_times_dot, normal);
+	result = V3_SUB(incident, result);
+	return (normalize(result));
+}
+
+#include "../inc/rt_math.h"
+
 // look at https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model
 // to make this better
 static inline
@@ -38,22 +52,51 @@ t_v3	point_light_color(
 		const t_light *restrict light,
 		const t_hit *restrict rec,
 		t_v3 light_direction,
-		float dist)
+		float dist,
+		bool is_specular)
 {
 	float		light_angle;
 	t_color		lambertian;
+	// t_v3		half_direction;
+	t_color		specular_color;
+	const float m = rec->mat.smoothness * 512.0f;
 
+	specular_color = v3(0, 0, 0);
 	dist = dist * dist;
-	light_angle = smoothstep(dot(rec->normal, light_direction), 0.0f, 2.0f);
+	light_angle = smoothstep(0.0f, 1.0f, dot(rec->normal, light_direction));
+	// light_angle = clamp(dot(rec->normal, light_direction), 0.0f, FLT_MAX);
 	lambertian = f32_mul_v3(light_angle, light->color);
 	lambertian = f32_mul_v3(1.0f / dist, lambertian);
-	return (v3_clamp(lambertian));
+	// if (is_specular)
+	// {
+		// BLINN PHON
+
+			half_direction = normalize(V3_SUB(light_direction, rec->view_direction));
+			light_angle = fmaxf(dot(half_direction, rec->normal), 0.0f);
+			float roughnessFactor = ((m + 8.0)*pow(max(dot(H,N),0.0), m))/8.0;
+			// light_angle = smoothstep(0.0f, 1.0f, dot(half_direction, rec->normal));
+			float specular = powf(light_angle, 256.0f);
+
+		// PHONG
+		// t_v3 reflect_dir = reflect(neg(light_direction), rec->normal);
+		// // light_angle = smoothstep(0.0f, 2.0f, dot(reflect_dir, neg(rec->view_direction)));
+		// light_angle = dot(reflect_dir, neg(rec->view_direction));
+		// // light_angle = light_angle * 0.5f + 0.5f;
+		// light_angle = clamp(light_angle, 0.0f, 1.0f);
+		// // float specular = powf(light_angle, 1024.0f);
+
+		specular_color = f32_mul_v3(powf(light_angle, m), light->color);
+		specular_color = f32_mul_v3(40.0f, specular_color);
+		specular_color = f32_mul_v3(1.0f / dist, specular_color);
+	// }
+	return (v3_clamp(V3_ADD(lambertian, specular_color)));
 }
 
 inline
 t_v3	check_point_light(
 		const t_scene *restrict scene,
-		const t_hit *restrict rec)
+		const t_hit *restrict rec,
+		const bool is_specular)
 {
 	t_color		color;
 	t_ray		shadow_ray;
@@ -74,7 +117,7 @@ t_v3	check_point_light(
 		{
 			light_dist = light_dist / scene->light_dist_mult;
 			color = V3_ADD(color, point_light_color(&scene->lights[i], rec,
-						light_vector, light_dist));
+						light_vector, light_dist, is_specular));
 		}
 		i++;
 	}

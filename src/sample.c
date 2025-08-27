@@ -16,21 +16,21 @@ bool	hit_color(
 	t_color	emit_color;
 	t_color	mat_color;
 	t_color	light_color;
-	bool	is_specular;
+	bool	specular;
 
-	is_specular = rec->mat.specular_probability >= random_float(seed);
+	specular = rec->mat.specular_probability >= random_float(seed);
 	rec->position = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
 	emit_color = v3_mul_f32(rec->mat.color, rec->mat.emitter);
 	emit_color = v3_mul_v3(emit_color, color[RAY]);
 	color[TOTAL] = V3_ADD(color[TOTAL], emit_color);
-	mat_color = v3_lerp(rec->mat.color, is_specular, rec->mat.specular_color);
+	mat_color = v3_lerp(rec->mat.color, specular, rec->mat.specular_color);
 	color[RAY] = v3_mul_v3(color[RAY], mat_color);
 	if (scene->use_point_light)
 	{
-		light_color = v3_mul_v3(check_point_light(scene, rec), color[RAY]);
+		light_color = v3_mul_v3(check_point_light(scene, rec, specular), color[RAY]);
 		color[TOTAL] = V3_ADD(color[TOTAL], light_color);
 	}
-	return (is_specular);
+	return (specular);
 }
 
 static inline

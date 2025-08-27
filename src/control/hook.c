@@ -39,6 +39,18 @@ bool	check_movement_keys(t_camera *cam, mlx_t *mlx, double time_step)
 	return (moved != 0);
 }
 
+void	check_setting_keys2(keys_t key, t_camera *cam)
+{
+	if (key == MLX_KEY_R)
+	{
+		cam->lookfrom = cam->base_position;
+		cam->lookat = cam->base_direction;
+		cam->right = normalize(cross(v3(0, 1, 0), cam->lookat));
+		cam->vup = normalize(cross(cam->lookat, cam->right));
+		reset_rotation_angles();
+	}
+}
+
 void	check_setting_keys(keys_t key, t_minirt *minirt, t_camera *cam)
 {
 	if (key == MLX_KEY_P)
@@ -65,6 +77,7 @@ void	check_setting_keys(keys_t key, t_minirt *minirt, t_camera *cam)
 		g_speed += 0.1f;
 	if (key == MLX_KEY_LEFT)
 		g_speed -= 0.1f;
+	check_setting_keys2(key, cam);
 }
 
 void	key_hook(struct mlx_key_data data, void *param)

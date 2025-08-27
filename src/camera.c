@@ -42,6 +42,7 @@ void	base_init_cam(t_camera *cam)
 	cam->recip_sqrt_spp = 1.0f / cam->sqrt_spp;
 	cam->max_bounce = MAX_BOUNCE_DEFAULT;
 	cam->vup = v3(0, 1, 0);
+	cam->base_position = cam->lookfrom;
 	cam->base_direction = neg(cam->lookat);
 	rotate_view(cam);
 	cam->defocus_angle = 0.0f;
