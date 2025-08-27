@@ -92,7 +92,7 @@ int	main(int argc, char **argv)
 		return (FAIL);
 	if (run_minirt(&minirt, argv) == FAIL)
 		return (FAIL);
-	ft_dprintf(1, "success hihihaha congrats\n");
 	delete_minirt(&minirt);
+	ft_dprintf(1, "Program ran successfully!\n");
 	return (SUCCESS);
 }

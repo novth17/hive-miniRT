@@ -6,23 +6,25 @@ static void	print_usage(char **tokens)
 	{
 		ft_dprintf(1, GREEN "Usage: cy <center:x,y,z> <axis:x,y,z> <diameter> "
 			"<height> <R,G,B> [<smoothness> <specular> <emitter> "
-			"<specular color>]\n" RESET);
+			"<specular color> <checker>]\n" RESET);
 	}
 	else if (ft_strcmp(tokens[0], "sp") == 0)
 	{
 		ft_dprintf(1, GREEN "Usage: sp <center:x,y,z> <diameter> <R,G,B> "
-			"[<smoothness> <specular> <emitter> <specular color>]\n" RESET);
+			"[<smoothness> <specular> <emitter> <specular color> "
+			"<checker>]\n" RESET);
 	}
 	else if (ft_strcmp(tokens[0], "pl") == 0)
 	{
 		ft_dprintf(1, GREEN "Usage: pl <point:x,y,z> <normal:x,y,z> <R,G,B> "
-			"[<smoothness> <specular> <emitter> <specular color>]\n" RESET);
+			"[<smoothness> <specular> <emitter> <specular color> "
+			"<checker>]\n" RESET);
 	}
 }
 
 void	exit_error(t_minirt *minirt, char *msg)
 {
-	ft_dprintf(2, RED "Error\n%s\n", msg);
+	ft_dprintf(2, RED "Error\n%s\n"RESET, msg);
 	delete_minirt(minirt);
 	exit(FAIL);
 }

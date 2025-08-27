@@ -8,12 +8,15 @@ int	parse_ambient(char **tokens, t_scene *scene)
 	if (!scene->is_valid)
 		return (print_error("Ambient: ratio: " ERROR_FLOAT, tokens[1]));
 	if (scene->ambient.ratio < 0.0 || scene->ambient.ratio > 1.0)
-		return (print_error("Ambient: ratio: " ERROR_IN_RANGE, tokens[1]));
+		return (print_error("Ambient: ratio: " ERROR_IN_RANGE2, tokens[1]));
 	scene->ambient.color = parse_color(tokens[2], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Ambient: " ERROR_COLOR, tokens[2]));
 	scene->ambient.color = v3_mul_f32(scene->ambient.color,
 			scene->ambient.ratio);
+	scene->ambient_count++;
+	if (scene->ambient_count > 1)
+		return (print_error("Too many ambient lights. Must be 1!", NULL));
 	return (SUCCESS);
 }
 
@@ -28,14 +31,17 @@ int	parse_camera(char **tokens, t_scene *scene)
 	if (!scene->is_valid)
 		return (print_error("Camera: direction: " ERROR_COORD, tokens[2]));
 	if (!is_in_range_vec3(scene->camera.lookat))
-		return (print_error("Camera: ratio: " ERROR_IN_RANGE, NULL));
+		return (print_error("Camera: ratio: " ERROR_IN_RANGE, tokens[2]));
 	if (!is_normalized(&scene->camera.lookat))
-		return (print_error("Camera: ratio: " ERROR_NORM, NULL));
+		return (print_error("Camera: ratio: " ERROR_NORM, tokens[2]));
 	scene->camera.fov = parse_float(tokens[3], &scene->is_valid);
 	if (!scene->is_valid)
 		return (print_error("Camera: FOV: " ERROR_FLOAT, tokens[3]));
 	if (scene->camera.fov < 0 || scene->camera.fov > 180)
 		return (print_error("Camera: " ERROR_FOV, tokens[3]));
+	scene->camera_count++;
+	if (scene->camera_count > 1)
+		return (print_error("Too many cameras. Must be 1!", NULL));
 	return (SUCCESS);
 }
 
@@ -56,7 +62,7 @@ int	parse_light(char **tokens, t_scene *scene)
 	if (!scene->is_valid)
 		return (print_error("Light: ratio: " ERROR_FLOAT, tokens[2]));
 	if (obj->light.bright_ratio < 0.0 || obj->light.bright_ratio > 1.0)
-		return (print_error("Light: ratio: " ERROR_IN_RANGE, tokens[2]));
+		return (print_error("Light: ratio: " ERROR_IN_RANGE2, tokens[2]));
 	if (tokens[3])
 	{
 		obj->light.color = parse_color(tokens[3], &scene->is_valid);

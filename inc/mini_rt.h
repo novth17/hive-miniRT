@@ -48,6 +48,8 @@ typedef struct s_scene
 	uint32_t	spheres_count;
 	uint32_t	pl_count;
 	uint32_t	cyls_count;
+	uint32_t	camera_count;
+	uint32_t	ambient_count;
 	float		light_dist_mult;
 	bool		use_point_light;
 	bool		is_valid;

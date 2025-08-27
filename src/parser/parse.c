@@ -30,7 +30,7 @@ int	parse_file(t_minirt *minirt, char *filename)
 	}
 	close(fd);
 	if (!minirt->file_has_content || !minirt->has_camera)
-		exit_error(minirt, ERROR_EMPTY);
+		return (FAIL);
 	return (SUCCESS);
 }
 
