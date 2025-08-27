@@ -25,7 +25,6 @@ static float	check_in_bound(t_ray ray, t_cylinder cyl, t_cyl_math *m)
 		m->hit_dist_from_base0 = dot(m->vec_to_hit0, cyl.axis);
 		if (m->hit_dist_from_base0 >= 0 && m->hit_dist_from_base0 <= cyl.height)
 			t_valid = m->t0;
-	
 	}
 	if (m->t1 >= 0)
 	{
