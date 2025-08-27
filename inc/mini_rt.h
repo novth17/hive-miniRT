@@ -213,9 +213,9 @@ float		check_spheres(t_hit *restrict rec, const t_sphere *spheres,
 				const uint32_t count, const t_ray ray);
 float		sphere_hit(const t_sphere sp, const t_ray ray);
 
-t_color		checker_plane(t_v3 p, t_material *m);
-t_color		checker_sphere(t_v3 p, const t_sphere *sphere);
-t_color		checker_cylinder(t_v3 p, const t_cylinder *cyl);
+t_color checker_plane(t_v3 p, const t_plane *pl);
+t_color checker_sphere(t_v3 p, const t_sphere *sphere);
+t_color checker_cylinder(t_v3 p, const t_cylinder *cyl);
 
 /* ===================== FOR ERROR ===================== */
 int			check_id_args_count(char **tokens, const char *id, int expected);
