@@ -45,8 +45,8 @@ static void print_spheres(t_minirt *minirt)
 			s->material.color.r,s->material.color.g, s->material.color.b);
 		if (1)
 		{
-			printf("sphere[%u]: diffuse=%.2f, probability=%.2f, emitter=%.2f,"
-				" spec_color=(%2f, %2f, %2f)\n", i, s->material.diffuse,
+			printf("sphere[%u]: smoothness=%.2f, probability=%.2f, emitter=%.2f,"
+				" spec_color=(%2f, %2f, %2f)\n", i, s->material.smoothness,
 				s->material.specular_probability, s->material.emitter,
 				s->material.specular_color.r,  s->material.specular_color.g,
 				s->material.specular_color.b );
@@ -71,9 +71,9 @@ static void print_planes(t_minirt *minirt)
 		);
 		if (1)
 		{
-			printf("plane[%u]: diffuse=%.2f, probability=%.2f , emitter=%.2f,"
+			printf("plane[%u]: smoothness=%.2f, probability=%.2f , emitter=%.2f,"
 				" spec_color=(%2f, %2f, %2f)\n", i,
-				pl->material.diffuse, pl->material.specular_probability,
+				pl->material.smoothness, pl->material.specular_probability,
 				pl->material.emitter,
 				pl->material.specular_color.r,  pl->material.specular_color.g,
 				pl->material.specular_color.b
@@ -100,8 +100,8 @@ static void print_cylinders(t_minirt *minirt)
 			cy->axis.x, cy->axis.y, cy->axis.z, cy->diameter, cy->height,
 			cy->material.color.r, cy->material.color.g, cy->material.color.b
 		);
-		printf("cylinder[%d]: diffuse=%.2f, probability=%.2f, emitter=%.2f, "
-			"spec_color=(%f, %f, %f)\n", i, cy->material.diffuse,
+		printf("cylinder[%d]: smoothness=%.2f, probability=%.2f, emitter=%.2f, "
+			"spec_color=(%f, %f, %f)\n", i, cy->material.smoothness,
 			cy->material.specular_probability,
 			cy->material.emitter,
 			cy->material.specular_color.r,

@@ -5,18 +5,18 @@ static void	print_usage(char **tokens)
 	if (ft_strcmp(tokens[0], "cy") == 0)
 	{
 		ft_dprintf(1, GREEN "Usage: cy <center:x,y,z> <axis:x,y,z> <diameter> "
-							"<height> <R,G,B> [<diffuse> <specular> <emitter> <specular color>]"
+							"<height> <R,G,B> [<smoothness> <specular> <emitter> <specular color>]"
 							"\n" RESET);
 	}
 	else if (ft_strcmp(tokens[0], "sp") == 0)
 	{
 		ft_dprintf(1, GREEN "Usage: sp <center:x,y,z> <diameter> <R,G,B> "
-							"[<diffuse> <specular> <emitter> <specular color>]\n" RESET);
+							"[<smoothness> <specular> <emitter> <specular color>]\n" RESET);
 	}
 	else if (ft_strcmp(tokens[0], "pl") == 0)
 	{
 		ft_dprintf(1, GREEN "Usage: pl <point:x,y,z> <normal:x,y,z> <R,G,B> "
-							"[<diffuse> <specular> <emitter> <specular color>]\n" RESET);
+							"[<smoothness> <specular> <emitter> <specular color>]\n" RESET);
 	}
 }
 
@@ -50,7 +50,7 @@ int	check_id_args_count(char **tokens, const char *id, int expected)
 int	check_obj_args_count(char **tokens, const char *id, int min, int max)
 {
 	const int	count = ft_count_2d(tokens);
-	
+
 	if (count < min || count > max)
 	{
 		ft_dprintf(2, RED "Error\n" RESET);

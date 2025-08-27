@@ -79,7 +79,7 @@ t_ray	calculate_next_ray(const t_hit *restrict rec,
 	t_v3	random_bounce;
 	t_v3	pure_bounce;
 	float	two_times_dot;
-	float	real_diffuse;
+	float	real_smoothness;
 
 	scatter = in_unit_sphere(seed);
 	scatter = v3_mul_f32(scatter, !near_zero(scatter));
@@ -87,8 +87,8 @@ t_ray	calculate_next_ray(const t_hit *restrict rec,
 	two_times_dot = 2.0f * dot(ray.direction, rec->normal);
 	pure_bounce = f32_mul_v3(two_times_dot, rec->normal);
 	pure_bounce = v3_sub_v3(ray.direction, pure_bounce);
-	real_diffuse = rec->mat.diffuse * is_specular_bounce;
-	ray.direction = v3_lerp(random_bounce, real_diffuse, pure_bounce);
+	real_smoothness = rec->mat.smoothness * is_specular_bounce;
+	ray.direction = v3_lerp(random_bounce, real_smoothness, pure_bounce);
 	ray.origin = rec->position;
 	return (ray);
 }
