@@ -36,5 +36,7 @@ bool	should_recalculate(keys_t key)
 		return (true);
 	if (key == MLX_KEY_DOWN)
 		return (true);
+	if (key == MLX_KEY_R)
+		return (true);
 	return (false);
 }

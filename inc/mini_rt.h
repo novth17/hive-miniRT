@@ -172,6 +172,8 @@ void		key_hook(struct mlx_key_data data, void *param);
 void		scroll_hook(double delta_x, double delta_y, void *param);
 void		mouse_control(t_minirt *minirt);
 void		rotate_view(t_camera *cam);
+void		reset_rotation_angles(void);
+
 
 /* ===================== FOR DRAW ===================== */
 // ray.c
@@ -215,9 +217,9 @@ float		check_spheres(t_hit *restrict rec, const t_sphere *spheres,
 				const uint32_t count, const t_ray ray);
 float		sphere_hit(const t_sphere sp, const t_ray ray);
 
-t_color checker_plane(t_v3 p, const t_plane *pl);
-t_color checker_sphere(t_v3 p, const t_sphere *sphere);
-t_color checker_cylinder(t_v3 p, const t_cylinder *cyl);
+t_color		checker_plane(t_v3 p, const t_plane *pl);
+t_color		checker_sphere(t_v3 p, const t_sphere *sphere);
+t_color		checker_cylinder(t_v3 p, const t_cylinder *cyl);
 
 /* ===================== FOR ERROR ===================== */
 int			check_id_args_count(char **tokens, const char *id, int expected);

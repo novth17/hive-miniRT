@@ -31,6 +31,17 @@ bool	shadow_hit(const t_scene *restrict scene,
 	return (false);
 }
 
+static inline
+t_v3	reflect(t_v3 incident, t_v3 normal)
+{
+	t_v3		result;
+	const float	two_times_dot = 2.0f * dot(normal, incident);
+
+	result = f32_mul_v3(two_times_dot, normal);
+	result = V3_SUB(incident, result);
+	return (normalize(result));
+}
+
 // look at https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model
 // to make this better
 static inline
@@ -41,12 +52,21 @@ t_v3	point_light_color(
 		float dist)
 {
 	float		light_angle;
-	t_v3		color;
+	t_color		lambertian;
+	t_v3		reflect_dir;
+	t_color		specular_color;
+	float		specular;
 
-	light_angle = smoothstep(dot(rec->normal, light_direction), 0.0f, 2.0f);
-	color = f32_mul_v3(light_angle, light->color);
-	color = f32_mul_v3(1.0f / (dist * dist), color);
-	return (v3_clamp(color));
+	dist = dist * dist;
+	specular_color = v3(0, 0, 0);
+	light_angle = smoothstep(0.0f, 1.0f, dot(rec->normal, light_direction));
+	lambertian = f32_mul_v3(light_angle, light->color);
+	reflect_dir = reflect(light_direction, rec->normal);
+	light_angle = dot(reflect_dir, rec->view_direction);
+	light_angle = fmaxf(light_angle, 0.0f);
+	specular = powf(light_angle, rec->mat.smoothness * 256.0f);
+	specular_color = f32_mul_v3(specular, rec->mat.specular_color);
+	return (v3_clamp(v3_div_f32(V3_ADD(lambertian, specular_color), dist)));
 }
 
 inline
@@ -56,7 +76,7 @@ t_v3	check_point_light(
 {
 	t_color		color;
 	t_ray		shadow_ray;
-	t_v3		light_vector;
+	t_v3		light_direction;
 	float		light_dist;
 	uint32_t	i;
 
@@ -64,16 +84,16 @@ t_v3	check_point_light(
 	color = v3(0, 0, 0);
 	while (i < scene->lights_count)
 	{
-		light_vector = V3_SUB(scene->lights[i].origin, rec->position);
-		light_dist = length(light_vector);
-		light_vector = f32_mul_v3(1.0f / light_dist, light_vector);
+		light_direction = V3_SUB(scene->lights[i].origin, rec->position);
+		light_dist = length(light_direction);
+		light_direction = f32_mul_v3(1.0f / light_dist, light_direction);
 		shadow_ray.origin = rec->position;
-		shadow_ray.direction = light_vector;
+		shadow_ray.direction = light_direction;
 		if (shadow_hit(scene, shadow_ray, light_dist) == false)
 		{
 			light_dist = light_dist / scene->light_dist_mult;
 			color = V3_ADD(color, point_light_color(&scene->lights[i], rec,
-						light_vector, light_dist));
+						light_direction, light_dist));
 		}
 		i++;
 	}

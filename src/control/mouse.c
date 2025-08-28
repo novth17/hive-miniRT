@@ -56,3 +56,9 @@ void	mouse_control(t_minirt *minirt)
 	g_prev_x = x;
 	g_prev_y = y;
 }
+
+void	reset_rotation_angles(void)
+{
+	g_total_rotation_x = 0.0f;
+	g_total_rotation_y = 0.0f;
+}
