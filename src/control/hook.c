@@ -66,10 +66,10 @@ void	check_setting_keys(keys_t key, t_minirt *minirt, t_camera *cam)
 	if (key == MLX_KEY_L)
 		minirt->scene.use_point_light = !minirt->scene.use_point_light;
 	if (key == MLX_KEY_UP)
-		minirt->scene.light_dist_mult += 0.5f;
+		minirt->scene.light_dist_mult += 0.25f;
 	if (key == MLX_KEY_DOWN)
 	{
-		minirt->scene.light_dist_mult -= 0.5f;
+		minirt->scene.light_dist_mult -= 0.25f;
 		if (minirt->scene.light_dist_mult < 1.0f)
 			minirt->scene.light_dist_mult = 1.0f;
 	}
