@@ -47,7 +47,7 @@ static int	parse_mat_checker(char **t, int count, int o, t_material *m)
 		if (ft_strcmp(t[o + 5], "checker") == 0)
 			m->has_checker = 1;
 		else
-			return (FAIL);
+			return (print_error("You mispelled 'checker'"RESET, t[o + 5]));
 	}
 	return (SUCCESS);
 }
