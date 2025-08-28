@@ -202,7 +202,7 @@ t_v4		sample_pixel(const t_scene *scene, const t_camera *restrict cam,
 
 // point_light.c
 t_v3		check_point_light(const t_scene *restrict scene,
-				const t_hit *restrict rec, const bool specular);
+				const t_hit *restrict rec);
 
 /* ===================== FOR CHECK HIT ===================== */
 float		check_planes(t_hit *restrict rec, const t_plane *planes,

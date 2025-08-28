@@ -27,7 +27,7 @@ bool	hit_color(
 	color[RAY] = v3_mul_v3(color[RAY], mat_color);
 	if (scene->use_point_light)
 	{
-		light_color = v3_mul_v3(check_point_light(scene, rec, specular), color[RAY]);
+		light_color = v3_mul_v3(check_point_light(scene, rec), color[RAY]);
 		color[TOTAL] = V3_ADD(color[TOTAL], light_color);
 	}
 	return (specular);
