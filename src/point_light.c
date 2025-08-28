@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   point_light.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/28 19:13:30 by ltaalas           #+#    #+#             */
+/*   Updated: 2025/08/28 19:17:19 by ltaalas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_rt.h"
 
 static inline
@@ -42,8 +54,6 @@ t_v3	reflect(t_v3 incident, t_v3 normal)
 	return (normalize(result));
 }
 
-// look at https://en.wikipedia.org/wiki/Blinn%E2%80%93Phong_reflection_model
-// to make this better
 static inline
 t_v3	point_light_color(
 		const t_light *restrict light,
@@ -65,7 +75,8 @@ t_v3	point_light_color(
 	light_angle = dot(reflect_dir, rec->view_direction);
 	light_angle = fmaxf(light_angle, 0.0f);
 	specular = powf(light_angle, rec->mat.smoothness * 256.0f);
-	specular_color = f32_mul_v3(specular, v3_mul_v3(light->color, rec->mat.specular_color));
+	specular_color = v3_mul_v3(light->color, rec->mat.specular_color);
+	specular_color = v3_mul_f32(specular_color, specular);
 	return (v3_clamp(v3_div_f32(V3_ADD(lambertian, specular_color), dist)));
 }
 
