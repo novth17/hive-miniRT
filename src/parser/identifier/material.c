@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   material.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/28 17:21:47 by hiennguy          #+#    #+#             */
+/*   Updated: 2025/08/28 17:21:49 by hiennguy         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_rt.h"
 
 static int	parse_mat_args1(char **t, int count, int o, t_material *m)
@@ -47,7 +59,7 @@ static int	parse_mat_checker(char **t, int count, int o, t_material *m)
 		if (ft_strcmp(t[o + 5], "checker") == 0)
 			m->has_checker = 1;
 		else
-			return (FAIL);
+			return (print_error("You mispelled 'checker'"RESET, t[o + 5]));
 	}
 	return (SUCCESS);
 }

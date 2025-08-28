@@ -1,4 +1,16 @@
-# include "mini_rt.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/28 17:25:11 by hiennguy          #+#    #+#             */
+/*   Updated: 2025/08/28 17:25:48 by hiennguy         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "mini_rt.h"
 
 static int	setup_mlx(t_minirt *minirt)
 {
@@ -25,97 +37,12 @@ static int	setup_mlx(t_minirt *minirt)
 	mlx_key_hook(minirt->mlx, &key_hook, minirt);
 	mlx_scroll_hook(minirt->mlx, &scroll_hook, minirt);
 	mlx_loop_hook(minirt->mlx, &per_frame, minirt);
-
 	return (SUCCESS);
-}
-
-static void print_spheres(t_minirt *minirt)
-{
-	int i;
-	t_sphere *s;
-
-	i = (int)minirt->scene.spheres_count - 1;
-	while (i >= 0)
-	{
-		s = &minirt->scene.spheres[i];
-		printf("sphere[%u]: center=(%.2f, %.2f, %.2f), diameter=%.2f,"
-			" color=(%2f, %2f, %2f)\n", i,
-			s->center.x, s->center.y, s->center.z,
-			s->radius,
-			s->material.color.r,s->material.color.g, s->material.color.b);
-		if (1)
-		{
-			printf("sphere[%u]: smoothness=%.2f, probability=%.2f, emitter=%.2f,"
-				" spec_color=(%2f, %2f, %2f)\n", i, s->material.smoothness,
-				s->material.specular_probability, s->material.emitter,
-				s->material.specular_color.r,  s->material.specular_color.g,
-				s->material.specular_color.b );
-		}
-		i--;
-	}
-}
-
-static void print_planes(t_minirt *minirt)
-{
-	int i;
-	t_plane *pl;
-
-	i = (int)minirt->scene.pl_count - 1;
-	while (i >= 0)
-	{
-		pl = &minirt->scene.pls[i];
-		printf("plane[%u]: point=(%.2f, %.2f, %.2f), axis=(%.2f, %.2f, %.2f),"
-			" color=(%2f, %2f, %2f)\n", i, pl->point.x, pl->point.y,
-			pl->point.z, pl->axis.x, pl->axis.y, pl->axis.z,
-			pl->material.color.r, pl->material.color.g, pl->material.color.b
-		);
-		if (1)
-		{
-			printf("plane[%u]: smoothness=%.2f, probability=%.2f , emitter=%.2f,"
-				" spec_color=(%2f, %2f, %2f)\n", i,
-				pl->material.smoothness, pl->material.specular_probability,
-				pl->material.emitter,
-				pl->material.specular_color.r,  pl->material.specular_color.g,
-				pl->material.specular_color.b
-			);
-		}
-		i--;
-	}
-}
-
-static void print_cylinders(t_minirt *minirt)
-{
-	t_cylinder *cy;
-	int i;
-
-	i = (int)minirt->scene.cyls_count - 1;
-
-	while (i >= 0)
-	{
-		cy = &minirt->scene.cyls[i];
-		printf("cylinder[%d]: center=(%.2f, %.2f, %.2f), "
-			"axis=(%.2f, %.2f, %.2f), diameter=%.2f, height=%.2f"
-			" color=(%f, %f, %f)\n", i,
-			cy->center.x, cy->center.y, cy->center.z,
-			cy->axis.x, cy->axis.y, cy->axis.z, cy->diameter, cy->height,
-			cy->material.color.r, cy->material.color.g, cy->material.color.b
-		);
-		printf("cylinder[%d]: smoothness=%.2f, probability=%.2f, emitter=%.2f, "
-			"spec_color=(%f, %f, %f)\n", i, cy->material.smoothness,
-			cy->material.specular_probability,
-			cy->material.emitter,
-			cy->material.specular_color.r,
-			cy->material.specular_color.g,
-			cy->material.specular_color.b
-		);
-		i--;
-	}
 }
 
 int	init_minirt(t_minirt *minirt, char **argv)
 {
 	ft_bzero(minirt, sizeof(t_minirt));
-
 	minirt->scene.is_valid = true;
 	minirt->file_has_content = false;
 	minirt->has_camera = false;
@@ -128,10 +55,6 @@ int	init_minirt(t_minirt *minirt, char **argv)
 	}
 	if (fill_obj_arr(minirt, &minirt->scene) == FAIL)
 		return (print_error("Filling object array failed", NULL));
-	ft_dprintf(1, YELLOW"--- INFO OF THE SCENE ---\n"RESET);
-	print_spheres(minirt);
-	print_planes(minirt);
-	print_cylinders(minirt);
 	if (setup_mlx(minirt) == FAIL)
 	{
 		ft_dprintf(2, "Failed to initialize MLX");
@@ -139,5 +62,3 @@ int	init_minirt(t_minirt *minirt, char **argv)
 	}
 	return (SUCCESS);
 }
-
-
