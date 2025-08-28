@@ -174,7 +174,6 @@ void		mouse_control(t_minirt *minirt);
 void		rotate_view(t_camera *cam);
 void		reset_rotation_angles(void);
 
-
 /* ===================== FOR DRAW ===================== */
 // ray.c
 t_ray		get_ray(const t_camera *restrict cam,

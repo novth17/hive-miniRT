@@ -55,13 +55,13 @@ typedef struct s_cyl_math
 
 typedef struct s_hit_record
 {
-	t_v3 view_direction;
-	t_v3 position; // p
-	t_v3	normal;
-	float distance;  // t
-	bool front_face; // maybe not needed;
-	bool did_hit;    // can be removed later
-	t_material mat;  // for now maybe have material index or smth idunno
+	t_v3		view_direction;
+	t_v3		position; // p
+	t_v3		normal;
+	float		distance; // t
+	bool		front_face; // maybe not needed;
+	bool		did_hit;	// can be removed later
+	t_material	mat;		// for now maybe have material index or smth idunno
 }			t_hit;
 
 #endif

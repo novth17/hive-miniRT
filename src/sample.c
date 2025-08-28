@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:13:40 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/28 19:15:40 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/28 19:57:31 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ bool	hit_color(
 }
 
 static inline
-bool	monte_carlo_terminin(t_color *restrict color, uint32_t *seed)
+bool	monte_carlo_termin(t_color *restrict color, uint32_t *seed)
 {
 	float	p;
 

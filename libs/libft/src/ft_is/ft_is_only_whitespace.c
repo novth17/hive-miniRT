@@ -10,15 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../../inc/libft.h"
+#include "../../inc/libft.h"
 
 bool	is_only_whitespace(const char *s)
 {
 	while (*s)
 	{
 		if (!ft_isspace(*s))
-			return false;
+			return (false);
 		s++;
 	}
-	return true;
+	return (true);
 }
