@@ -1,4 +1,16 @@
-#include "../inc/mini_rt.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   task.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/28 19:13:44 by ltaalas           #+#    #+#             */
+/*   Updated: 2025/08/28 19:13:45 by ltaalas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "mini_rt.h"
 
 static
 void	set_default_task(t_task_queue *queue, t_minirt *minirt, t_camera *cam)

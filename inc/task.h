@@ -9,7 +9,7 @@
 # endif
 
 typedef struct s_minirt	t_minirt;
-typedef struct s_scene		t_scene;
+typedef struct s_scene	t_scene;
 
 typedef struct s_task
 {

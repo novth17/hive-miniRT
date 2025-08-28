@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   thread.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/28 19:13:47 by ltaalas           #+#    #+#             */
+/*   Updated: 2025/08/28 19:13:47 by ltaalas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifdef MINIRT_BONUS
 
 # include <unistd.h>
 # include <stdatomic.h>
 # include <pthread.h>
-# include "mini_rt.h"
 # include <sched.h>
+# include "mini_rt.h"
 
 static
 bool	get_and_render_tile(volatile t_task_queue *queue)

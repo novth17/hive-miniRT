@@ -26,4 +26,3 @@ void	ft_free_2d(char **all_words)
 	}
 	free(all_words);
 }
-

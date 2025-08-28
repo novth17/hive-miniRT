@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sample.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/28 19:13:40 by ltaalas           #+#    #+#             */
+/*   Updated: 2025/08/28 19:57:31 by ltaalas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_rt.h"
 
 #define RAY 0	// index for current ray color in color array
@@ -34,7 +46,7 @@ bool	hit_color(
 }
 
 static inline
-bool	monte_carlo_terminination(t_color *restrict color, uint32_t *seed)
+bool	monte_carlo_termin(t_color *restrict color, uint32_t *seed)
 {
 	float	p;
 
@@ -82,7 +94,7 @@ t_v4	trace(
 		if (find_closest_ray_intesection(&rec, ray, scene))
 		{
 			specular[IS] = hit_color(color, &rec, scene, seed);
-			if (i > 0 && !specular[PREV] && monte_carlo_terminination(color, seed))
+			if (i > 0 && !specular[PREV] && monte_carlo_termin(color, seed))
 				break ;
 			specular[PREV] = specular[IS];
 			color[PREV] = color[RAY];

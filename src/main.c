@@ -1,5 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/28 19:13:28 by ltaalas           #+#    #+#             */
+/*   Updated: 2025/08/28 19:13:28 by ltaalas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_rt.h"
-#include "thread.h"
 
 #ifdef MINIRT_BONUS
 
@@ -15,7 +26,6 @@ void	set_defaults(t_minirt *minirt, char *scene_file_name)
 	minirt->scene.light_dist_mult = 1.0f;
 	minirt->scene.use_point_light = true;
 	minirt->recalculate_cam = 1;
-	printf("core_count %i\n", minirt->core_count);
 	resize_linear_color_buf(minirt);
 	create_task_queue(&minirt->queue, minirt, frame_cam);
 	if (create_worker_threads(minirt))
@@ -36,7 +46,6 @@ void	set_defaults(t_minirt *minirt, char *scene_file_name)
 	minirt->scene.light_dist_mult = 1.0f;
 	minirt->scene.use_point_light = true;
 	minirt->recalculate_cam = 1;
-	printf("core_count %i\n", minirt->core_count);
 	resize_linear_color_buf(minirt);
 	create_task_queue(&minirt->queue, minirt, frame_cam);
 }

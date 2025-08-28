@@ -1,8 +1,20 @@
-#include "../inc/mini_rt.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   image_to_file.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/28 19:13:20 by ltaalas           #+#    #+#             */
+/*   Updated: 2025/08/28 19:13:20 by ltaalas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "mini_rt.h"
 #include <fcntl.h>
 #include <stdint.h>
 #include <errno.h>
-#include "../inc/image_to_file.h"
+#include "image_to_file.h"
 
 void	convert_mlx_image_into_output_image(uint32_t *output,
 											const mlx_image_t *image,

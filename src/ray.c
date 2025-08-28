@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ray.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/28 19:13:35 by ltaalas           #+#    #+#             */
+/*   Updated: 2025/08/28 19:57:03 by ltaalas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "mini_rt.h"
 #include "types.h"
 #include "rt_math.h"
@@ -13,7 +25,7 @@ bool	find_closest_ray_intesection(
 	check_planes(rec, scene->pls, scene->pl_count, ray);
 	check_spheres(rec, scene->spheres, scene->spheres_count, ray);
 	check_cyl(rec, scene->cyls, scene->cyls_count, ray);
-	return (rec->did_hit);
+	return (rec->distance < MAX_HIT_DIST);
 }
 
 // for calculating the defocus blur effect
