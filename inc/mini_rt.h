@@ -4,7 +4,6 @@
 # define SUCCESS	0
 # define FAIL	1
 
-# include <stdio.h> // @WARNING FOR DEBUGGING CURRENTLY
 # include <fcntl.h>
 
 # include "MLX42.h"
@@ -17,10 +16,10 @@
 # include "rt_math.h"
 # include "camera.h"
 # include "task.h"
+# include "thread.h"
 
 # ifdef MINIRT_BONUS
 #  include <stdatomic.h>
-#  include "thread.h"
 # endif
 
 # define WINDOW_WIDTH 1080

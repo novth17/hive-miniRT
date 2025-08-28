@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/mini_rt.h"
+#include "mini_rt.h"
 
 static
 void	set_default_task(t_task_queue *queue, t_minirt *minirt, t_camera *cam)

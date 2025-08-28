@@ -15,8 +15,8 @@
 # include <unistd.h>
 # include <stdatomic.h>
 # include <pthread.h>
-# include "mini_rt.h"
 # include <sched.h>
+# include "mini_rt.h"
 
 static
 bool	get_and_render_tile(volatile t_task_queue *queue)

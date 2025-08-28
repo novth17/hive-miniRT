@@ -10,11 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/mini_rt.h"
+#include "mini_rt.h"
 #include <fcntl.h>
 #include <stdint.h>
 #include <errno.h>
-#include "../inc/image_to_file.h"
+#include "image_to_file.h"
 
 void	convert_mlx_image_into_output_image(uint32_t *output,
 											const mlx_image_t *image,

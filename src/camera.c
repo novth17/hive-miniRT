@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/rt_math.h"
-#include "../inc/mini_rt.h"
+#include "rt_math.h"
+#include "mini_rt.h"
 
 float	deg_to_rad(float a)
 {

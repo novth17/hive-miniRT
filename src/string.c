@@ -12,7 +12,6 @@
 
 #include "mini_rt.h"
 
-// maybe add this to some general utils file
 static
 uint8_t	num_length(uint32_t num)
 {
