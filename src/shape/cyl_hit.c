@@ -6,19 +6,19 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 17:17:58 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/08/28 17:18:17 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/08/28 18:58:23 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt.h"
 
-static void		cylinder_set_normal(const t_ray ray, const t_cylinder cyl,
-					const t_hit record, t_hit *out);
-static t_hit	create_cyl_hit_record(const t_ray ray, const t_cylinder cyl,
-					const float t);
+static void	cylinder_set_normal(const t_ray ray, const t_cylinder cyl,
+				t_hit *rec);
+static void	create_cyl_hit_record(t_hit *rec, const t_ray ray,
+				const t_cylinder cyl, const float t);
 
 float	check_cyl(t_hit *restrict rec, const t_cylinder *cyl,
-		const uint32_t count, const t_ray ray)
+			const uint32_t count, const t_ray ray)
 {
 	uint32_t	i;
 	float		t;
@@ -31,7 +31,7 @@ float	check_cyl(t_hit *restrict rec, const t_cylinder *cyl,
 		t = cyl_hit(cyl[i], ray);
 		if (t < closest)
 		{
-			*rec = create_cyl_hit_record(ray, cyl[i], t);
+			create_cyl_hit_record(rec, ray, cyl[i], t);
 			closest = t;
 		}
 		i++;
@@ -52,26 +52,26 @@ float	check_cyl(t_hit *restrict rec, const t_cylinder *cyl,
  *   out  - pointer to the hit record to update with the correct normal
  */
 static void	cylinder_set_normal(const t_ray ray, const t_cylinder cyl,
-		const t_hit record, t_hit *out)
+		t_hit *rec)
 {
 	t_cyl_hit	h;
 
-	h.vec_to_hit = v3_sub_v3(record.position, cyl.center);
+	h.vec_to_hit = v3_sub_v3(rec->position, cyl.center);
 	h.proj_len = dot(h.vec_to_hit, cyl.axis);
 	h.half_height = cyl.height * 0.5f;
 	if (h.proj_len < -h.half_height + CYL_CAP_EPSILON)
-		out->normal = neg(cyl.axis);
+		rec->normal = neg(cyl.axis);
 	else if (h.proj_len > h.half_height - CYL_CAP_EPSILON)
-		out->normal = cyl.axis;
+		rec->normal = cyl.axis;
 	else
 	{
 		h.axis_projection = v3_mul_f32(cyl.axis, h.proj_len);
 		h.side_normal = v3_sub_v3(h.vec_to_hit, h.axis_projection);
-		out->normal = h.side_normal;
+		rec->normal = h.side_normal;
 	}
-	out->front_face = dot(ray.direction, out->normal) < 0;
-	if (!out->front_face)
-		out->normal = neg(out->normal);
+	rec->front_face = dot(ray.direction, rec->normal) < 0;
+	if (!rec->front_face)
+		rec->normal = neg(rec->normal);
 }
 
 /**
@@ -87,17 +87,15 @@ static void	cylinder_set_normal(const t_ray ray, const t_cylinder cyl,
  *
  * @return A fully populated t_hit struct.
  */
-static t_hit	create_cyl_hit_record(const t_ray ray, const t_cylinder cyl,
+static
+void	create_cyl_hit_record(t_hit *rec, const t_ray ray, const t_cylinder cyl,
 		const float t)
 {
-	t_hit	rec;
-
-	rec.distance = t;
-	rec.position = at(ray, t);
-	rec.mat = cyl.material;
-	if (rec.mat.has_checker)
-		rec.mat.color = checker_cylinder(rec.position, &cyl);
-	rec.did_hit = true;
-	cylinder_set_normal(ray, cyl, rec, &rec);
-	return (rec);
+	rec->distance = t;
+	rec->position = at(ray, t);
+	rec->mat = cyl.material;
+	if (rec->mat.has_checker)
+		rec->mat.color = checker_cylinder(rec->position, &cyl);
+	rec->did_hit = true;
+	cylinder_set_normal(ray, cyl, rec);
 }

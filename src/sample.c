@@ -16,25 +16,25 @@ bool	hit_color(
 	t_color	emit_color;
 	t_color	mat_color;
 	t_color	light_color;
-	bool	is_specular;
+	bool	specular;
 
-	is_specular = rec->mat.specular_probability >= random_float(seed);
+	specular = rec->mat.specular_probability >= random_float(seed);
 	rec->position = V3_ADD(rec->position, v3_mul_f32(rec->normal, 1e-4f));
 	emit_color = v3_mul_f32(rec->mat.color, rec->mat.emitter);
 	emit_color = v3_mul_v3(emit_color, color[RAY]);
 	color[TOTAL] = V3_ADD(color[TOTAL], emit_color);
-	mat_color = v3_lerp(rec->mat.color, is_specular, rec->mat.specular_color);
+	mat_color = v3_lerp(rec->mat.color, specular, rec->mat.specular_color);
 	color[RAY] = v3_mul_v3(color[RAY], mat_color);
 	if (scene->use_point_light)
 	{
 		light_color = v3_mul_v3(check_point_light(scene, rec), color[RAY]);
 		color[TOTAL] = V3_ADD(color[TOTAL], light_color);
 	}
-	return (is_specular);
+	return (specular);
 }
 
 static inline
-bool	monte_carlo_termin(t_color *restrict color, uint32_t *seed)
+bool	monte_carlo_terminination(t_color *restrict color, uint32_t *seed)
 {
 	float	p;
 
@@ -82,7 +82,7 @@ t_v4	trace(
 		if (find_closest_ray_intesection(&rec, ray, scene))
 		{
 			specular[IS] = hit_color(color, &rec, scene, seed);
-			if (i > 0 && !specular[PREV] && monte_carlo_termin(color, seed))
+			if (i > 0 && !specular[PREV] && monte_carlo_terminination(color, seed))
 				break ;
 			specular[PREV] = specular[IS];
 			color[PREV] = color[RAY];

@@ -2,6 +2,7 @@
 # define CAMERA_H
 
 # include "rt_math.h"
+# include "types.h"
 # include <stdint.h>
 
 # ifdef MINIRT_BONUS
@@ -13,6 +14,7 @@
 typedef struct s_camera
 {
 	t_v3		base_direction;
+	t_v3		base_position;
 	float		aspect_ratio;
 	int32_t		image_width;
 	int32_t		image_height;
