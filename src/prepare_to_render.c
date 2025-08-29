@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prepare_to_render.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:13:32 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/28 19:13:32 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/29 14:06:17 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

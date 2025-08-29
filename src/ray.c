@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ray.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:13:35 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/28 19:57:03 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/29 14:07:43 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt.h"
-#include "types.h"
-#include "rt_math.h"
-#include "camera.h"
 
 inline
 bool	find_closest_ray_intesection(

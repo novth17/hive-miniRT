@@ -13,7 +13,6 @@
 #ifndef IMAGE_TO_FILE_H
 # define IMAGE_TO_FILE_H
 
-# include <stdint.h>
 # include <string.h>
 # include "mini_rt.h"
 # include "MLX42.h"

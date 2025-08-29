@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   camera.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:13:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/28 19:13:08 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/29 14:10:19 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "rt_math.h"
 #include "mini_rt.h"
 
 float	deg_to_rad(float a)

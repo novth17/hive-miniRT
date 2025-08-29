@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:13:28 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/28 19:13:28 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/28 23:03:01 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,6 @@ int	main(int argc, char **argv)
 	if (run_minirt(&minirt, argv) == FAIL)
 		return (FAIL);
 	delete_minirt(&minirt);
-	ft_dprintf(1, "Program ran successfully!\n");
+	ft_dprintf(1, GREEN"Program ran successfully!\n"RESET);
 	return (SUCCESS);
 }
