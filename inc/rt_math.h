@@ -1,7 +1,6 @@
 #ifndef RT_MATH_H
 # define RT_MATH_H
 
-
 # include <float.h>
 # include <math.h>
 # include "types.h"

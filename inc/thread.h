@@ -1,6 +1,6 @@
 #ifndef THREAD_H
 # define THREAD_H
-# include "mini_rt.h" //wtf?
+# include "mini_rt.h" //wtf why need here?
 
 # ifdef MINIRT_BONUS
 

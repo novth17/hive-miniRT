@@ -2,7 +2,6 @@
 # define CAMERA_H
 
 # include "rt_math.h"
-# include "types.h"
 
 # ifdef MINIRT_BONUS
 #  define MAX_BOUNCE_DEFAULT 4
