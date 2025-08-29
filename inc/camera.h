@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   camera.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/29 16:29:55 by ltaalas           #+#    #+#             */
+/*   Updated: 2025/08/29 16:30:14 by ltaalas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CAMERA_H
 # define CAMERA_H
 
@@ -26,7 +38,7 @@ typedef struct s_camera
 
 	int32_t		max_bounce;
 	float		fov;
-	t_point3	lookfrom; // @QUESTION why this and camera_center??
+	t_point3	lookfrom;
 	t_point3	lookat;
 	t_v3		vup;
 	t_v3		right;
