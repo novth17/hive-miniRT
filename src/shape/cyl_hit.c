@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 17:17:58 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/08/28 18:58:23 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/08/29 10:11:25 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,13 @@ float	check_cyl(t_hit *restrict rec, const t_cylinder *cyl,
 }
 
 /**
- * cylinder_set_normal:
- * --------------------
  * Decides which surface of the cylinder the ray hit (top cap, bottom cap,
  * or side),  and sets the correct normal direction at the hit point.
  *
  * Parameters:
- *   ray  - the incoming ray
- *   cyl  - the cylinder that was hit
- *   rec  - the hit record with position already filled
- *   out  - pointer to the hit record to update with the correct normal
+ *   @param ray  - the incoming ray
+ *   @param cyl  - the cylinder that was hit
+ *   @param rec  - pointer to the hit record to update with the correct normal
  */
 static void	cylinder_set_normal(const t_ray ray, const t_cylinder cyl,
 		t_hit *rec)
