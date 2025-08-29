@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 17:17:58 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/08/29 10:11:25 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/08/29 16:45:25 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ float	check_cyl(t_hit *restrict rec, const t_cylinder *cyl,
 	while (i < count)
 	{
 		t = cyl_hit(cyl[i], ray);
-		if (t < closest)
+		if (t > MIN_HIT_DIST && t < closest)
 		{
 			create_cyl_hit_record(rec, ray, cyl[i], t);
 			closest = t;
