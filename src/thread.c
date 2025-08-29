@@ -6,17 +6,13 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:13:47 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/28 19:13:47 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/29 17:06:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifdef MINIRT_BONUS
+#include "thread.h"
 
-# include <unistd.h>
-# include <stdatomic.h>
-# include <pthread.h>
-# include <sched.h>
-# include "mini_rt.h"
+#ifdef MINIRT_BONUS
 
 static
 bool	get_and_render_tile(volatile t_task_queue *queue)
