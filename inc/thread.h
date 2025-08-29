@@ -6,15 +6,19 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 16:29:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/29 16:29:27 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/29 17:12:55 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef THREAD_H
 # define THREAD_H
-# include "mini_rt.h" //wtf why need here?
 
 # ifdef MINIRT_BONUS
+
+#  include <stdatomic.h>
+#  include <pthread.h>
+#  include <sched.h>
+#  include "mini_rt.h"
 
 bool	create_worker_threads(t_minirt *minirt);
 
