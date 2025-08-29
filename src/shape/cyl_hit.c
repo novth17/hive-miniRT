@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cyl_hit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 17:17:58 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/08/28 18:58:23 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/08/29 16:46:09 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,5 @@ void	create_cyl_hit_record(t_hit *rec, const t_ray ray, const t_cylinder cyl,
 	rec->mat = cyl.material;
 	if (rec->mat.has_checker)
 		rec->mat.color = checker_cylinder(rec->position, &cyl);
-	rec->did_hit = true;
 	cylinder_set_normal(ray, cyl, rec);
 }
