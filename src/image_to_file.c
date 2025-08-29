@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:13:20 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/29 14:05:58 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/08/29 18:37:57 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,20 +105,11 @@ void	create_filename_base(t_string *filename, t_minirt *minirt)
 {
 	static const uint32_t	filename_start_length = sizeof(OUTPUT_FILENAME) - 1;
 	static char				name_buf[FILENAME_BUFFER_SIZE] = OUTPUT_FILENAME;
-	const char				*scene_name = minirt->scene_file_name;
-	const uint32_t			scene_name_len = ft_strlen(scene_name) - 3;
-	uint32_t				scene_name_len_to_write;
 
 	filename->buf = name_buf;
 	filename->len = filename_start_length;
 	filename->size = sizeof(name_buf);
-	scene_name_len_to_write = scene_name_len;
-	if (scene_name_len_to_write > 20)
-		scene_name_len_to_write = 20 - (sizeof("--truncated") - 1);
-	cat_cstring_to_string_n(filename, scene_name, scene_name_len_to_write);
-	cat_cstring_to_string(filename, "_rt");
-	if (scene_name_len != scene_name_len_to_write)
-		cat_cstring_to_string(filename, "--truncated");
+	apply_scene_file_name(filename, minirt->scene_file_name);
 	cat_cstring_to_string(filename, "_spp-");
 	cat_uint_to_str(filename, minirt->scene.camera.samples_per_pixel);
 	cat_cstring_to_string(filename, "_maxbounces-");

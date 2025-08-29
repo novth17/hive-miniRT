@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mouse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:14:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/28 19:15:01 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/29 19:44:41 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,19 @@
 
 static int32_t		g_prev_x;
 static int32_t		g_prev_y;
-static const float	g_rotation_speed = 0.002f;
+static const float	g_rotation_speed = 0.0017f;
 static float		g_total_rotation_x = 0.f;
 static float		g_total_rotation_y = 0.f;
 
 void	rotate_view(t_camera *cam)
 {
-	static const t_v3	y_axis = {.x = 0.0f, .y = 1.0f, .z = 0.0f};
 	t_v3				view;
 
-	view = rotate(cam->base_direction, y_axis, g_total_rotation_x);
-	view = normalize(view);
-	cam->right = normalize(cross(y_axis, view));
+	view = rotate(cam->base_direction, cam->vup, g_total_rotation_x);
+	view = noz(view);
+	cam->right = noz(cross(cam->vup, view));
 	view = rotate(view, cam->right, g_total_rotation_y);
-	cam->lookat = normalize(view);
-	cam->vup = cross(cam->lookat, cam->right);
-	cam->vup = normalize(cam->vup);
+	cam->lookat = noz(view);
 }
 
 #define DEG_90 1.5707963268f

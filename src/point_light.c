@@ -74,7 +74,7 @@ t_v3	point_light_color(
 	reflect_dir = reflect(light_direction, rec->normal);
 	light_angle = dot(reflect_dir, rec->view_direction);
 	light_angle = fmaxf(light_angle, 0.0f);
-	specular = powf(light_angle, rec->mat.smoothness * 256.0f);
+	specular = powf(light_angle, 256.0f);
 	specular_color = v3_mul_v3(light->color, rec->mat.specular_color);
 	specular_color = v3_mul_f32(specular_color, specular);
 	return (v3_clamp(v3_div_f32(V3_ADD(lambertian, specular_color), dist)));

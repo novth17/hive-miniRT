@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:13:18 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/29 14:12:22 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/08/29 18:38:07 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,4 +74,23 @@ t_bitmap_header	make_header(const mlx_image_t *image,
 	header.colors_used = 0;
 	header.colors_important = 0;
 	return (header);
+}
+
+void	apply_scene_file_name(t_string *filename, char *scene_name)
+{
+	uint32_t	scene_name_len_to_write;
+	uint32_t	scene_name_len;
+	char		*slash_position;
+
+	slash_position = ft_strrchr(scene_name, '/');
+	if (*slash_position == '/')
+		scene_name = slash_position + 1;
+	scene_name_len = ft_strlen(scene_name) - 3;
+	scene_name_len_to_write = scene_name_len;
+	if (scene_name_len_to_write > 20)
+		scene_name_len_to_write = 20 - (sizeof("--truncated") - 1);
+	cat_cstring_to_string_n(filename, scene_name, scene_name_len_to_write);
+	cat_cstring_to_string(filename, "_rt");
+	if (scene_name_len != scene_name_len_to_write)
+		cat_cstring_to_string(filename, "--truncated");
 }
