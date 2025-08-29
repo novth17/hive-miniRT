@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   hit.h                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/28 23:10:05 by hiennguy          #+#    #+#             */
+/*   Updated: 2025/08/28 23:10:07 by hiennguy         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef HIT_H
 # define HIT_H
 
@@ -56,11 +68,18 @@ typedef struct s_cyl_math
 typedef struct s_hit_record
 {
 	t_v3		view_direction;
-	t_v3		position; // p
+	t_v3		position;
 	t_v3		normal;
+<<<<<<< HEAD
 	float		distance; // t
 	bool		front_face; // maybe not needed;
 	t_material	mat;		// for now maybe have material index or smth idunno
+=======
+	float		distance;
+	bool		front_face;
+	bool		did_hit;
+	t_material	mat;
+>>>>>>> main
 }			t_hit;
 
 #endif

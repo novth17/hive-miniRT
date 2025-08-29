@@ -16,14 +16,15 @@ OBJ_DIR		= obj/
 SRC_DIR		= src
 
 HEADERS		= 	inc/camera.h \
-				inc/error.h \
-				inc/hit.h \
-				inc/image_to_file.h \
-				inc/mini_rt.h \
-				inc/object.h \
-				inc/rt_math.h \
-				inc/types.h \
-				inc/task.h
+				inc/error.h  \
+				inc/hit.h  \
+				inc/image_to_file.h  \
+				inc/mini_rt.h  \
+				inc/object.h  \
+				inc/rt_math.h  \
+				inc/task.h  \
+				inc/thread.h  \
+				inc/types.h
 
 SRC 		=	$(SRC_DIR)/main.c \
 				$(SRC_DIR)/init.c \

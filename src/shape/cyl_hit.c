@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 17:17:58 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/08/29 16:46:09 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/29 16:49:22 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ float	check_cyl(t_hit *restrict rec, const t_cylinder *cyl,
 	while (i < count)
 	{
 		t = cyl_hit(cyl[i], ray);
-		if (t < closest)
+		if (t > MIN_HIT_DIST && t < closest)
 		{
 			create_cyl_hit_record(rec, ray, cyl[i], t);
 			closest = t;
@@ -40,16 +40,13 @@ float	check_cyl(t_hit *restrict rec, const t_cylinder *cyl,
 }
 
 /**
- * cylinder_set_normal:
- * --------------------
  * Decides which surface of the cylinder the ray hit (top cap, bottom cap,
  * or side),  and sets the correct normal direction at the hit point.
  *
  * Parameters:
- *   ray  - the incoming ray
- *   cyl  - the cylinder that was hit
- *   rec  - the hit record with position already filled
- *   out  - pointer to the hit record to update with the correct normal
+ *   @param ray  - the incoming ray
+ *   @param cyl  - the cylinder that was hit
+ *   @param rec  - pointer to the hit record to update with the correct normal
  */
 static void	cylinder_set_normal(const t_ray ray, const t_cylinder cyl,
 		t_hit *rec)

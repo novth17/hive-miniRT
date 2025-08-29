@@ -13,10 +13,8 @@
 #ifndef RT_MATH_H
 # define RT_MATH_H
 
-# include <stdint.h>
 # include <float.h>
 # include <math.h>
-
 # include "types.h"
 
 // vec2.c

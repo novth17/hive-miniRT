@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   image_to_file.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:13:20 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/28 19:13:20 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/29 14:05:58 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mini_rt.h"
-#include <fcntl.h>
-#include <stdint.h>
 #include <errno.h>
 #include "image_to_file.h"
 

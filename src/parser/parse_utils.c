@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 17:21:27 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/08/28 17:36:18 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/08/28 22:53:02 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	check_fd(t_minirt *minirt, int fd)
 {
 	if (fd < 0)
 	{
-		ft_dprintf(2, RED"Error\n"ERROR_NOT_EXIST"\n\n");
+		ft_dprintf(2, RED"Error\n"ERROR_NOT_EXIST"\n\n"RESET);
 		print_guide();
 		delete_minirt(minirt);
 		exit(FAIL);
