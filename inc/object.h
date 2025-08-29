@@ -6,7 +6,7 @@
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 23:03:38 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/08/28 23:03:42 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/08/29 14:02:43 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define OBJECT_H
 
 # include "mini_rt.h"
-# include "types.h"
 
 # define CHECKER_SIZE 0.7
 # define CHECKER_DENSITY 8

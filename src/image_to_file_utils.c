@@ -3,16 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   image_to_file_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:13:18 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/28 19:13:18 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/29 14:12:22 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdint.h>
-#include "types.h"
-#include "rt_math.h"
 #include "image_to_file.h"
 
 uint32_t	reorder_color(uint32_t color)
