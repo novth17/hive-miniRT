@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/28 17:24:10 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/08/28 22:57:55 by hiennguy         ###   ########.fr       */
+/*   Created: 2025/08/29 13:50:28 by hiennguy          #+#    #+#             */
+/*   Updated: 2025/08/29 13:51:31 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ int	check_id_args_count(char **tokens, const char *id, int expected)
 	if (ft_count_2d(tokens) != expected)
 	{
 		ft_dprintf(2, RED "Error\n" RESET);
-		ft_dprintf(2, RED"%s: Number of arguments must be %d!\n"RESET, id, expected);
+		ft_dprintf(2, RED"%s: Number of arguments must be %d!\n"RESET,
+			id, expected);
 		return (FAIL);
 	}
 	return (SUCCESS);
