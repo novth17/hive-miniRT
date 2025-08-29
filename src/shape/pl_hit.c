@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pl_hit.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 17:15:08 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/08/28 17:15:10 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/08/29 16:46:14 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void	create_plane_hit_record(t_hit *rec, const t_ray ray, const t_plane pl,
 	t_v3	face_normal;
 
 	rec->mat = pl.material;
-	rec->did_hit = true;
 	rec->distance = t;
 	rec->position = at(ray, rec->distance);
 	face_normal = pl.axis;

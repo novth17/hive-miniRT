@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 19:12:28 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/28 19:12:30 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/29 16:46:17 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ static inline
 void	create_sphere_hit_record(t_hit *restrict rec, const t_ray ray,
 	const t_sphere sp, const float root)
 {
-	rec->did_hit = true;
 	rec->distance = root;
 	rec->position = at(ray, rec->distance);
 	rec->mat = sp.material;

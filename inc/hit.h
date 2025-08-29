@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hit.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/28 23:10:05 by hiennguy          #+#    #+#             */
-/*   Updated: 2025/08/28 23:10:07 by hiennguy         ###   ########.fr       */
+/*   Updated: 2025/08/29 16:50:21 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,9 @@ typedef struct s_hit_record
 	t_v3		view_direction;
 	t_v3		position;
 	t_v3		normal;
-	float		distance;
-	bool		front_face;
-	bool		did_hit;
-	t_material	mat;
+	float		distance; // t
+	bool		front_face; // maybe not needed;
+	t_material	mat;		// for now maybe have material index or smth idunno
 }			t_hit;
 
 #endif
