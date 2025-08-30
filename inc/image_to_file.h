@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   image_to_file.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: hiennguy <hiennguy@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/29 16:29:49 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/08/29 16:29:51 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/08/29 18:38:46 by hiennguy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,6 @@ uint32_t		blend_fore_and_background(uint32_t foreground,
 					uint32_t background);
 t_bitmap_header	make_header(const mlx_image_t *image,
 					uint32_t output_pixel_size);
+void			apply_scene_file_name(t_string *filename, char *scene_name);
 
 #endif

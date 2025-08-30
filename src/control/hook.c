@@ -14,8 +14,6 @@
 
 static float	g_speed = 0.5f;
 
-// maybe just close window and leave from main?
-// or maybe this is easier i dunno
 static void	esc_key_func(mlx_key_data_t keydata, t_minirt *minirt)
 {
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
