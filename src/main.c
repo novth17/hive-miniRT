@@ -29,7 +29,12 @@ void	set_defaults(t_minirt *minirt, char *scene_file_name)
 	resize_linear_color_buf(minirt);
 	create_task_queue(&minirt->queue, minirt, frame_cam);
 	if (create_worker_threads(minirt))
+	{
 		minirt->core_count = 1;
+		if (minirt->queue.tasks && minirt->queue.tasks != get_default_task())
+			free(minirt->queue.tasks);
+		create_task_queue(&minirt->queue, minirt, frame_cam);
+	}
 }
 
 #else
