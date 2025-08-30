@@ -12,7 +12,7 @@
 
 #include "rt_math.h"
 
-inline // @TODO move this
+inline
 t_v3	at(const t_ray r, const float t)
 {
 	t_v3	result;

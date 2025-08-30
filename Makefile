@@ -26,56 +26,56 @@ HEADERS		= 	inc/camera.h \
 				inc/thread.h  \
 				inc/types.h
 
-SRC 		=	$(SRC_DIR)/main.c \
-				$(SRC_DIR)/init.c \
-				$(SRC_DIR)/error.c \
-				$(SRC_DIR)/delete.c \
-				$(SRC_DIR)/getters.c \
-        		$(SRC_DIR)/camera.c \
-          		$(SRC_DIR)/task.c \
-				$(SRC_DIR)/thread.c \
-				$(SRC_DIR)/ray.c \
-				$(SRC_DIR)/prepare_to_render.c \
-				$(SRC_DIR)/render.c \
-				$(SRC_DIR)/sample.c \
-				$(SRC_DIR)/point_light.c \
-				$(SRC_DIR)/string.c \
-				$(SRC_DIR)/image_to_file.c \
-				$(SRC_DIR)/image_to_file_utils.c \
-				$(SRC_DIR)/title.c \
-				$(SRC_DIR)/guide.c \
-				$(SRC_DIR)/background.c \
-				$(SRC_DIR)/parser/parse.c \
-				$(SRC_DIR)/parser/parse_utils.c \
-				$(SRC_DIR)/parser/validate.c \
-				$(SRC_DIR)/parser/fill_arr.c \
-				$(SRC_DIR)/parser/attribute/color.c \
-				$(SRC_DIR)/parser/attribute/float.c \
-				$(SRC_DIR)/parser/attribute/vector.c \
-				$(SRC_DIR)/parser/identifier/element.c \
-				$(SRC_DIR)/parser/identifier/object.c \
-				$(SRC_DIR)/parser/identifier/material.c \
-				$(SRC_DIR)/math/rt_math.c \
-				$(SRC_DIR)/math/square.c \
-				$(SRC_DIR)/math/cross_dot_length.c \
-				$(SRC_DIR)/math/vec2.c \
-				$(SRC_DIR)/math/vec3_1.c \
-				$(SRC_DIR)/math/vec3_2.c \
-				$(SRC_DIR)/math/vec4.c \
-				$(SRC_DIR)/math/quaternion.c \
-				$(SRC_DIR)/math/normalize.c \
-				$(SRC_DIR)/math/interpolate.c \
-				$(SRC_DIR)/math/random.c \
-				$(SRC_DIR)/math/color_correction.c \
+SRC 		=	$(SRC_DIR)/checker/check.c \
 				$(SRC_DIR)/control/hook.c \
 				$(SRC_DIR)/control/mouse.c \
 				$(SRC_DIR)/control/scroll.c \
 				$(SRC_DIR)/control/utils.c \
-				$(SRC_DIR)/shape/pl_hit.c \
-				$(SRC_DIR)/shape/cyl_side_hit.c  \
+				$(SRC_DIR)/math/color_correction.c \
+				$(SRC_DIR)/math/cross_dot_length.c \
+				$(SRC_DIR)/math/interpolate.c \
+				$(SRC_DIR)/math/normalize.c \
+				$(SRC_DIR)/math/quaternion.c \
+				$(SRC_DIR)/math/random.c \
+				$(SRC_DIR)/math/rt_math.c \
+				$(SRC_DIR)/math/square.c \
+				$(SRC_DIR)/math/vec2.c \
+				$(SRC_DIR)/math/vec3_1.c \
+				$(SRC_DIR)/math/vec3_2.c \
+				$(SRC_DIR)/math/vec4.c \
+				$(SRC_DIR)/parser/attribute/color.c \
+				$(SRC_DIR)/parser/attribute/float.c \
+				$(SRC_DIR)/parser/attribute/vector.c \
+				$(SRC_DIR)/parser/identifier/element.c \
+				$(SRC_DIR)/parser/identifier/material.c \
+				$(SRC_DIR)/parser/identifier/object.c \
+				$(SRC_DIR)/parser/fill_arr.c \
+				$(SRC_DIR)/parser/parse_utils.c \
+				$(SRC_DIR)/parser/parse.c \
+				$(SRC_DIR)/parser/validate.c \
+				$(SRC_DIR)/print_message/error.c \
+				$(SRC_DIR)/print_message/guide.c \
+				$(SRC_DIR)/print_screen/image_to_file_utils.c \
+				$(SRC_DIR)/print_screen/image_to_file.c \
+				$(SRC_DIR)/render/background.c \
+				$(SRC_DIR)/render/camera.c \
+				$(SRC_DIR)/render/point_light.c \
+				$(SRC_DIR)/render/prepare_to_render.c \
+				$(SRC_DIR)/render/ray.c \
+				$(SRC_DIR)/render/render.c \
+				$(SRC_DIR)/render/sample.c \
 				$(SRC_DIR)/shape/cyl_hit.c \
+				$(SRC_DIR)/shape/cyl_side_hit.c \
+				$(SRC_DIR)/shape/pl_hit.c \
 				$(SRC_DIR)/shape/sphere_hit.c \
-				$(SRC_DIR)/checker/check.c
+				$(SRC_DIR)/task_thread/task.c \
+				$(SRC_DIR)/task_thread/thread.c \
+				$(SRC_DIR)/window_title/string.c \
+				$(SRC_DIR)/window_title/title.c \
+				$(SRC_DIR)/delete.c \
+				$(SRC_DIR)/getters.c \
+				$(SRC_DIR)/init.c \
+				$(SRC_DIR)/main.c
 
 OBJS		= $(addprefix $(OBJ_DIR), $(SRC:$(SRC_DIR)/%.c=%.o))
 
