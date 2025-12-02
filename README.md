@@ -75,6 +75,9 @@ Run an .rt scene. At root, scenes can be found in the folder.
 ```
 ./miniRT scenes/lollipops.rt
 ```
+#### 🕹️ How to Play
+![guide](guide.jpg)
+
 #### 🧹 Clean and rebuild
 ```
 make clean   #Remove object files
