@@ -88,3 +88,8 @@ make clean   #Remove object files
 make fclean  #Remove everything including binary
 make re      #Rebuild from scratch
 ```
+## ✨ Contributors
+- @Omppu0    - Luka Taalas
+- @novth17   - Lily Hien Nguyen
+  
+Huge thanks to my passionate partner, Luka, who loves exploring physics, had fun with [Raytracing Book]([url](https://raytracing.github.io/books/RayTracingInOneWeekend.html)), and always ready to “what if we add one more bonus?”.
