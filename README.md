@@ -5,18 +5,6 @@
 A lightweight ray tracer written in C. Its purpose is to introduce the fundamentals of ray tracing math, vectors, intersections, and the basic of lightings.
 It loads a .rt scene, computes rays for each pixel, intersects them with objects, applies lighting, and renders the final image using MLX42.
 
-### Supported objects:
-- Sphere
-- Plane
-- Cylinder
-
-### Supported lighting:
-- Ambient
-- Diffuse
-- Hard shadows
-
-It also supports camera movement and object transformations.
-
 ---
 ## ✨ Features
 
