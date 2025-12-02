@@ -80,4 +80,9 @@ make re      #Rebuild from scratch
 - @Omppu0    - Luka Taalas
 - @novth17   - Lily Hien Nguyen
   
-Huge thanks to my passionate partner, Luka, who loves exploring physics, had fun with [Raytracing Book]([url](https://raytracing.github.io/books/RayTracingInOneWeekend.html)), and always ready to “what if we add one more bonus?”.
+Huge thanks to my passionate partner, Luka, who loves exploring physics, had fun with [Raytracing In One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) , and always ready to “what if we add one more bonus?”.
+
+## ✨ Material and Sources
+- [Raytracing In One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
+- [Ray Tracing: The Next Week](https://raytracing.github.io/books/RayTracingTheNextWeek.html)
+
