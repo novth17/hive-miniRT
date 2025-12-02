@@ -6,14 +6,15 @@ A lightweight ray tracer written in C. Its purpose is to introduce the fundament
 It loads a .rt scene, computes rays for each pixel, intersects them with objects, applies lighting, and renders the final image using MLX42.
 
 ### Supported objects:
-Sphere
-Plane
-Cylinder
+- Sphere
+- Plane
+- Cylinder
 
 ### Supported lighting:
-Ambient
-Diffuse
-Hard shadows
+- Ambient
+- Diffuse
+- Hard shadows
+
 It also supports camera movement and object transformations.
 
 ---
