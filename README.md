@@ -62,7 +62,11 @@ Before building, you must have:
 flags: -lm for math library; -ldl -lglfw -pthread (MLX42 dependencies)
 
 ### 📸 Preview
+scenes/lollipops.rt
 ![Render](image/minirt_lollipops_rt_spp-8_maxbounces-8_frames-27_avg_frame_time-10273ms.bmp)
+
+random_scenes/mirror_room_aes_rt
+![Render2](image/minirt_mirror_room_aes_rt_spp-8_maxbounces-16_frames-81_avg_f--truncated.bmp)
 
 ### 🔨 Build
 From the project root, do:
