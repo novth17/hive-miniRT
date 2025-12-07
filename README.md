@@ -1,4 +1,4 @@
-# ⚡ MiniRayTracer: 42-miniRT
+# ⚡ MiniRayTracer: miniRT
 
 ## 🌀 Overview
 
